@@ -43,6 +43,7 @@ import 'package:anytime/ui/themes.dart';
 import 'package:anytime/ui/widgets/action_text.dart';
 import 'package:anytime/ui/widgets/layout_selector.dart';
 import 'package:anytime/ui/widgets/search_slide_route.dart';
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -52,8 +53,13 @@ import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:material_color_utilities/material_color_utilities.dart';
 
-var theme = Themes.lightTheme().themeData;
+ColorScheme? currentDynamicColorsLight;
+ColorScheme? currentDynamicColorsDark;
+ThemeData theme = Themes.dynamicLightTheme(currentDynamicColorsLight ??
+        ColorScheme.fromSeed(seedColor: Colors.deepPurple))
+    .themeData;
 
 /// Anytime is a Podcast player. You can search and subscribe to podcasts,
 /// download and stream episodes and view the latest podcast charts.
@@ -111,16 +117,40 @@ class AnytimePodcastApp extends StatefulWidget {
 }
 
 class AnytimePodcastAppState extends State<AnytimePodcastApp> {
+  ColorScheme? currentColorScheme;
   ThemeData? theme;
+  DynamicColorBuilder? dynamicColorBuilder;
+
+  Future<void> setCurrentColor() async {
+    CorePalette? corePalette = await DynamicColorPlugin.getCorePalette();
+
+    setState(() {
+      currentColorScheme = corePalette?.toColorScheme();
+    });
+    if (widget.mobileSettingsService.themeDarkMode) {
+      theme = Themes.dynamicDarkTheme(currentColorScheme ??
+              ColorScheme.fromSeed(seedColor: Colors.deepPurple))
+          .themeData;
+    } else {
+      theme = Themes.dynamicLightTheme(currentColorScheme ??
+              ColorScheme.fromSeed(seedColor: Colors.deepPurple))
+          .themeData;
+    }
+  }
 
   @override
   void initState() {
+    setCurrentColor();
     super.initState();
 
     /// Listen to theme change events from settings.
     widget.settingsBloc!.settings.listen((event) {
       setState(() {
-        var newTheme = event.theme == 'dark' ? Themes.darkTheme().themeData : Themes.lightTheme().themeData;
+        var newTheme = event.theme == 'dark'
+            ? Themes.dynamicDarkTheme(currentColorScheme ??
+                    ColorScheme.fromSeed(seedColor: Colors.deepPurple))
+                .themeData
+            : Themes.dynamicLightTheme(currentColorScheme).themeData;
 
         /// Only update the theme if it has changed.
         if (newTheme != theme) {
@@ -128,89 +158,89 @@ class AnytimePodcastAppState extends State<AnytimePodcastApp> {
         }
       });
     });
-
-    if (widget.mobileSettingsService.themeDarkMode) {
-      theme = Themes.darkTheme().themeData;
-    } else {
-      theme = Themes.lightTheme().themeData;
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        Provider<SearchBloc>(
-          create: (_) => SearchBloc(
-            podcastService: widget.podcastService!,
-          ),
-          dispose: (_, value) => value.dispose(),
-        ),
-        Provider<DiscoveryBloc>(
-          create: (_) => DiscoveryBloc(
-            podcastService: widget.podcastService!,
-          ),
-          dispose: (_, value) => value.dispose(),
-        ),
-        Provider<EpisodeBloc>(
-          create: (_) =>
-              EpisodeBloc(podcastService: widget.podcastService!, audioPlayerService: widget.audioPlayerService),
-          dispose: (_, value) => value.dispose(),
-        ),
-        Provider<PodcastBloc>(
-          create: (_) => PodcastBloc(
+        providers: [
+          Provider<SearchBloc>(
+            create: (_) => SearchBloc(
               podcastService: widget.podcastService!,
-              audioPlayerService: widget.audioPlayerService,
-              downloadService: widget.downloadService,
-              settingsService: widget.mobileSettingsService),
-          dispose: (_, value) => value.dispose(),
-        ),
-        Provider<PagerBloc>(
-          create: (_) => PagerBloc(),
-          dispose: (_, value) => value.dispose(),
-        ),
-        Provider<AudioBloc>(
-          create: (_) => AudioBloc(audioPlayerService: widget.audioPlayerService),
-          dispose: (_, value) => value.dispose(),
-        ),
-        Provider<SettingsBloc?>(
-          create: (_) => widget.settingsBloc,
-          dispose: (_, value) => value!.dispose(),
-        ),
-        Provider<OPMLBloc>(
-          create: (_) => OPMLBloc(opmlService: widget.opmlService),
-          dispose: (_, value) => value.dispose(),
-        ),
-        Provider<QueueBloc>(
-          create: (_) => QueueBloc(
-            audioPlayerService: widget.audioPlayerService,
-            podcastService: widget.podcastService!,
+            ),
+            dispose: (_, value) => value.dispose(),
           ),
-          dispose: (_, value) => value.dispose(),
-        )
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        showSemanticsDebugger: false,
-        title: 'Anytime Podcast Player',
-        navigatorObservers: [NavigationRouteObserver()],
-        localizationsDelegates: const <LocalizationsDelegate<Object>>[
-          AnytimeLocalisationsDelegate(),
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
+          Provider<DiscoveryBloc>(
+            create: (_) => DiscoveryBloc(
+              podcastService: widget.podcastService!,
+            ),
+            dispose: (_, value) => value.dispose(),
+          ),
+          Provider<EpisodeBloc>(
+            create: (_) => EpisodeBloc(
+                podcastService: widget.podcastService!,
+                audioPlayerService: widget.audioPlayerService),
+            dispose: (_, value) => value.dispose(),
+          ),
+          Provider<PodcastBloc>(
+            create: (_) => PodcastBloc(
+                podcastService: widget.podcastService!,
+                audioPlayerService: widget.audioPlayerService,
+                downloadService: widget.downloadService,
+                settingsService: widget.mobileSettingsService),
+            dispose: (_, value) => value.dispose(),
+          ),
+          Provider<PagerBloc>(
+            create: (_) => PagerBloc(),
+            dispose: (_, value) => value.dispose(),
+          ),
+          Provider<AudioBloc>(
+            create: (_) =>
+                AudioBloc(audioPlayerService: widget.audioPlayerService),
+            dispose: (_, value) => value.dispose(),
+          ),
+          Provider<SettingsBloc?>(
+            create: (_) => widget.settingsBloc,
+            dispose: (_, value) => value!.dispose(),
+          ),
+          Provider<OPMLBloc>(
+            create: (_) => OPMLBloc(opmlService: widget.opmlService),
+            dispose: (_, value) => value.dispose(),
+          ),
+          Provider<QueueBloc>(
+            create: (_) => QueueBloc(
+              audioPlayerService: widget.audioPlayerService,
+              podcastService: widget.podcastService!,
+            ),
+            dispose: (_, value) => value.dispose(),
+          )
         ],
-        supportedLocales: const [
-          Locale('en', ''),
-          Locale('de', ''),
-          Locale('it', ''),
-        ],
-        theme: theme,
-        // Uncomment builder below to enable accessibility checker tool.
-        // builder: (context, child) => AccessibilityTools(child: child),
-        home: const AnytimeHomePage(title: 'Anytime Podcast Player'),
-      ),
-    );
+        child: DynamicColorBuilder(
+          builder: (lightColorScheme, darkColorScheme) {
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              showSemanticsDebugger: false,
+              title: 'Anytime Podcast Player',
+              navigatorObservers: [NavigationRouteObserver()],
+              localizationsDelegates: const <LocalizationsDelegate<Object>>[
+                AnytimeLocalisationsDelegate(),
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: const [
+                Locale('en', ''),
+                Locale('de', ''),
+                Locale('it', ''),
+              ],
+              theme: theme,
+
+              // Uncomment builder below to enable accessibility checker tool.
+              // builder: (context, child) => AccessibilityTools(child: child),
+              home: const AnytimeHomePage(title: 'Podcast Player'),
+            );
+          },
+        ));
   }
 }
 
@@ -230,7 +260,8 @@ class AnytimeHomePage extends StatefulWidget {
   State<AnytimeHomePage> createState() => _AnytimeHomePageState();
 }
 
-class _AnytimeHomePageState extends State<AnytimeHomePage> with WidgetsBindingObserver {
+class _AnytimeHomePageState extends State<AnytimeHomePage>
+    with WidgetsBindingObserver {
   StreamSubscription? deepLinkSubscription;
 
   final log = Logger('_AnytimeHomePageState');
@@ -293,7 +324,9 @@ class _AnytimeHomePageState extends State<AnytimeHomePage> with WidgetsBindingOb
         Navigator.of(context).popUntil((route) {
           var currentRouteName = NavigationRouteObserver().top!.settings.name;
 
-          return currentRouteName == null || currentRouteName == '' || currentRouteName == '/';
+          return currentRouteName == null ||
+              currentRouteName == '' ||
+              currentRouteName == '/';
         });
 
         /// Once we have reached the root route, push podcast details.
@@ -302,7 +335,8 @@ class _AnytimeHomePageState extends State<AnytimeHomePage> with WidgetsBindingOb
           MaterialPageRoute<void>(
               fullscreenDialog: true,
               settings: const RouteSettings(name: 'podcastdetails'),
-              builder: (context) => PodcastDetails(Podcast.fromUrl(url: path), loadPodcastBloc)),
+              builder: (context) =>
+                  PodcastDetails(Podcast.fromUrl(url: path), loadPodcastBloc)),
         );
       }
     }
@@ -370,11 +404,13 @@ class _AnytimeHomePageState extends State<AnytimeHomePage> with WidgetsBindingOb
                               defaultTargetPlatform == TargetPlatform.iOS
                                   ? MaterialPageRoute<void>(
                                       fullscreenDialog: false,
-                                      settings: const RouteSettings(name: 'search'),
+                                      settings:
+                                          const RouteSettings(name: 'search'),
                                       builder: (context) => const Search())
                                   : SlideRightRoute(
                                       widget: const Search(),
-                                      settings: const RouteSettings(name: 'search'),
+                                      settings:
+                                          const RouteSettings(name: 'search'),
                                     ),
                             );
                           },
@@ -388,21 +424,27 @@ class _AnytimeHomePageState extends State<AnytimeHomePage> with WidgetsBindingOb
                             return <PopupMenuEntry<String>>[
                               if (feedbackUrl.isNotEmpty)
                                 PopupMenuItem<String>(
-                                  textStyle: Theme.of(context).textTheme.titleMedium,
+                                  textStyle:
+                                      Theme.of(context).textTheme.titleMedium,
                                   value: 'feedback',
                                   child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
                                       const Padding(
                                         padding: EdgeInsets.only(right: 8.0),
-                                        child: Icon(Icons.feedback_outlined, size: 18.0),
+                                        child: Icon(Icons.feedback_outlined,
+                                            size: 18.0),
                                       ),
-                                      Text(L.of(context)!.feedback_menu_item_label),
+                                      Text(L
+                                          .of(context)!
+                                          .feedback_menu_item_label),
                                     ],
                                   ),
                                 ),
                               PopupMenuItem<String>(
-                                textStyle: Theme.of(context).textTheme.titleMedium,
+                                textStyle:
+                                    Theme.of(context).textTheme.titleMedium,
                                 value: 'layout',
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -416,7 +458,8 @@ class _AnytimeHomePageState extends State<AnytimeHomePage> with WidgetsBindingOb
                                 ),
                               ),
                               PopupMenuItem<String>(
-                                textStyle: Theme.of(context).textTheme.titleMedium,
+                                textStyle:
+                                    Theme.of(context).textTheme.titleMedium,
                                 value: 'rss',
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -430,7 +473,8 @@ class _AnytimeHomePageState extends State<AnytimeHomePage> with WidgetsBindingOb
                                 ),
                               ),
                               PopupMenuItem<String>(
-                                textStyle: Theme.of(context).textTheme.titleMedium,
+                                textStyle:
+                                    Theme.of(context).textTheme.titleMedium,
                                 value: 'settings',
                                 child: Row(
                                   children: [
@@ -443,13 +487,15 @@ class _AnytimeHomePageState extends State<AnytimeHomePage> with WidgetsBindingOb
                                 ),
                               ),
                               PopupMenuItem<String>(
-                                textStyle: Theme.of(context).textTheme.titleMedium,
+                                textStyle:
+                                    Theme.of(context).textTheme.titleMedium,
                                 value: 'about',
                                 child: Row(
                                   children: [
                                     const Padding(
                                       padding: EdgeInsets.only(right: 8.0),
-                                      child: Icon(Icons.info_outline, size: 18.0),
+                                      child:
+                                          Icon(Icons.info_outline, size: 18.0),
                                     ),
                                     Text(L.of(context)!.about_label),
                                   ],
@@ -463,7 +509,8 @@ class _AnytimeHomePageState extends State<AnytimeHomePage> with WidgetsBindingOb
                   ),
                   StreamBuilder<int>(
                       stream: pager.currentPage,
-                      builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+                      builder:
+                          (BuildContext context, AsyncSnapshot<int> snapshot) {
                         return _fragment(snapshot.data, searchBloc);
                       }),
                 ],
@@ -478,20 +525,26 @@ class _AnytimeHomePageState extends State<AnytimeHomePage> with WidgetsBindingOb
             builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
               int index = snapshot.data ?? 0;
 
-              return BottomNavigationBar(
-                type: BottomNavigationBarType.fixed,
+              return NavigationBar(
+                selectedIndex: index,
+                onDestinationSelected: pager.changePage,
+                //  type: BottomNavigationBarType.fixed,
                 backgroundColor: Theme.of(context).bottomAppBarTheme.color,
-                selectedIconTheme: Theme.of(context).iconTheme,
-                selectedItemColor: Theme.of(context).iconTheme.color,
-                selectedFontSize: 11.0,
-                unselectedFontSize: 11.0,
-                unselectedItemColor:
-                    HSLColor.fromColor(Theme.of(context).bottomAppBarTheme.color!).withLightness(0.8).toColor(),
-                currentIndex: index,
-                onTap: pager.changePage,
-                items: <BottomNavigationBarItem>[
-                  BottomNavigationBarItem(
-                    icon: index == 0 ? const Icon(Icons.library_music) : const Icon(Icons.library_music_outlined),
+                //   selectedIconTheme: Theme.of(context).iconTheme,
+                //    selectedItemColor: Theme.of(context).iconTheme.color,
+                //    selectedFontSize: 11.0,
+                //    unselectedFontSize: 11.0,
+                //    unselectedItemColor: HSLColor.fromColor(
+                //            Theme.of(context).bottomAppBarTheme.color!)
+                //        .withLightness(0.8)
+                //        .toColor(),
+                //    currentIndex: index,
+                //    onTap: pager.changePage,
+                destinations: <Widget>[
+                  NavigationDestination(
+                    icon: index == 0
+                        ? const Icon(Icons.library_music)
+                        : const Icon(Icons.library_music_outlined),
                     label: L.of(context)!.library,
                   ),
                   // To be fleshed out later.
@@ -499,12 +552,16 @@ class _AnytimeHomePageState extends State<AnytimeHomePage> with WidgetsBindingOb
                   //   icon: index == 0 ? Icon(Icons.article_rounded) : Icon(Icons.article_outlined),
                   //   label: 'Episodes',
                   // ),
-                  BottomNavigationBarItem(
-                    icon: index == 1 ? const Icon(Icons.explore) : const Icon(Icons.explore_outlined),
+                  NavigationDestination(
+                    icon: index == 1
+                        ? const Icon(Icons.explore)
+                        : const Icon(Icons.explore_outlined),
                     label: L.of(context)!.discover,
                   ),
-                  BottomNavigationBarItem(
-                    icon: index == 2 ? const Icon(Icons.download) : const Icon(Icons.download_outlined),
+                  NavigationDestination(
+                    icon: index == 2
+                        ? const Icon(Icons.download)
+                        : const Icon(Icons.download_outlined),
                     label: L.of(context)!.downloads,
                   ),
                 ],
@@ -623,7 +680,8 @@ class _AnytimeHomePageState extends State<AnytimeHomePage> with WidgetsBindingOb
                     context,
                     MaterialPageRoute<void>(
                         settings: const RouteSettings(name: 'podcastdetails'),
-                        builder: (context) => PodcastDetails(Podcast.fromUrl(url: url), podcastBloc)),
+                        builder: (context) => PodcastDetails(
+                            Podcast.fromUrl(url: url), podcastBloc)),
                   ).then((value) => Navigator.pop(context));
                 },
               ),
@@ -694,7 +752,9 @@ class TitleWidget extends StatelessWidget {
           ),
           Text(
             'Player',
-            style: Theme.of(context).brightness == Brightness.light ? _titleTheme2Light : _titleTheme2Dark,
+            style: Theme.of(context).brightness == Brightness.light
+                ? _titleTheme2Light
+                : _titleTheme2Dark,
           ),
         ],
       ),
