@@ -42,7 +42,8 @@ ThemeData _buildLightTheme() {
     dialogBackgroundColor: const Color(0xffffffff),
     indicatorColor: Colors.blueAccent,
     hintColor: const Color(0x8a000000),
-    primaryTextTheme: Typography.material2021(platform: TargetPlatform.android).black,
+    primaryTextTheme:
+        Typography.material2021(platform: TargetPlatform.android).black,
     textTheme: Typography.material2021(
       platform: TargetPlatform.android,
     ).black,
@@ -112,7 +113,8 @@ ThemeData _buildDarkTheme() {
     dialogBackgroundColor: const Color(0xff222222),
     indicatorColor: Colors.orange,
     hintColor: const Color(0x80ffffff),
-    primaryTextTheme: Typography.material2021(platform: TargetPlatform.android).white,
+    primaryTextTheme:
+        Typography.material2021(platform: TargetPlatform.android).white,
     textTheme: Typography.material2021(platform: TargetPlatform.android).white,
     primaryIconTheme: const IconThemeData(color: Colors.white),
     iconTheme: base.iconTheme.copyWith(
@@ -156,14 +158,188 @@ ThemeData _buildDarkTheme() {
 
 class Themes {
   final ThemeData themeData;
+  final ColorScheme? dynamicColorScheme;
 
-  Themes({required this.themeData});
+  Themes({
+    required this.themeData,
+    this.dynamicColorScheme,
+  });
 
-  factory Themes.lightTheme() {
-    return Themes(themeData: _lightTheme);
+  // factory Themes.lightTheme() {
+  //   return Themes(
+  //     themeData: _lightTheme,
+  //   );
+  // }
+  //
+  // factory Themes.darkTheme() {
+  //   return Themes(themeData: _darkTheme);
+  // }
+
+  factory Themes.dynamicLightTheme(ColorScheme? dynamicColor) {
+    final base = ThemeData.light(useMaterial3: true);
+    final dynamicTheme = ThemeData(
+        secondaryHeaderColor: HSLColor.fromColor(dynamicColor!.primary)
+            .withLightness(0.92)
+            .toColor(),
+        hintColor: dynamicColor?.primary,
+        scaffoldBackgroundColor: HSLColor.fromColor(dynamicColor!.primary)
+            .withLightness(0.96)
+            .toColor(),
+        colorScheme:
+            dynamicColor ?? ColorScheme.fromSwatch(primarySwatch: Colors.blue),
+        bottomAppBarTheme: const BottomAppBarTheme().copyWith(
+          color: HSLColor.fromColor(dynamicColor!.primary)
+                  .withLightness(0.92)
+                  .toColor() ??
+              const Color(0xffffffff),
+        ),
+        brightness: Brightness.light,
+        primaryTextTheme:
+            Typography.material2021(platform: TargetPlatform.android).black,
+        textTheme: Typography.material2021(
+          platform: TargetPlatform.android,
+        ).black,
+        primaryIconTheme: IconThemeData(color: Colors.grey[800]),
+        iconTheme: base.iconTheme.copyWith(
+          color: dynamicColor.primary,
+        ),
+        sliderTheme: const SliderThemeData().copyWith(
+          valueIndicatorColor: HSLColor.fromColor(dynamicColor.primary)
+              .withLightness(0.92)
+              .toColor(),
+          trackHeight: 2.0,
+          thumbShape: const RoundSliderThumbShape(
+            enabledThumbRadius: 6.0,
+            disabledThumbRadius: 6.0,
+          ),
+        ),
+        appBarTheme: base.appBarTheme.copyWith(
+            backgroundColor: HSLColor.fromColor(dynamicColor!.primary)
+                .withLightness(0.92)
+                .toColor(),
+            foregroundColor: Colors.black,
+            systemOverlayStyle: SystemUiOverlayStyle.light.copyWith(
+              systemNavigationBarIconBrightness: Brightness.dark,
+              systemNavigationBarColor:
+                  HSLColor.fromColor(dynamicColor!.primary)
+                      .withLightness(0.92)
+                      .toColor(),
+              statusBarIconBrightness: Brightness.dark,
+            )),
+        snackBarTheme: base.snackBarTheme.copyWith(
+            //   actionTextColor: Colors.orange,
+            ),
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: OutlinedButton.styleFrom(
+              foregroundColor: dynamicColor?.primary ?? Colors.grey[800]),
+        ),
+        cardTheme: const CardTheme().copyWith(
+          color: dynamicColor?.primary ?? const Color(0xff444444),
+          shadowColor: dynamicColor?.primary ?? const Color(0x77ffffff),
+        ),
+        canvasColor: HSLColor.fromColor(dynamicColor!.primary)
+                .withLightness(0.92)
+                .toColor() ??
+            Colors.white,
+        cardColor: HSLColor.fromColor(dynamicColor!.primary)
+                .withLightness(0.92)
+                .toColor() ??
+            Colors.white);
+
+    return Themes(themeData: dynamicTheme);
   }
+  factory Themes.dynamicDarkTheme(ColorScheme? dynamicColor) {
+    final base = ThemeData.dark(useMaterial3: true);
+    final dynamicTheme = ThemeData(
+      colorScheme: ColorScheme.dark(
+        primary: Color(0xffffffff),
+        secondary: Color(0xfffb8c00),
+        surface: HSLColor.fromColor(dynamicColor!.primary)
+            .withLightness(0.18)
+            .toColor(),
+        error: Color(0xffd32f2f),
+        onSurface: Color(0xffffffff),
+      ),
+      bottomAppBarTheme: const BottomAppBarTheme().copyWith(
+        color: HSLColor.fromColor(dynamicColor!.primary)
+            .withLightness(0.15)
+            .toColor(),
+      ),
+      cardTheme: const CardTheme().copyWith(
+        color: const Color(0xff444444),
+        shadowColor: const Color(0x77ffffff),
+      ),
+      brightness: Brightness.dark,
+      primaryColor: const Color(0xffffffff),
+      primaryColorLight: const Color(0xffffe0b2),
+      primaryColorDark: const Color(0xfff57c00),
 
-  factory Themes.darkTheme() {
-    return Themes(themeData: _darkTheme);
+      //card background
+      canvasColor: HSLColor.fromColor(dynamicColor!.primary)
+          .withLightness(0.1)
+          .toColor(),
+      scaffoldBackgroundColor: HSLColor.fromColor(dynamicColor!.primary)
+          .withLightness(0.1)
+          .toColor(),
+      cardColor: const Color(0xff0F0F0F),
+      dividerColor: const Color(0xff444444),
+      highlightColor: const Color(0xff222222),
+      splashColor: const Color(0x66c8c8c8),
+      unselectedWidgetColor: Colors.white,
+      disabledColor: const Color(0x77ffffff),
+      secondaryHeaderColor: const Color(0xff222222),
+      dialogBackgroundColor: const Color(0xff222222),
+      indicatorColor: Colors.orange,
+      hintColor: const Color(0x80ffffff),
+      primaryTextTheme:
+          Typography.material2021(platform: TargetPlatform.android).white,
+      textTheme:
+          Typography.material2021(platform: TargetPlatform.android).white,
+      primaryIconTheme: const IconThemeData(color: Colors.white),
+      iconTheme: base.iconTheme.copyWith(
+        color: HSLColor.fromColor(dynamicColor!.primary)
+            .withLightness(0.9)
+            .toColor(),
+      ),
+      dividerTheme: base.dividerTheme.copyWith(
+        color: const Color(0xff444444),
+      ),
+      sliderTheme: const SliderThemeData().copyWith(
+        valueIndicatorColor: Colors.white,
+        trackHeight: 2.0,
+        thumbShape: const RoundSliderThumbShape(
+          enabledThumbRadius: 6.0,
+          disabledThumbRadius: 6.0,
+        ),
+      ),
+      appBarTheme: base.appBarTheme.copyWith(
+          backgroundColor: HSLColor.fromColor(dynamicColor!.primary)
+              .withLightness(0.19)
+              .toColor(),
+          foregroundColor: Colors.white,
+          shadowColor: const Color(0xff222222),
+          elevation: 1.0,
+          systemOverlayStyle: SystemUiOverlayStyle.light.copyWith(
+            systemNavigationBarIconBrightness: Brightness.light,
+            systemNavigationBarColor: HSLColor.fromColor(dynamicColor!.primary)
+                .withLightness(0.19)
+                .toColor(),
+            statusBarIconBrightness: Brightness.light,
+          )),
+      snackBarTheme: base.snackBarTheme.copyWith(
+        actionTextColor: Colors.orange,
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: const Color(0xffffffff),
+          side: const BorderSide(
+            color: Color(0xffffffff),
+            style: BorderStyle.solid,
+          ),
+        ),
+      ),
+    );
+
+    return Themes(themeData: dynamicTheme);
   }
 }
