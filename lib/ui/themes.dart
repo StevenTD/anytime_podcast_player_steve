@@ -294,10 +294,10 @@ class Themes {
 
       //card background
       canvasColor: HSLColor.fromColor(dynamicColor!.primary)
-          .withLightness(0.1)
+          .withLightness(0.02)
           .toColor(),
       scaffoldBackgroundColor: HSLColor.fromColor(dynamicColor!.primary)
-          .withLightness(0.098)
+          .withLightness(0.02)
           .toColor(),
       cardColor: HSLColor.fromColor(dynamicColor!.primary)
           .withLightness(0.098)
@@ -313,7 +313,7 @@ class Themes {
       disabledColor: const Color(0x77ffffff),
       secondaryHeaderColor: dynamicColor.primary,
       dialogBackgroundColor: HSLColor.fromColor(dynamicColor!.primary)
-          .withLightness(0.96)
+          .withLightness(0.096)
           .toColor(),
       indicatorColor: dynamicColor.primary,
       hintColor: const Color(0x80ffffff),
@@ -329,7 +329,7 @@ class Themes {
       ),
       dividerTheme: base.dividerTheme.copyWith(
           color: HSLColor.fromColor(dynamicColor!.primary)
-              .withLightness(0.098)
+              .withLightness(0.02)
               .toColor()),
       sliderTheme: const SliderThemeData().copyWith(
         valueIndicatorColor: Colors.white,
