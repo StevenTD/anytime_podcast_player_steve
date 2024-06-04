@@ -253,7 +253,7 @@ class Themes {
     final dynamicTheme = ThemeData(
       colorScheme: ColorScheme.dark(
         primary: Color(0xffffffff),
-        secondary: Color(0xfffb8c00),
+        secondary: dynamicColor!.primary,
         surface: HSLColor.fromColor(dynamicColor!.primary)
             .withLightness(0.18)
             .toColor(),
@@ -272,14 +272,14 @@ class Themes {
       brightness: Brightness.dark,
       primaryColor: const Color(0xffffffff),
       primaryColorLight: const Color(0xffffe0b2),
-      primaryColorDark: const Color(0xfff57c00),
+      primaryColorDark: dynamicColor.primary,
 
       //card background
       canvasColor: HSLColor.fromColor(dynamicColor!.primary)
           .withLightness(0.1)
           .toColor(),
       scaffoldBackgroundColor: HSLColor.fromColor(dynamicColor!.primary)
-          .withLightness(0.1)
+          .withLightness(0.098)
           .toColor(),
       cardColor: const Color(0xff0F0F0F),
       dividerColor: const Color(0xff444444),
@@ -289,7 +289,7 @@ class Themes {
       disabledColor: const Color(0x77ffffff),
       secondaryHeaderColor: const Color(0xff222222),
       dialogBackgroundColor: const Color(0xff222222),
-      indicatorColor: Colors.orange,
+      indicatorColor: dynamicColor.primary,
       hintColor: const Color(0x80ffffff),
       primaryTextTheme:
           Typography.material2021(platform: TargetPlatform.android).white,
@@ -327,7 +327,7 @@ class Themes {
             statusBarIconBrightness: Brightness.light,
           )),
       snackBarTheme: base.snackBarTheme.copyWith(
-        actionTextColor: Colors.orange,
+        actionTextColor: dynamicColor.primary,
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(

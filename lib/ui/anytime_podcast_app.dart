@@ -530,6 +530,7 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
                 onDestinationSelected: pager.changePage,
                 //  type: BottomNavigationBarType.fixed,
                 backgroundColor: Theme.of(context).bottomAppBarTheme.color,
+                indicatorColor: Theme.of(context).primaryColor,
                 //   selectedIconTheme: Theme.of(context).iconTheme,
                 //    selectedItemColor: Theme.of(context).iconTheme.color,
                 //    selectedFontSize: 11.0,
