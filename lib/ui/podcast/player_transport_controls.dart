@@ -21,7 +21,8 @@ class PlayerTransportControls extends StatefulWidget {
   });
 
   @override
-  State<PlayerTransportControls> createState() => _PlayerTransportControlsState();
+  State<PlayerTransportControls> createState() =>
+      _PlayerTransportControlsState();
 }
 
 class _PlayerTransportControlsState extends State<PlayerTransportControls> {
@@ -43,7 +44,9 @@ class _PlayerTransportControlsState extends State<PlayerTransportControls> {
                 const SleepSelectorWidget(),
                 IconButton(
                   onPressed: () {
-                    return snapshot.data == AudioState.buffering ? null : _rewind(audioBloc);
+                    return snapshot.data == AudioState.buffering
+                        ? null
+                        : _rewind(audioBloc);
                   },
                   tooltip: L.of(context)!.rewind_button_label,
                   padding: const EdgeInsets.all(0.0),
@@ -55,7 +58,9 @@ class _PlayerTransportControlsState extends State<PlayerTransportControls> {
                 AnimatedPlayButton(audioState: snapshot.data!),
                 IconButton(
                   onPressed: () {
-                    return snapshot.data == AudioState.buffering ? null : _fastforward(audioBloc);
+                    return snapshot.data == AudioState.buffering
+                        ? null
+                        : _fastforward(audioBloc);
                   },
                   tooltip: L.of(context)!.fast_forward_button_label,
                   padding: const EdgeInsets.all(0.0),
@@ -106,7 +111,8 @@ void _onPause(AudioBloc audioBloc) {
   audioBloc.transitionState(TransitionState.pause);
 }
 
-class _AnimatedPlayButtonState extends State<AnimatedPlayButton> with SingleTickerProviderStateMixin {
+class _AnimatedPlayButtonState extends State<AnimatedPlayButton>
+    with SingleTickerProviderStateMixin {
   late AnimationController _playPauseController;
   late StreamSubscription<AudioState> _audioStateSubscription;
   bool init = true;
@@ -117,7 +123,8 @@ class _AnimatedPlayButtonState extends State<AnimatedPlayButton> with SingleTick
 
     final audioBloc = Provider.of<AudioBloc>(context, listen: false);
 
-    _playPauseController = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    _playPauseController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 300));
 
     /// Seems a little hacky, but when we load the form we want the play/pause
     /// button to be in the correct state. If we are building the first frame,
@@ -172,12 +179,20 @@ class _AnimatedPlayButtonState extends State<AnimatedPlayButton> with SingleTick
             width: 84,
           ),
         Tooltip(
-          message: playing ? L.of(context)!.pause_button_label : L.of(context)!.play_button_label,
+          message: playing
+              ? L.of(context)!.pause_button_label
+              : L.of(context)!.play_button_label,
           child: TextButton(
             style: TextButton.styleFrom(
-              shape: CircleBorder(side: BorderSide(color: Theme.of(context).highlightColor, width: 0.0)),
-              backgroundColor: Theme.of(context).brightness == Brightness.light ? Colors.orange : Colors.grey[800],
-              foregroundColor: Theme.of(context).brightness == Brightness.light ? Colors.orange : Colors.grey[800],
+              shape: CircleBorder(
+                  side: BorderSide(
+                      color: Theme.of(context).highlightColor, width: 0.0)),
+              backgroundColor: Theme.of(context).brightness == Brightness.light
+                  ? Theme.of(context).primaryColor
+                  : Colors.grey[800],
+              foregroundColor: Theme.of(context).brightness == Brightness.light
+                  ? Theme.of(context).primaryColor
+                  : Colors.grey[800],
               padding: const EdgeInsets.all(6.0),
             ),
             onPressed: () {
@@ -189,7 +204,9 @@ class _AnimatedPlayButtonState extends State<AnimatedPlayButton> with SingleTick
             },
             child: AnimatedIcon(
               size: 60.0,
-              semanticLabel: playing ? L.of(context)!.pause_button_label : L.of(context)!.play_button_label,
+              semanticLabel: playing
+                  ? L.of(context)!.pause_button_label
+                  : L.of(context)!.play_button_label,
               icon: AnimatedIcons.play_pause,
               color: Colors.white,
               progress: _playPauseController,
