@@ -39,7 +39,8 @@ class _DiscoveryState extends State<Discovery> {
     bloc.discover(DiscoveryChartEvent(
       count: Discovery.fetchSize,
       genre: bloc.selectedGenre.genre,
-      countryCode: PlatformDispatcher.instance.locale.countryCode?.toLowerCase() ?? '',
+      countryCode:
+          PlatformDispatcher.instance.locale.countryCode?.toLowerCase() ?? '',
       languageCode: PlatformDispatcher.instance.locale.languageCode,
     ));
   }
@@ -56,10 +57,12 @@ class _DiscoveryState extends State<Discovery> {
                 pinned: true,
                 floating: false,
               ),
-              DiscoveryResults(data: bloc.results, inlineSearch: widget.inlineSearch),
+              DiscoveryResults(
+                  data: bloc.results, inlineSearch: widget.inlineSearch),
             ],
           )
-        : DiscoveryResults(data: bloc.results, inlineSearch: widget.inlineSearch);
+        : DiscoveryResults(
+            data: bloc.results, inlineSearch: widget.inlineSearch);
   }
 }
 
@@ -71,7 +74,8 @@ class MyHeaderDelegate extends SliverPersistentHeaderDelegate {
   MyHeaderDelegate(this.discoveryBloc);
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
     return CategorySelectorWidget(discoveryBloc: discoveryBloc);
   }
 
@@ -82,7 +86,8 @@ class MyHeaderDelegate extends SliverPersistentHeaderDelegate {
   double get minExtent => 56.0;
 
   @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) => true;
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
+      true;
 }
 
 class CategorySelectorWidget extends StatefulWidget {
@@ -126,7 +131,8 @@ class _CategorySelectorWidgetState extends State<CategorySelectorWidget> {
                       return Container(
                         margin: EdgeInsets.only(left: padding),
                         child: Card(
-                          color: item == selectedCategory || (selectedCategory.isEmpty && i == 0)
+                          color: item == selectedCategory ||
+                                  (selectedCategory.isEmpty && i == 0)
                               ? Theme.of(context).cardTheme.shadowColor
                               : Theme.of(context).cardTheme.color,
                           child: TextButton(
@@ -142,8 +148,12 @@ class _CategorySelectorWidgetState extends State<CategorySelectorWidget> {
                               widget.discoveryBloc.discover(DiscoveryChartEvent(
                                 count: Discovery.fetchSize,
                                 genre: item,
-                                countryCode: PlatformDispatcher.instance.locale.countryCode?.toLowerCase() ?? '',
-                                languageCode: PlatformDispatcher.instance.locale.languageCode,
+                                countryCode: PlatformDispatcher
+                                        .instance.locale.countryCode
+                                        ?.toLowerCase() ??
+                                    '',
+                                languageCode: PlatformDispatcher
+                                    .instance.locale.languageCode,
                               ));
                             },
                             child: Text(item),
