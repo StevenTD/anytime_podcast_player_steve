@@ -189,7 +189,7 @@ class _AnimatedPlayButtonState extends State<AnimatedPlayButton>
                       color: Theme.of(context).highlightColor, width: 0.0)),
               backgroundColor: Theme.of(context).brightness == Brightness.light
                   ? Theme.of(context).primaryColor
-                  : Colors.grey[800],
+                  : Theme.of(context).bottomAppBarTheme.color,
               foregroundColor: Theme.of(context).brightness == Brightness.light
                   ? Theme.of(context).primaryColor
                   : Colors.grey[800],

@@ -181,12 +181,16 @@ class Themes {
         secondaryHeaderColor: HSLColor.fromColor(dynamicColor!.primary)
             .withLightness(0.92)
             .toColor(),
-        hintColor: dynamicColor?.primary,
-        scaffoldBackgroundColor: HSLColor.fromColor(dynamicColor!.primary)
-            .withLightness(0.96)
+        hintColor: dynamicColor.primary,
+        scaffoldBackgroundColor: HSLColor.fromColor(dynamicColor.primary)
+            .withLightness(0.92)
             .toColor(),
-        colorScheme:
-            dynamicColor ?? ColorScheme.fromSwatch(primarySwatch: Colors.blue),
+        colorScheme: dynamicColor.copyWith(
+          //for active player in home
+          surface: HSLColor.fromColor(dynamicColor!.primary)
+              .withLightness(0.9)
+              .toColor(),
+        ),
         bottomAppBarTheme: const BottomAppBarTheme().copyWith(
           color: HSLColor.fromColor(dynamicColor!.primary)
                   .withLightness(0.92)
@@ -231,7 +235,7 @@ class Themes {
             ),
         outlinedButtonTheme: OutlinedButtonThemeData(
           style: OutlinedButton.styleFrom(
-              foregroundColor: dynamicColor?.primary ?? Colors.grey[800]),
+              foregroundColor: dynamicColor.primary ?? Colors.grey[800]),
         ),
         cardTheme: const CardTheme().copyWith(
           color: dynamicColor?.primary ?? const Color(0xff444444),
@@ -241,19 +245,33 @@ class Themes {
                 .withLightness(0.92)
                 .toColor() ??
             Colors.white,
-        cardColor: HSLColor.fromColor(dynamicColor!.primary)
-                .withLightness(0.92)
-                .toColor() ??
-            Colors.white);
+        cardColor:
+            HSLColor.fromColor(dynamicColor!.primary).withLightness(0.92).toColor() ??
+                Colors.white,
+        dividerColor: HSLColor.fromColor(dynamicColor!.primary)
+            .withLightness(0.9)
+            .toColor(),
+        dividerTheme: base.dividerTheme.copyWith(
+            color: HSLColor.fromColor(dynamicColor!.primary)
+                .withLightness(0.9)
+                .toColor()),
+        dialogBackgroundColor: HSLColor.fromColor(dynamicColor!.primary)
+            .withLightness(0.92)
+            .toColor(),
+        popupMenuTheme: PopupMenuThemeData(
+            color: HSLColor.fromColor(dynamicColor!.primary)
+                .withLightness(0.90)
+                .toColor()));
 
     return Themes(themeData: dynamicTheme);
   }
+
   factory Themes.dynamicDarkTheme(ColorScheme? dynamicColor) {
     final base = ThemeData.dark(useMaterial3: true);
     final dynamicTheme = ThemeData(
       colorScheme: ColorScheme.dark(
-        primary: Color(0xffffffff),
-        secondary: dynamicColor!.primary,
+        primary: dynamicColor!.primary,
+        secondary: dynamicColor!.secondary,
         surface: HSLColor.fromColor(dynamicColor!.primary)
             .withLightness(0.18)
             .toColor(),
@@ -266,8 +284,8 @@ class Themes {
             .toColor(),
       ),
       cardTheme: const CardTheme().copyWith(
-        color: const Color(0xff444444),
-        shadowColor: const Color(0x77ffffff),
+        color: dynamicColor.primary,
+        shadowColor: dynamicColor.primary,
       ),
       brightness: Brightness.dark,
       primaryColor: const Color(0xffffffff),
@@ -281,14 +299,22 @@ class Themes {
       scaffoldBackgroundColor: HSLColor.fromColor(dynamicColor!.primary)
           .withLightness(0.098)
           .toColor(),
-      cardColor: const Color(0xff0F0F0F),
-      dividerColor: const Color(0xff444444),
-      highlightColor: const Color(0xff222222),
+      cardColor: HSLColor.fromColor(dynamicColor!.primary)
+          .withLightness(0.098)
+          .toColor(),
+      dividerColor: HSLColor.fromColor(dynamicColor!.primary)
+          .withLightness(0.098)
+          .toColor(),
+      highlightColor: HSLColor.fromColor(dynamicColor!.primary)
+          .withLightness(0.09)
+          .toColor(),
       splashColor: const Color(0x66c8c8c8),
       unselectedWidgetColor: Colors.white,
       disabledColor: const Color(0x77ffffff),
-      secondaryHeaderColor: const Color(0xff222222),
-      dialogBackgroundColor: const Color(0xff222222),
+      secondaryHeaderColor: dynamicColor.primary,
+      dialogBackgroundColor: HSLColor.fromColor(dynamicColor!.primary)
+          .withLightness(0.96)
+          .toColor(),
       indicatorColor: dynamicColor.primary,
       hintColor: const Color(0x80ffffff),
       primaryTextTheme:
@@ -297,13 +323,14 @@ class Themes {
           Typography.material2021(platform: TargetPlatform.android).white,
       primaryIconTheme: const IconThemeData(color: Colors.white),
       iconTheme: base.iconTheme.copyWith(
-        color: HSLColor.fromColor(dynamicColor!.primary)
+        color: HSLColor.fromColor(dynamicColor.primary)
             .withLightness(0.9)
             .toColor(),
       ),
       dividerTheme: base.dividerTheme.copyWith(
-        color: const Color(0xff444444),
-      ),
+          color: HSLColor.fromColor(dynamicColor!.primary)
+              .withLightness(0.098)
+              .toColor()),
       sliderTheme: const SliderThemeData().copyWith(
         valueIndicatorColor: Colors.white,
         trackHeight: 2.0,
