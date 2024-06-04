@@ -322,7 +322,7 @@ class Themes {
           systemOverlayStyle: SystemUiOverlayStyle.light.copyWith(
             systemNavigationBarIconBrightness: Brightness.light,
             systemNavigationBarColor: HSLColor.fromColor(dynamicColor!.primary)
-                .withLightness(0.19)
+                .withLightness(0.15)
                 .toColor(),
             statusBarIconBrightness: Brightness.light,
           )),
