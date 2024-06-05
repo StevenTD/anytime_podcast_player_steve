@@ -187,12 +187,12 @@ class Themes {
             .toColor(),
         colorScheme: dynamicColor.copyWith(
           //for active player in home
-          surface: HSLColor.fromColor(dynamicColor!.primary)
+          surface: HSLColor.fromColor(dynamicColor.primary)
               .withLightness(0.9)
               .toColor(),
         ),
         bottomAppBarTheme: const BottomAppBarTheme().copyWith(
-          color: HSLColor.fromColor(dynamicColor!.primary)
+          color: HSLColor.fromColor(dynamicColor.primary)
                   .withLightness(0.92)
                   .toColor() ??
               const Color(0xffffffff),
@@ -218,16 +218,15 @@ class Themes {
           ),
         ),
         appBarTheme: base.appBarTheme.copyWith(
-            backgroundColor: HSLColor.fromColor(dynamicColor!.primary)
+            backgroundColor: HSLColor.fromColor(dynamicColor.primary)
                 .withLightness(0.92)
                 .toColor(),
             foregroundColor: Colors.black,
             systemOverlayStyle: SystemUiOverlayStyle.light.copyWith(
               systemNavigationBarIconBrightness: Brightness.dark,
-              systemNavigationBarColor:
-                  HSLColor.fromColor(dynamicColor!.primary)
-                      .withLightness(0.92)
-                      .toColor(),
+              systemNavigationBarColor: HSLColor.fromColor(dynamicColor.primary)
+                  .withLightness(0.92)
+                  .toColor(),
               statusBarIconBrightness: Brightness.dark,
             )),
         snackBarTheme: base.snackBarTheme.copyWith(
@@ -238,28 +237,28 @@ class Themes {
               foregroundColor: dynamicColor.primary ?? Colors.grey[800]),
         ),
         cardTheme: const CardTheme().copyWith(
-          color: dynamicColor?.primary ?? const Color(0xff444444),
-          shadowColor: dynamicColor?.primary ?? const Color(0x77ffffff),
+          color: dynamicColor.primary ?? const Color(0xff444444),
+          shadowColor: dynamicColor.primary ?? const Color(0x77ffffff),
         ),
-        canvasColor: HSLColor.fromColor(dynamicColor!.primary)
+        canvasColor: HSLColor.fromColor(dynamicColor.primary)
                 .withLightness(0.92)
                 .toColor() ??
             Colors.white,
         cardColor:
-            HSLColor.fromColor(dynamicColor!.primary).withLightness(0.92).toColor() ??
+            HSLColor.fromColor(dynamicColor.primary).withLightness(0.92).toColor() ??
                 Colors.white,
-        dividerColor: HSLColor.fromColor(dynamicColor!.primary)
+        dividerColor: HSLColor.fromColor(dynamicColor.primary)
             .withLightness(0.9)
             .toColor(),
         dividerTheme: base.dividerTheme.copyWith(
-            color: HSLColor.fromColor(dynamicColor!.primary)
+            color: HSLColor.fromColor(dynamicColor.primary)
                 .withLightness(0.9)
                 .toColor()),
-        dialogBackgroundColor: HSLColor.fromColor(dynamicColor!.primary)
+        dialogBackgroundColor: HSLColor.fromColor(dynamicColor.primary)
             .withLightness(0.92)
             .toColor(),
         popupMenuTheme: PopupMenuThemeData(
-            color: HSLColor.fromColor(dynamicColor!.primary)
+            color: HSLColor.fromColor(dynamicColor.primary)
                 .withLightness(0.90)
                 .toColor()));
 
@@ -271,15 +270,15 @@ class Themes {
     final dynamicTheme = ThemeData(
       colorScheme: ColorScheme.dark(
         primary: dynamicColor!.primary,
-        secondary: dynamicColor!.secondary,
-        surface: HSLColor.fromColor(dynamicColor!.primary)
+        secondary: dynamicColor.secondary,
+        surface: HSLColor.fromColor(dynamicColor.primary)
             .withLightness(0.18)
             .toColor(),
         error: Color(0xffd32f2f),
         onSurface: Color(0xffffffff),
       ),
       bottomAppBarTheme: const BottomAppBarTheme().copyWith(
-        color: HSLColor.fromColor(dynamicColor!.primary)
+        color: HSLColor.fromColor(dynamicColor.primary)
             .withLightness(0.15)
             .toColor(),
       ),
@@ -293,26 +292,26 @@ class Themes {
       primaryColorDark: dynamicColor.primary,
 
       //card background
-      canvasColor: HSLColor.fromColor(dynamicColor!.primary)
+      canvasColor: HSLColor.fromColor(dynamicColor.primary)
           .withLightness(0.02)
           .toColor(),
-      scaffoldBackgroundColor: HSLColor.fromColor(dynamicColor!.primary)
+      scaffoldBackgroundColor: HSLColor.fromColor(dynamicColor.primary)
           .withLightness(0.02)
           .toColor(),
-      cardColor: HSLColor.fromColor(dynamicColor!.primary)
+      cardColor: HSLColor.fromColor(dynamicColor.primary)
           .withLightness(0.098)
           .toColor(),
-      dividerColor: HSLColor.fromColor(dynamicColor!.primary)
+      dividerColor: HSLColor.fromColor(dynamicColor.primary)
           .withLightness(0.098)
           .toColor(),
-      highlightColor: HSLColor.fromColor(dynamicColor!.primary)
+      highlightColor: HSLColor.fromColor(dynamicColor.primary)
           .withLightness(0.09)
           .toColor(),
       splashColor: const Color(0x66c8c8c8),
       unselectedWidgetColor: Colors.white,
       disabledColor: const Color(0x77ffffff),
       secondaryHeaderColor: dynamicColor.primary,
-      dialogBackgroundColor: HSLColor.fromColor(dynamicColor!.primary)
+      dialogBackgroundColor: HSLColor.fromColor(dynamicColor.primary)
           .withLightness(0.096)
           .toColor(),
       indicatorColor: dynamicColor.primary,
@@ -328,7 +327,7 @@ class Themes {
             .toColor(),
       ),
       dividerTheme: base.dividerTheme.copyWith(
-          color: HSLColor.fromColor(dynamicColor!.primary)
+          color: HSLColor.fromColor(dynamicColor.primary)
               .withLightness(0.02)
               .toColor()),
       sliderTheme: const SliderThemeData().copyWith(
@@ -340,7 +339,7 @@ class Themes {
         ),
       ),
       appBarTheme: base.appBarTheme.copyWith(
-          backgroundColor: HSLColor.fromColor(dynamicColor!.primary)
+          backgroundColor: HSLColor.fromColor(dynamicColor.primary)
               .withLightness(0.19)
               .toColor(),
           foregroundColor: Colors.white,
@@ -348,7 +347,7 @@ class Themes {
           elevation: 1.0,
           systemOverlayStyle: SystemUiOverlayStyle.light.copyWith(
             systemNavigationBarIconBrightness: Brightness.light,
-            systemNavigationBarColor: HSLColor.fromColor(dynamicColor!.primary)
+            systemNavigationBarColor: HSLColor.fromColor(dynamicColor.primary)
                 .withLightness(0.15)
                 .toColor(),
             statusBarIconBrightness: Brightness.light,
