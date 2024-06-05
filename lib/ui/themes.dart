@@ -221,7 +221,7 @@ class Themes {
             backgroundColor: HSLColor.fromColor(dynamicColor.primary)
                 .withLightness(0.92)
                 .toColor(),
-            foregroundColor: Colors.black,
+            foregroundColor: dynamicColor.secondary,
             systemOverlayStyle: SystemUiOverlayStyle.light.copyWith(
               systemNavigationBarIconBrightness: Brightness.dark,
               systemNavigationBarColor: HSLColor.fromColor(dynamicColor.primary)
