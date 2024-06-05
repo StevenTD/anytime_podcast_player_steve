@@ -92,7 +92,9 @@ class _PodcastDetailsState extends State<PodcastDetails> {
       }
     });
 
-    widget._podcastBloc.backgroundLoading.where((event) => event is BlocPopulatedState<void>).listen((event) {
+    widget._podcastBloc.backgroundLoading
+        .where((event) => event is BlocPopulatedState<void>)
+        .listen((event) {
       if (mounted) {
         /// If we have not scrolled (save a few pixels) just refresh the episode list;
         /// otherwise prompt the user to prevent unexpected list jumping
@@ -106,7 +108,8 @@ class _PodcastDetailsState extends State<PodcastDetails> {
               label: L.of(context)!.new_episodes_view_now_label,
               onPressed: () {
                 _sliverScrollController.animateTo(100,
-                    duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeInOut);
                 widget._podcastBloc.podcastEvent(PodcastEvent.refresh);
               },
             ),
@@ -120,8 +123,13 @@ class _PodcastDetailsState extends State<PodcastDetails> {
   @override
   void didChangeDependencies() {
     _systemOverlayStyle = SystemUiOverlayStyle(
-      statusBarIconBrightness: Theme.of(context).brightness == Brightness.light ? Brightness.dark : Brightness.light,
-      statusBarColor: Theme.of(context).appBarTheme.backgroundColor!.withOpacity(toolbarCollapsed ? 1.0 : 0.5),
+      statusBarIconBrightness: Theme.of(context).brightness == Brightness.light
+          ? Brightness.dark
+          : Brightness.light,
+      statusBarColor: Theme.of(context)
+          .appBarTheme
+          .backgroundColor!
+          .withOpacity(toolbarCollapsed ? 1.0 : 0.5),
     );
     super.didChangeDependencies();
   }
@@ -143,7 +151,10 @@ class _PodcastDetailsState extends State<PodcastDetails> {
   void _resetSystemOverlayStyle() {
     setState(() {
       _systemOverlayStyle = SystemUiOverlayStyle(
-        statusBarIconBrightness: Theme.of(context).brightness == Brightness.light ? Brightness.dark : Brightness.light,
+        statusBarIconBrightness:
+            Theme.of(context).brightness == Brightness.light
+                ? Brightness.dark
+                : Brightness.light,
         statusBarColor: Colors.transparent,
       );
     });
@@ -152,8 +163,14 @@ class _PodcastDetailsState extends State<PodcastDetails> {
   void _updateSystemOverlayStyle() {
     setState(() {
       _systemOverlayStyle = SystemUiOverlayStyle(
-        statusBarIconBrightness: Theme.of(context).brightness == Brightness.light ? Brightness.dark : Brightness.light,
-        statusBarColor: Theme.of(context).appBarTheme.backgroundColor!.withOpacity(toolbarCollapsed ? 1.0 : 0.5),
+        statusBarIconBrightness:
+            Theme.of(context).brightness == Brightness.light
+                ? Brightness.dark
+                : Brightness.light,
+        statusBarColor: Theme.of(context)
+            .appBarTheme
+            .backgroundColor!
+            .withOpacity(toolbarCollapsed ? 1.0 : 0.5),
       );
     });
   }
@@ -189,10 +206,17 @@ class _PodcastDetailsState extends State<PodcastDetails> {
                           duration: const Duration(milliseconds: 500),
                           child: Text(widget.podcast.title)),
                       leading: PlatformBackButton(
-                        iconColour: toolbarCollapsed && Theme.of(context).brightness == Brightness.light
+                        iconColour: toolbarCollapsed &&
+                                Theme.of(context).brightness == Brightness.light
                             ? Theme.of(context).appBarTheme.foregroundColor!
                             : Colors.white,
-                        decorationColour: toolbarCollapsed ? const Color(0x00000000) : const Color(0x22000000),
+                        decorationColour: toolbarCollapsed
+                            ? Theme.of(context)
+                                .scaffoldBackgroundColor
+                                .withOpacity(0.7)
+                            : Theme.of(context)
+                                .scaffoldBackgroundColor
+                                .withOpacity(0.7),
                         onPressed: () {
                           _resetSystemOverlayStyle();
                           Navigator.pop(context);
@@ -204,8 +228,10 @@ class _PodcastDetailsState extends State<PodcastDetails> {
                       snap: false,
                       flexibleSpace: FlexibleSpaceBar(
                         background: Hero(
-                          key: Key('detailhero${widget.podcast.imageUrl}:${widget.podcast.link}'),
-                          tag: '${widget.podcast.imageUrl}:${widget.podcast.link}',
+                          key: Key(
+                              'detailhero${widget.podcast.imageUrl}:${widget.podcast.link}'),
+                          tag:
+                              '${widget.podcast.imageUrl}:${widget.podcast.link}',
                           child: ExcludeSemantics(
                             child: StreamBuilder<BlocState<Podcast>>(
                                 initialData: BlocEmptyState<Podcast>(),
@@ -264,7 +290,8 @@ class _PodcastDetailsState extends State<PodcastDetails> {
                                   ),
                                   Text(
                                     L.of(context)!.no_podcast_details_message,
-                                    style: Theme.of(context).textTheme.bodyMedium,
+                                    style:
+                                        Theme.of(context).textTheme.bodyMedium,
                                     textAlign: TextAlign.center,
                                   ),
                                 ],
@@ -339,11 +366,13 @@ class PodcastHeaderImage extends StatelessWidget {
       key: Key('details${podcast.imageUrl}'),
       url: podcast.imageUrl!,
       fit: BoxFit.cover,
-      placeholder:
-          placeholderBuilder != null ? placeholderBuilder?.builder()(context) : DelayedCircularProgressIndicator(),
+      placeholder: placeholderBuilder != null
+          ? placeholderBuilder?.builder()(context)
+          : DelayedCircularProgressIndicator(),
       errorPlaceholder: placeholderBuilder != null
           ? placeholderBuilder?.errorBuilder()(context)
-          : const Image(image: AssetImage('assets/images/anytime-placeholder-logo.png')),
+          : const Image(
+              image: AssetImage('assets/images/anytime-placeholder-logo.png')),
     );
   }
 }
@@ -371,7 +400,8 @@ class _PodcastTitleState extends State<PodcastTitle> {
   final maxHeight = 100.0;
   PodcastHtml? description;
   bool showOverflow = false;
-  final StreamController<bool> isDescriptionExpandedStream = StreamController<bool>.broadcast();
+  final StreamController<bool> isDescriptionExpandedStream =
+      StreamController<bool>.broadcast();
 
   @override
   Widget build(BuildContext context) {
@@ -396,11 +426,13 @@ class _PodcastTitleState extends State<PodcastTitle> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 2.0),
-                        child: Text(widget.podcast.title, style: textTheme.titleLarge),
+                        child: Text(widget.podcast.title,
+                            style: textTheme.titleLarge),
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(8, 0, 8, 4),
-                        child: Text(widget.podcast.copyright ?? '', style: textTheme.bodySmall),
+                        child: Text(widget.podcast.copyright ?? '',
+                            style: textTheme.bodySmall),
                       ),
                     ],
                   ),
@@ -423,17 +455,22 @@ class _PodcastTitleState extends State<PodcastTitle> {
                                 ),
                                 child: Icon(
                                   Icons.expand_less,
-                                  semanticLabel: L.of(context)!.semantics_collapse_podcast_description,
+                                  semanticLabel: L
+                                      .of(context)!
+                                      .semantics_collapse_podcast_description,
                                 ),
                                 onPressed: () {
                                   isDescriptionExpandedStream.add(false);
                                 },
                               )
                             : TextButton(
-                                style: const ButtonStyle(visualDensity: VisualDensity.compact),
+                                style: const ButtonStyle(
+                                    visualDensity: VisualDensity.compact),
                                 child: Icon(
                                   Icons.expand_more,
-                                  semanticLabel: L.of(context)!.semantics_expand_podcast_description,
+                                  semanticLabel: L
+                                      .of(context)!
+                                      .semantics_expand_podcast_description,
                                 ),
                                 onPressed: () {
                                   isDescriptionExpandedStream.add(true);
@@ -531,7 +568,8 @@ class PodcastDescription extends StatelessWidget {
               child: Container(
                 constraints: expanded
                     ? const BoxConstraints()
-                    : BoxConstraints.loose(const Size(double.infinity, maxHeight - padding)),
+                    : BoxConstraints.loose(
+                        const Size(double.infinity, maxHeight - padding)),
                 child: expanded
                     ? content
                     : ShaderMask(
@@ -644,7 +682,8 @@ class FollowButton extends StatelessWidget {
             child: subscribed
                 ? OutlinedButton.icon(
                     style: OutlinedButton.styleFrom(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0)),
                     ),
                     icon: const Icon(
                       Icons.delete_outline,
@@ -657,7 +696,8 @@ class FollowButton extends StatelessWidget {
                               useRootNavigator: false,
                               builder: (_) => BasicDialogAlert(
                                 title: Text(L.of(context)!.unsubscribe_label),
-                                content: Text(L.of(context)!.unsubscribe_message),
+                                content:
+                                    Text(L.of(context)!.unsubscribe_message),
                                 actions: <Widget>[
                                   BasicDialogAction(
                                     title: ExcludeSemantics(
@@ -678,7 +718,8 @@ class FollowButton extends StatelessWidget {
                                     iosIsDefaultAction: true,
                                     iosIsDestructiveAction: true,
                                     onPressed: () {
-                                      bloc.podcastEvent(PodcastEvent.unsubscribe);
+                                      bloc.podcastEvent(
+                                          PodcastEvent.unsubscribe);
 
                                       Navigator.pop(context);
                                       Navigator.pop(context);
@@ -692,7 +733,8 @@ class FollowButton extends StatelessWidget {
                   )
                 : OutlinedButton.icon(
                     style: OutlinedButton.styleFrom(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0)),
                     ),
                     icon: const Icon(
                       Icons.add,
