@@ -34,7 +34,8 @@ class NowPlayingOptionsSelector extends StatefulWidget {
   const NowPlayingOptionsSelector({super.key, this.scrollPos});
 
   @override
-  State<NowPlayingOptionsSelector> createState() => _NowPlayingOptionsSelectorState();
+  State<NowPlayingOptionsSelector> createState() =>
+      _NowPlayingOptionsSelectorState();
 }
 
 class _NowPlayingOptionsSelectorState extends State<NowPlayingOptionsSelector> {
@@ -45,7 +46,8 @@ class _NowPlayingOptionsSelectorState extends State<NowPlayingOptionsSelector> {
     final queueBloc = Provider.of<QueueBloc>(context, listen: false);
     final theme = Theme.of(context);
     final windowHeight = MediaQuery.of(context).size.height;
-    final minSize = NowPlayingOptionsSelector.baseSize / (windowHeight - NowPlayingOptionsSelector.baseSize);
+    final minSize = NowPlayingOptionsSelector.baseSize /
+        (windowHeight - NowPlayingOptionsSelector.baseSize);
     final mediaQueryData = MediaQuery.of(context);
 
     return DraggableScrollableSheet(
@@ -58,11 +60,13 @@ class _NowPlayingOptionsSelectorState extends State<NowPlayingOptionsSelector> {
       // snapSizes: [minSize, maxSize],
       builder: (BuildContext context, ScrollController scrollController) {
         return DefaultTabController(
-          animationDuration: !draggableController!.isAttached || draggableController!.size <= minSize
+          animationDuration: !draggableController!.isAttached ||
+                  draggableController!.size <= minSize
               ? const Duration(seconds: 0)
               : kTabScrollDuration,
           length: 2,
-          child: LayoutBuilder(builder: (BuildContext ctx, BoxConstraints constraints) {
+          child: LayoutBuilder(
+              builder: (BuildContext ctx, BoxConstraints constraints) {
             return SingleChildScrollView(
               controller: scrollController,
               child: ConstrainedBox(
@@ -70,7 +74,7 @@ class _NowPlayingOptionsSelectorState extends State<NowPlayingOptionsSelector> {
                   height: constraints.maxHeight,
                 ),
                 child: Material(
-                  color: theme.secondaryHeaderColor,
+                  color: Theme.of(context).dialogBackgroundColor,
                   shape: RoundedRectangleBorder(
                     side: BorderSide(
                       color: Theme.of(context).highlightColor,
@@ -90,8 +94,12 @@ class _NowPlayingOptionsSelectorState extends State<NowPlayingOptionsSelector> {
                         Semantics(
                           liveRegion: true,
                           label: optionsSliderOpen()
-                              ? L.of(context)!.semantic_playing_options_collapse_label
-                              : L.of(context)!.semantic_playing_options_expand_label,
+                              ? L
+                                  .of(context)!
+                                  .semantic_playing_options_collapse_label
+                              : L
+                                  .of(context)!
+                                  .semantic_playing_options_expand_label,
                           child: GestureDetector(
                             onTap: () {
                               if (draggableController != null) {
@@ -113,15 +121,18 @@ class _NowPlayingOptionsSelectorState extends State<NowPlayingOptionsSelector> {
                             child: const SliderHandle(),
                           ),
                         ),
-                      if (!mediaQueryData.accessibleNavigation) const SliderHandle(),
+                      if (!mediaQueryData.accessibleNavigation)
+                        const SliderHandle(),
                       DecoratedBox(
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.0),
                           border: Border(
                             bottom: draggableController != null &&
-                                    (!draggableController!.isAttached || draggableController!.size <= minSize)
+                                    (!draggableController!.isAttached ||
+                                        draggableController!.size <= minSize)
                                 ? BorderSide.none
-                                : BorderSide(color: Colors.grey[800]!, width: 1.0),
+                                : BorderSide(
+                                    color: Colors.grey[800]!, width: 1.0),
                           ),
                         ),
                         child: StreamBuilder<QueueState>(
@@ -132,10 +143,12 @@ class _NowPlayingOptionsSelectorState extends State<NowPlayingOptionsSelector> {
                                 onTap: (index) {
                                   DefaultTabController.of(ctx).animateTo(index);
 
-                                  if (draggableController != null && draggableController!.size < 1.0) {
+                                  if (draggableController != null &&
+                                      draggableController!.size < 1.0) {
                                     draggableController!.animateTo(
                                       1.0,
-                                      duration: const Duration(milliseconds: 150),
+                                      duration:
+                                          const Duration(milliseconds: 150),
                                       curve: Curves.easeInOut,
                                     );
                                   }
@@ -145,34 +158,53 @@ class _NowPlayingOptionsSelectorState extends State<NowPlayingOptionsSelector> {
 
                                 /// Little hack to hide the indicator when closed
                                 indicatorColor: draggableController != null &&
-                                        (!draggableController!.isAttached || draggableController!.size <= minSize)
+                                        (!draggableController!.isAttached ||
+                                            draggableController!.size <=
+                                                minSize)
                                     ? Theme.of(context).secondaryHeaderColor
                                     : null,
                                 tabs: [
                                   Padding(
-                                    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                                    padding: const EdgeInsets.only(
+                                        top: 8.0, bottom: 8.0),
                                     child: Text(
-                                      L.of(context)!.up_next_queue_label.toUpperCase(),
-                                      style: Theme.of(context).textTheme.labelLarge,
+                                      L
+                                          .of(context)!
+                                          .up_next_queue_label
+                                          .toUpperCase(),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelLarge,
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                                    padding: const EdgeInsets.only(
+                                        top: 8.0, bottom: 8.0),
                                     // If the episode does not support transcripts, grey out
                                     // the option.
                                     child: snapshot.hasData &&
                                             snapshot.data?.playing != null &&
-                                            snapshot.data!.playing!.hasTranscripts
+                                            snapshot
+                                                .data!.playing!.hasTranscripts
                                         ? Text(
-                                            L.of(context)!.transcript_label.toUpperCase(),
-                                            style: Theme.of(context).textTheme.labelLarge,
+                                            L
+                                                .of(context)!
+                                                .transcript_label
+                                                .toUpperCase(),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .labelLarge,
                                           )
                                         : Text(
-                                            L.of(context)!.transcript_label.toUpperCase(),
+                                            L
+                                                .of(context)!
+                                                .transcript_label
+                                                .toUpperCase(),
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .labelLarge!
-                                                .copyWith(color: theme.disabledColor),
+                                                .copyWith(
+                                                    color: theme.disabledColor),
                                           ),
                                   ),
                                 ],
@@ -200,7 +232,9 @@ class _NowPlayingOptionsSelectorState extends State<NowPlayingOptionsSelector> {
   }
 
   bool optionsSliderOpen() {
-    return (draggableController != null && draggableController!.isAttached && draggableController!.size == 1.0);
+    return (draggableController != null &&
+        draggableController!.isAttached &&
+        draggableController!.size == 1.0);
   }
 
   @override
@@ -232,10 +266,12 @@ class NowPlayingOptionsSelectorWide extends StatefulWidget {
   const NowPlayingOptionsSelectorWide({super.key, this.scrollPos});
 
   @override
-  State<NowPlayingOptionsSelectorWide> createState() => _NowPlayingOptionsSelectorWideState();
+  State<NowPlayingOptionsSelectorWide> createState() =>
+      _NowPlayingOptionsSelectorWideState();
 }
 
-class _NowPlayingOptionsSelectorWideState extends State<NowPlayingOptionsSelectorWide> {
+class _NowPlayingOptionsSelectorWideState
+    extends State<NowPlayingOptionsSelectorWide> {
   DraggableScrollableController? draggableController;
 
   @override
@@ -246,7 +282,8 @@ class _NowPlayingOptionsSelectorWideState extends State<NowPlayingOptionsSelecto
 
     return DefaultTabController(
       length: 2,
-      child: LayoutBuilder(builder: (BuildContext ctx, BoxConstraints constraints) {
+      child: LayoutBuilder(
+          builder: (BuildContext ctx, BoxConstraints constraints) {
         return SingleChildScrollView(
           controller: scrollController,
           child: ConstrainedBox(
@@ -264,7 +301,8 @@ class _NowPlayingOptionsSelectorWideState extends State<NowPlayingOptionsSelecto
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.0),
                       border: Border(
-                        bottom: BorderSide(color: Colors.grey[800]!, width: 1.0),
+                        bottom:
+                            BorderSide(color: Colors.grey[800]!, width: 1.0),
                       ),
                     ),
                     child: StreamBuilder<QueueState>(
@@ -275,27 +313,41 @@ class _NowPlayingOptionsSelectorWideState extends State<NowPlayingOptionsSelecto
                             automaticIndicatorColorAdjustment: false,
                             tabs: [
                               Padding(
-                                padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
+                                padding: const EdgeInsets.only(
+                                    top: 16.0, bottom: 16.0),
                                 child: Text(
-                                  L.of(context)!.up_next_queue_label.toUpperCase(),
+                                  L
+                                      .of(context)!
+                                      .up_next_queue_label
+                                      .toUpperCase(),
                                   style: Theme.of(context).textTheme.labelLarge,
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
+                                padding: const EdgeInsets.only(
+                                    top: 16.0, bottom: 16.0),
                                 child: snapshot.hasData &&
                                         snapshot.data?.playing != null &&
                                         snapshot.data!.playing!.hasTranscripts
                                     ? Text(
-                                        L.of(context)!.transcript_label.toUpperCase(),
-                                        style: Theme.of(context).textTheme.labelLarge,
+                                        L
+                                            .of(context)!
+                                            .transcript_label
+                                            .toUpperCase(),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelLarge,
                                       )
                                     : Text(
-                                        L.of(context)!.transcript_label.toUpperCase(),
+                                        L
+                                            .of(context)!
+                                            .transcript_label
+                                            .toUpperCase(),
                                         style: Theme.of(context)
                                             .textTheme
                                             .labelLarge!
-                                            .copyWith(color: theme.disabledColor),
+                                            .copyWith(
+                                                color: theme.disabledColor),
                                       ),
                               ),
                             ],
