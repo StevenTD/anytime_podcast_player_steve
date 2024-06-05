@@ -544,7 +544,10 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
                 destinations: <Widget>[
                   NavigationDestination(
                     icon: index == 0
-                        ? const Icon(Icons.library_music)
+                        ? Icon(
+                            Icons.library_music,
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                          )
                         : const Icon(Icons.library_music_outlined),
                     label: L.of(context)!.library,
                   ),
@@ -555,13 +558,19 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
                   // ),
                   NavigationDestination(
                     icon: index == 1
-                        ? const Icon(Icons.explore)
+                        ? Icon(
+                            Icons.explore,
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                          )
                         : const Icon(Icons.explore_outlined),
                     label: L.of(context)!.discover,
                   ),
                   NavigationDestination(
                     icon: index == 2
-                        ? const Icon(Icons.download)
+                        ? Icon(
+                            Icons.download,
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                          )
                         : const Icon(Icons.download_outlined),
                     label: L.of(context)!.downloads,
                   ),
