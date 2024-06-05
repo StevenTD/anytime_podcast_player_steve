@@ -34,7 +34,8 @@ class TranscriptView extends StatefulWidget {
 class _TranscriptViewState extends State<TranscriptView> {
   final log = Logger('TranscriptView');
   final ItemScrollController _itemScrollController = ItemScrollController();
-  final ScrollOffsetListener _scrollOffsetListener = ScrollOffsetListener.create(recordProgrammaticScrolls: false);
+  final ScrollOffsetListener _scrollOffsetListener =
+      ScrollOffsetListener.create(recordProgrammaticScrolls: false);
   final _transcriptSearchController = TextEditingController();
   late StreamSubscription<PositionState> _positionSubscription;
   int position = 0;
@@ -88,15 +89,18 @@ class _TranscriptViewState extends State<TranscriptView> {
             forceTranscriptUpdate = false;
             // Will the next in the list do?
             if (transcript.subtitles.length > (index + 1) &&
-                event.position.inMilliseconds >= transcript.subtitles[index + 1].start.inMilliseconds &&
-                event.position.inMilliseconds < transcript.subtitles[index + 1].end!.inMilliseconds) {
+                event.position.inMilliseconds >=
+                    transcript.subtitles[index + 1].start.inMilliseconds &&
+                event.position.inMilliseconds <
+                    transcript.subtitles[index + 1].end!.inMilliseconds) {
               index++;
               subtitle = transcript.subtitles[index];
 
               if (subtitle != null && subtitle!.speaker.isNotEmpty) {
                 speaker = subtitle!.speaker;
               } else {
-                var match = exp.firstMatch(transcript.subtitles[index].data ?? '');
+                var match =
+                    exp.firstMatch(transcript.subtitles[index].data ?? '');
 
                 if (match != null) {
                   speaker = match.namedGroup('speaker') ?? '';
@@ -105,7 +109,8 @@ class _TranscriptViewState extends State<TranscriptView> {
             } else {
               try {
                 subtitle = transcript.subtitles
-                    .where((a) => (event.position.inMilliseconds >= a.start.inMilliseconds &&
+                    .where((a) => (event.position.inMilliseconds >=
+                            a.start.inMilliseconds &&
                         event.position.inMilliseconds < a.end!.inMilliseconds))
                     .first;
 
@@ -122,7 +127,8 @@ class _TranscriptViewState extends State<TranscriptView> {
                   var countIndex = index;
 
                   while (!speakFound && count-- > 0 && countIndex >= 0) {
-                    var match = exp.firstMatch(transcript.subtitles[countIndex].data!);
+                    var match =
+                        exp.firstMatch(transcript.subtitles[countIndex].data!);
 
                     countIndex--;
 
@@ -154,7 +160,11 @@ class _TranscriptViewState extends State<TranscriptView> {
                 first = false;
               } else {
                 scrolling = true;
-                _itemScrollController.scrollTo(index: index, duration: const Duration(milliseconds: 50)).then((value) {
+                _itemScrollController
+                    .scrollTo(
+                        index: index,
+                        duration: const Duration(milliseconds: 50))
+                    .then((value) {
                   scrolling = false;
                 });
               }
@@ -189,8 +199,10 @@ class _TranscriptViewState extends State<TranscriptView> {
                       alignment: Alignment.center,
                       child: PlatformProgressIndicator(),
                     );
-                  } else if (transcriptSnapshot.data is TranscriptUnavailableState ||
-                      !transcriptSnapshot.data!.transcript!.transcriptAvailable) {
+                  } else if (transcriptSnapshot.data
+                          is TranscriptUnavailableState ||
+                      !transcriptSnapshot
+                          .data!.transcript!.transcriptAvailable) {
                     return Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Align(
@@ -205,18 +217,22 @@ class _TranscriptViewState extends State<TranscriptView> {
                               textAlign: TextAlign.center,
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(top: 32.0, bottom: 32.0),
+                              padding: const EdgeInsets.only(
+                                  top: 32.0, bottom: 32.0),
                               child: OutlinedButton(
                                   onPressed: () {
-                                    final uri = Uri.parse(L.of(context)!.transcript_why_not_url);
+                                    final uri = Uri.parse(
+                                        L.of(context)!.transcript_why_not_url);
 
                                     unawaited(
-                                      canLaunchUrl(uri).then((value) => launchUrl(uri)),
+                                      canLaunchUrl(uri)
+                                          .then((value) => launchUrl(uri)),
                                     );
                                   },
                                   child: Text(
                                     L.of(context)!.transcript_why_not_label,
-                                    style: Theme.of(context).textTheme.titleSmall,
+                                    style:
+                                        Theme.of(context).textTheme.titleSmall,
                                     textAlign: TextAlign.center,
                                   )),
                             ),
@@ -225,12 +241,15 @@ class _TranscriptViewState extends State<TranscriptView> {
                       ),
                     );
                   } else {
-                    final items = transcriptSnapshot.data!.transcript?.subtitles ?? <Subtitle>[];
+                    final items =
+                        transcriptSnapshot.data!.transcript?.subtitles ??
+                            <Subtitle>[];
 
                     return Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(top: 8.0, left: 16.0, right: 16.0),
+                          padding: const EdgeInsets.only(
+                              top: 8.0, left: 16.0, right: 16.0),
                           child: TextField(
                             controller: _transcriptSearchController,
                             decoration: InputDecoration(
@@ -239,7 +258,8 @@ class _TranscriptViewState extends State<TranscriptView> {
                                 icon: const Icon(Icons.close),
                                 onPressed: () {
                                   _transcriptSearchController.clear();
-                                  audioBloc.filterTranscript(TranscriptClearEvent());
+                                  audioBloc
+                                      .filterTranscript(TranscriptClearEvent());
                                   setState(() {
                                     autoScrollEnabled = true;
                                   });
@@ -248,7 +268,8 @@ class _TranscriptViewState extends State<TranscriptView> {
                               isDense: true,
                               filled: true,
                               border: const OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8.0)),
                                 borderSide: BorderSide.none,
                                 gapPadding: 0.0,
                               ),
@@ -260,7 +281,8 @@ class _TranscriptViewState extends State<TranscriptView> {
                                   autoScrollEnabled = false;
                                   autoScroll = false;
                                 });
-                                audioBloc.filterTranscript(TranscriptFilterEvent(search: search));
+                                audioBloc.filterTranscript(
+                                    TranscriptFilterEvent(search: search));
                               }
                             }),
                           ),
@@ -298,16 +320,20 @@ class _TranscriptViewState extends State<TranscriptView> {
                             height: 72.0,
                             child: ListView.builder(
                                 scrollDirection: Axis.horizontal,
-                                itemCount: queueSnapshot.data!.playing!.persons.length,
+                                itemCount:
+                                    queueSnapshot.data!.playing!.persons.length,
                                 itemBuilder: (BuildContext context, int index) {
-                                  var person = queueSnapshot.data!.playing!.persons[index];
+                                  var person = queueSnapshot
+                                      .data!.playing!.persons[index];
                                   var selected = false;
 
                                   // Some speakers are - delimited so won't match
                                   speaker = speaker.replaceAll('-', ' ');
 
                                   if (speaker.isNotEmpty &&
-                                      person.name.toLowerCase().startsWith(speaker.toLowerCase())) {
+                                      person.name
+                                          .toLowerCase()
+                                          .startsWith(speaker.toLowerCase())) {
                                     selected = true;
                                   }
 
@@ -316,7 +342,10 @@ class _TranscriptViewState extends State<TranscriptView> {
                                     child: Container(
                                       padding: const EdgeInsets.all(4.0),
                                       decoration: BoxDecoration(
-                                          color: selected ? Colors.orange : Colors.transparent, shape: BoxShape.circle),
+                                          color: selected
+                                              ? Colors.orange
+                                              : Colors.transparent,
+                                          shape: BoxShape.circle),
                                       child: CircleAvatar(
                                         radius: 28,
                                         backgroundImage: ExtendedImage.network(
@@ -336,17 +365,24 @@ class _TranscriptViewState extends State<TranscriptView> {
                                 ? Padding(
                                     padding: const EdgeInsets.only(top: 8.0),
                                     child: ScrollablePositionedList.builder(
-                                        itemScrollController: _itemScrollController,
-                                        scrollOffsetListener: _scrollOffsetListener,
+                                        itemScrollController:
+                                            _itemScrollController,
+                                        scrollOffsetListener:
+                                            _scrollOffsetListener,
                                         itemCount: items.length,
-                                        itemBuilder: (BuildContext context, int index) {
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
                                           var i = items[index];
                                           return Wrap(
                                             children: [
                                               SubtitleWidget(
                                                 subtitle: i,
-                                                persons: queueSnapshot.data?.playing?.persons ?? <Person>[],
-                                                highlight: i.start.inMilliseconds == position,
+                                                persons: queueSnapshot.data
+                                                        ?.playing?.persons ??
+                                                    <Person>[],
+                                                highlight:
+                                                    i.start.inMilliseconds ==
+                                                        position,
                                               ),
                                             ],
                                           );
@@ -395,7 +431,9 @@ class SubtitleWidget extends StatelessWidget {
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
-        color: highlight ? Theme.of(context).colorScheme.onSurface : Colors.transparent,
+        color: highlight
+            ? Theme.of(context).colorScheme.primary
+            : Colors.transparent,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -404,11 +442,21 @@ class SubtitleWidget extends StatelessWidget {
               subtitle.speaker.isEmpty
                   ? _formatDuration(subtitle.start)
                   : '${_formatDuration(subtitle.start)} - ${subtitle.speaker}',
-              style: Theme.of(context).textTheme.titleSmall,
+              style: highlight
+                  ? Theme.of(context)
+                      .textTheme
+                      .titleSmall
+                      ?.copyWith(color: Colors.white)
+                  : Theme.of(context).textTheme.titleSmall,
             ),
             Text(
               subtitle.data!,
-              style: Theme.of(context).textTheme.titleMedium,
+              style: highlight
+                  ? Theme.of(context)
+                      .textTheme
+                      .titleSmall
+                      ?.copyWith(color: Colors.white)
+                  : Theme.of(context).textTheme.titleMedium,
             ),
             const Padding(padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 16.0))
           ],
