@@ -54,6 +54,7 @@ import 'package:provider/provider.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:material_color_utilities/material_color_utilities.dart';
+import 'package:is_lock_screen2/is_lock_screen2.dart';
 
 ColorScheme? currentDynamicColorsLight;
 ColorScheme? currentDynamicColorsDark;
@@ -116,7 +117,9 @@ class AnytimePodcastApp extends StatefulWidget {
   AnytimePodcastAppState createState() => AnytimePodcastAppState();
 }
 
-class AnytimePodcastAppState extends State<AnytimePodcastApp> {
+class AnytimePodcastAppState extends State<AnytimePodcastApp>
+    with WidgetsBindingObserver {
+  AppLifecycleState? _state;
   ColorScheme? currentColorScheme;
   ThemeData? theme;
   DynamicColorBuilder? dynamicColorBuilder;
@@ -142,6 +145,7 @@ class AnytimePodcastAppState extends State<AnytimePodcastApp> {
   void initState() {
     setCurrentColor();
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
 
     /// Listen to theme change events from settings.
     widget.settingsBloc!.settings.listen((event) {
@@ -158,6 +162,27 @@ class AnytimePodcastAppState extends State<AnytimePodcastApp> {
         }
       });
     });
+  }
+
+  Future<bool?> checkLockScreen() async {
+    var lock = await isLockScreen();
+
+    return lock;
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    _state = state;
+    if (state == AppLifecycleState.inactive) {
+      checkLockScreen().then((isLocked) {
+        if (!isLocked!) {
+          debugPrint('App minimized!');
+        }
+      });
+    } else if (state == AppLifecycleState.resumed) {
+      debugPrint('App resumed, reapplying theme');
+      setCurrentColor();
+    }
   }
 
   @override
