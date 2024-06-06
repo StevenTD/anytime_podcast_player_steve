@@ -183,7 +183,7 @@ class Themes {
             .toColor(),
         hintColor: dynamicColor.primary,
         scaffoldBackgroundColor: HSLColor.fromColor(dynamicColor.primary)
-            .withLightness(0.92)
+            .withLightness(0.97)
             .toColor(),
         colorScheme: dynamicColor.copyWith(
           //for active player in home
@@ -241,7 +241,7 @@ class Themes {
           shadowColor: dynamicColor.primary ?? const Color(0x77ffffff),
         ),
         canvasColor: HSLColor.fromColor(dynamicColor.primary)
-                .withLightness(0.92)
+                .withLightness(0.97)
                 .toColor() ??
             Colors.white,
         cardColor:
