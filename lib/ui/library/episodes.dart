@@ -53,7 +53,7 @@ class _EpisodesState extends State<Episodes> {
             play: true,
             download: true,
             icon: Icons.cloud_download,
-            emptyMessage: L.of(context)!.no_downloads_message,
+            emptyMessage: L.of(context)!.no_ep_followed_message,
           );
         } else {
           if (state is BlocLoadingState) {
@@ -127,7 +127,7 @@ class _EpisodesState extends State<Episodes> {
                 color: Theme.of(context).primaryColor,
               ),
               Text(
-                L.of(context)!.no_downloads_message,
+                L.of(context)!.no_ep_followed_message,
                 style: Theme.of(context).textTheme.titleLarge,
                 textAlign: TextAlign.center,
               ),

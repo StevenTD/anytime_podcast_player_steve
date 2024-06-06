@@ -247,6 +247,17 @@ class L {
         );
   }
 
+  String get no_ep_followed_message {
+    return message('no_downloads_message') ??
+        Intl.message(
+          'You do not have any episodes',
+          name: 'no_ep_followed_message',
+          desc:
+          'Displayed on the episode tab when the user has no episode/subscriptions',
+          locale: localeName,
+        );
+  }
+
   String get no_search_results_message {
     return message('no_search_results_message') ??
         Intl.message(
