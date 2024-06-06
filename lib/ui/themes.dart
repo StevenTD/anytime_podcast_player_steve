@@ -302,7 +302,7 @@ class Themes {
           .withLightness(0.098)
           .toColor(),
       dividerColor: HSLColor.fromColor(dynamicColor.primary)
-          .withLightness(0.098)
+          .withLightness(0.1)
           .toColor(),
       highlightColor: HSLColor.fromColor(dynamicColor.primary)
           .withLightness(0.09)
@@ -328,7 +328,7 @@ class Themes {
       ),
       dividerTheme: base.dividerTheme.copyWith(
           color: HSLColor.fromColor(dynamicColor.primary)
-              .withLightness(0.02)
+              .withLightness(0.09)
               .toColor()),
       sliderTheme: const SliderThemeData().copyWith(
         valueIndicatorColor: Colors.white,
