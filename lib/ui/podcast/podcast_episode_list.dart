@@ -6,6 +6,7 @@ import 'package:anytime/bloc/podcast/queue_bloc.dart';
 import 'package:anytime/entities/episode.dart';
 import 'package:anytime/state/queue_event_state.dart';
 import 'package:anytime/ui/widgets/episode_tile.dart';
+import 'package:anytime/ui/widgets/episode_tile_more_details.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -45,12 +46,13 @@ class PodcastEpisodeList extends StatelessWidget {
                 if (snapshot.hasData) {
                   var playingGuid = snapshot.data!.playing?.guid;
 
-                  queued = snapshot.data!.queue.any((element) => element.guid == episode.guid);
+                  queued = snapshot.data!.queue
+                      .any((element) => element.guid == episode.guid);
 
                   playing = playingGuid == episode.guid;
                 }
 
-                return EpisodeTile(
+                return EpisodeTileMoreDetails(
                   episode: episode,
                   download: download,
                   play: play,
