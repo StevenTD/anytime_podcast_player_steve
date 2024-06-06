@@ -14,16 +14,17 @@ class DownloadButton extends StatelessWidget {
   final String title;
   final IconData icon;
   final int percent;
+  final double? size;
   final VoidCallback onPressed;
 
-  const DownloadButton({
-    super.key,
-    required this.label,
-    required this.title,
-    required this.icon,
-    required this.percent,
-    required this.onPressed,
-  });
+  const DownloadButton(
+      {super.key,
+      required this.label,
+      required this.title,
+      required this.icon,
+      required this.percent,
+      required this.onPressed,
+      this.size});
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +51,7 @@ class DownloadButton extends StatelessWidget {
                 )
               : Icon(
                   icon,
-                  size: 22.0,
+                  size: size ?? 22.0,
 
                   /// Why is this not picking up the theme like other widgets?!?!?!
                   color: Theme.of(context).primaryColor,
