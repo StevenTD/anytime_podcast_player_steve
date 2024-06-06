@@ -34,6 +34,7 @@ import 'package:anytime/services/podcast/podcast_service.dart';
 import 'package:anytime/services/settings/mobile_settings_service.dart';
 import 'package:anytime/ui/library/discovery.dart';
 import 'package:anytime/ui/library/downloads.dart';
+import 'package:anytime/ui/library/episodes.dart';
 import 'package:anytime/ui/library/library.dart';
 import 'package:anytime/ui/podcast/mini_player.dart';
 import 'package:anytime/ui/podcast/podcast_details.dart';
@@ -608,7 +609,7 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
 
   Widget _fragment(int? index, EpisodeBloc searchBloc) {
     if (index == 0) {
-      return const Library();
+      return const Episodes();
     } else if (index == 1) {
       return Discovery(
         categories: true,
