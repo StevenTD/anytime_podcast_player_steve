@@ -232,13 +232,15 @@ class PodcastBloc extends Bloc {
   /// Sets up a listener to handle requests to download an episode.
   void _listenDownloadRequest() {
     _downloadEpisode.listen((Episode? e) async {
+      log.fine('testtt');
       log.fine('Received download request for ${e!.title}');
-
+      print('Full details: $e');
       // To prevent a pause between the user tapping the download icon and
       // the UI showing some sort of progress, set it to queued now.
       var episode = _episodes.firstWhereOrNull((ep) => ep.guid == e.guid);
-
+      print('Searching to: $_episodes');
       if (episode != null) {
+        print('Download Episode Not Null');
         episode.downloadState = e.downloadState = DownloadState.queued;
 
         _episodesStream.add(_episodes);
@@ -253,7 +255,24 @@ class PodcastBloc extends Bloc {
           episode.downloadState = e.downloadState = DownloadState.none;
           _episodesStream.add(_episodes);
         }
+      }else {
+        print('Download Episode ');
+        e.downloadState = e.downloadState = DownloadState.queued;
+
+        _episodesStream.add(_episodes);
+
+        var result = await downloadService.downloadEpisode(e);
+
+        // If there was an error downloading the episode, push an error state
+        // and then restore to none.
+        if (!result) {
+          e.downloadState = e.downloadState = DownloadState.failed;
+          _episodesStream.add(_episodes);
+          e.downloadState = e.downloadState = DownloadState.none;
+          _episodesStream.add(_episodes);
+        }
       }
+
     });
   }
 
