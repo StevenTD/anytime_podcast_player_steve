@@ -3,8 +3,10 @@
 // found in the LICENSE file.
 
 import 'package:anytime/bloc/podcast/episode_bloc.dart';
+import 'package:anytime/bloc/podcast/podcast_bloc.dart';
 import 'package:anytime/bloc/podcast/queue_bloc.dart';
 import 'package:anytime/entities/episode.dart';
+import 'package:anytime/entities/podcast.dart';
 import 'package:anytime/l10n/L.dart';
 import 'package:anytime/state/bloc_state.dart';
 import 'package:anytime/state/queue_event_state.dart';
@@ -13,6 +15,8 @@ import 'package:anytime/ui/widgets/episode_tile.dart';
 import 'package:anytime/ui/widgets/platform_progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../../entities/feed.dart';
 
 /// Place holder for the upcoming Episodes view.
 ///
@@ -49,7 +53,7 @@ class _EpisodesState extends State<Episodes> {
 
         if (state is BlocPopulatedState) {
           return PodcastEpisodeList(
-            episodes: state.results as List<Episode>?,
+            episodes: state.results,
             play: true,
             download: true,
             icon: Icons.cloud_download,
