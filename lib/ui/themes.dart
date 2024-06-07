@@ -287,7 +287,7 @@ class Themes {
         shadowColor: dynamicColor.primary,
       ),
       brightness: Brightness.dark,
-      primaryColor: const Color(0xffffffff),
+      primaryColor: dynamicColor.primary,
       primaryColorLight: const Color(0xffffe0b2),
       primaryColorDark: dynamicColor.primary,
 
@@ -342,6 +342,7 @@ class Themes {
           backgroundColor: HSLColor.fromColor(dynamicColor.primary)
               .withLightness(0.19)
               .toColor(),
+          //Indicator icon for actionbar
           foregroundColor: Colors.white,
           shadowColor: const Color(0xff222222),
           elevation: 1.0,
