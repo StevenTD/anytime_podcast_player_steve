@@ -9,6 +9,8 @@ import 'package:anytime/bloc/settings/settings_bloc.dart';
 import 'package:anytime/entities/app_settings.dart';
 import 'package:anytime/entities/downloadable.dart';
 import 'package:anytime/entities/episode.dart';
+import 'package:anytime/entities/feed.dart';
+import 'package:anytime/entities/podcast.dart';
 import 'package:anytime/l10n/L.dart';
 import 'package:anytime/services/audio/audio_player_service.dart';
 import 'package:anytime/ui/podcast/now_playing.dart';
@@ -38,7 +40,7 @@ class PlayControlWithRect extends StatelessWidget {
 
     return SizedBox(
       height: 40.0,
-      width: 95.0,
+      width: 100.0,
       child: StreamBuilder<PlayerControlState>(
           stream: Rx.combineLatest2(
               audioBloc.playingState!,
@@ -202,6 +204,7 @@ class DownloadControl extends StatelessWidget {
   Widget build(BuildContext context) {
     final audioBloc = Provider.of<AudioBloc>(context);
     final podcastBloc = Provider.of<PodcastBloc>(context);
+
 
     return SizedBox(
       height: 48.0,
