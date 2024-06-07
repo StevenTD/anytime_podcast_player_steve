@@ -1,7 +1,6 @@
 ## Anytime Podcast Player / Temporary  
 
-This is the official repository for the Anytime Podcast Player - the simple Podcast playing app for with dyanmic color support and familiar interface
-Android & iOS, built with Dart & Flutter.
+This is the official repository for the Anytime Podcast Player - the simple Podcast playing app for Android & iOS with dyanmic color support and familiar interface, built with Dart & Flutter.
 ***
 Latest build status
 
