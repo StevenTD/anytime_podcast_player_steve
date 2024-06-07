@@ -36,6 +36,7 @@ import 'package:anytime/ui/library/discovery.dart';
 import 'package:anytime/ui/library/downloads.dart';
 import 'package:anytime/ui/library/episodes.dart';
 import 'package:anytime/ui/library/library.dart';
+import 'package:anytime/ui/library/your_feed.dart';
 import 'package:anytime/ui/podcast/mini_player.dart';
 import 'package:anytime/ui/podcast/podcast_details.dart';
 import 'package:anytime/ui/search/search.dart';
@@ -52,6 +53,7 @@ import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
+import 'package:sliver_tools/sliver_tools.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:material_color_utilities/material_color_utilities.dart';
@@ -608,8 +610,9 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
   }
 
   Widget _fragment(int? index, EpisodeBloc searchBloc) {
+    final bloc = Provider.of<DiscoveryBloc>(context);
     if (index == 0) {
-      return const Episodes();
+      return YourFeed();
     } else if (index == 1) {
       return Discovery(
         categories: true,
@@ -752,7 +755,7 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
 
 class TitleWidget extends StatelessWidget {
   final TextStyle _titleTheme1 = theme.textTheme.bodyMedium!.copyWith(
-    color: const Color.fromARGB(255, 255, 153, 0),
+    color: theme.primaryColor,
     fontWeight: FontWeight.bold,
     fontFamily: 'MontserratRegular',
     fontSize: 18,
@@ -783,7 +786,7 @@ class TitleWidget extends StatelessWidget {
       child: Row(
         children: <Widget>[
           Text(
-            'Anytime ',
+            'Your ',
             style: _titleTheme1,
           ),
           Text(
