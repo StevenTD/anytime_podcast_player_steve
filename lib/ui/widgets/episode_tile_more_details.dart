@@ -51,7 +51,7 @@ class _EpisodeTileState extends State<EpisodeTileMoreDetails> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final textTheme = Theme.of(context).textTheme;
-    final episodeBloc = Provider.of<EpisodeBloc>(context);
+    final episodeBloc = Provider.of<EpisodeBloc>(context, listen: false);
     final queueBloc = Provider.of<QueueBloc>(context);
 
     return Column(
@@ -345,8 +345,9 @@ class _EpisodeTileState extends State<EpisodeTileMoreDetails> {
             opacity: widget.episode.played ? 0.5 : 1.0,
             child: EpisodeTransportControls(
               episode: widget.episode,
-              download: widget.download,
-              play: widget.play,
+              download: true,
+              play: true,
+
             ),
           ),
         ),
@@ -374,9 +375,15 @@ class EpisodeTransportControls extends StatelessWidget {
 
     if (play) {
       buttons.add(
-        PlayControlWithRect(
-          episode: episode,
-        ),
+         Padding(
+           padding: const EdgeInsets.only(right: 8.0),
+           child: Semantics(
+             container: true,
+             child: PlayControlWithRect(
+              episode: episode,
+                     ),
+           ),
+         ),
       );
     }
 
