@@ -153,6 +153,7 @@ class MobilePodcastService extends PodcastService {
       podcast_search.Podcast? loadedPodcast;
       var imageUrl = podcast.imageUrl;
       var thumbImageUrl = podcast.thumbImageUrl;
+      var sourceUrl = podcast.url;
 
       if (!refresh) {
         log.fine('Not a refresh so try to fetch from cache');
@@ -169,12 +170,14 @@ class MobilePodcastService extends PodcastService {
             log.fine('Loading podcast from feed $url');
             loadedPodcast = await _loadPodcastFeed(url: url);
             tries = 0;
-          } on Exception {
-            if (tries > 0 && url.startsWith('https')) {
-              // Try the http only version - flesh out to setting later on
-              log.fine('Failed to load podcast. Fallback to http and try again');
+          } catch (e) {
+            if (tries > 0) {
+              //TODO: Needs improving to only fall back if original URL was http and we forced it up to https.
+              if (e is podcast_search.PodcastCertificateException && url.startsWith('https')) {
+                log.fine('Certificate error whilst fetching podcast. Fallback to http and try again');
 
-              url = url.replaceFirst('https', 'http');
+                url = url.replaceFirst('https', 'http');
+              }
             } else {
               rethrow;
             }
@@ -189,7 +192,7 @@ class MobilePodcastService extends PodcastService {
       final copyright = _format(loadedPodcast.copyright);
       final funding = <Funding>[];
       final persons = <Person>[];
-      final existingEpisodes = await repository.findEpisodesByPodcastGuid(loadedPodcast.url!);
+      final existingEpisodes = await repository.findEpisodesByPodcastGuid(sourceUrl);
 
       // If imageUrl is null we have not loaded the podcast as a result of a search.
       if (imageUrl == null || imageUrl.isEmpty || refresh) {
@@ -214,8 +217,8 @@ class MobilePodcastService extends PodcastService {
       }
 
       Podcast pc = Podcast(
-        guid: loadedPodcast.url,
-        url: loadedPodcast.url!,
+        guid: sourceUrl,
+        url: sourceUrl,
         link: loadedPodcast.link,
         title: title,
         description: description,
@@ -228,14 +231,15 @@ class MobilePodcastService extends PodcastService {
       );
 
       /// We could be following this podcast already. Let's check.
-      var follow = await repository.findPodcastByGuid(loadedPodcast.url!);
+      var follow = await repository.findPodcastByGuid(sourceUrl);
 
       if (follow != null) {
         // We are, so swap in the stored ID so we update the saved version later.
         pc.id = follow.id;
 
-        // And preserve any filter applied
+        // And preserve any filter & sort applied
         pc.filter = follow.filter;
+        pc.sort = follow.sort;
       }
 
       // Usually, episodes are order by reverse publication date - but not always.
@@ -378,7 +382,7 @@ class MobilePodcastService extends PodcastService {
 
         // Phew! Now, after all that, we have have a podcast filter in place. All episodes will have
         // been saved, but we might not want to display them all. Let's filter.
-        pc.episodes = _filterEpisodes(pc);
+        pc.episodes = _sortAndFilterEpisodes(pc);
       }
 
       return pc;
@@ -697,7 +701,7 @@ class MobilePodcastService extends PodcastService {
     return decodedGenre;
   }
 
-  List<Episode> _filterEpisodes(Podcast podcast) {
+  List<Episode> _sortAndFilterEpisodes(Podcast podcast) {
     var filteredEpisodes = <Episode>[];
 
     switch (podcast.filter) {
@@ -713,6 +717,18 @@ class MobilePodcastService extends PodcastService {
       case PodcastEpisodeFilter.notPlayed:
         filteredEpisodes = podcast.episodes.where((e) => e.highlight || !e.played).toList();
         break;
+    }
+
+    switch (podcast.sort) {
+      case PodcastEpisodeSort.none:
+      case PodcastEpisodeSort.latestFirst:
+        filteredEpisodes.sort((e1, e2) => e2.publicationDate!.compareTo(e1.publicationDate!));
+      case PodcastEpisodeSort.earliestFirst:
+        filteredEpisodes.sort((e1, e2) => e1.publicationDate!.compareTo(e2.publicationDate!));
+      case PodcastEpisodeSort.alphabeticalAscending:
+        filteredEpisodes.sort((e1, e2) => e1.title!.toLowerCase().compareTo(e2.title!.toLowerCase()));
+      case PodcastEpisodeSort.alphabeticalDescending:
+        filteredEpisodes.sort((e1, e2) => e2.title!.toLowerCase().compareTo(e1.title!.toLowerCase()));
     }
 
     return filteredEpisodes;

@@ -2,7 +2,7 @@
 // This is a library that provides messages for a en locale. All the
 // messages from the main program should be duplicated here with the same
 // function name.
-
+// @dart=2.12
 // Ignore issues from commonly used lints in this file.
 // ignore_for_file:unnecessary_brace_in_string_interps
 // ignore_for_file:prefer_single_quotes,comment_references, directives_ordering
@@ -36,6 +36,7 @@ class MessageLookup extends MessageLookupByLibrary {
     'audio_settings_playback_speed_label': MessageLookupByLibrary.simpleMessage('Playback Speed'),
     'auto_scroll_transcript_label': MessageLookupByLibrary.simpleMessage('Follow transcript'),
     'cancel_button_label': MessageLookupByLibrary.simpleMessage('Cancel'),
+    'cancel_download_button_label': MessageLookupByLibrary.simpleMessage('Cancel download'),
     'cancel_option_label': MessageLookupByLibrary.simpleMessage('Cancel'),
     'chapters_label': MessageLookupByLibrary.simpleMessage('Chapters'),
     'clear_queue_button_label': MessageLookupByLibrary.simpleMessage('CLEAR QUEUE'),
@@ -54,8 +55,9 @@ class MessageLookup extends MessageLookupByLibrary {
     'download_episode_button_label': MessageLookupByLibrary.simpleMessage('Download episode'),
     'downloads': MessageLookupByLibrary.simpleMessage('Downloads'),
     'empty_queue_message': MessageLookupByLibrary.simpleMessage('Your queue is empty'),
+    'episode_details_button_label': MessageLookupByLibrary.simpleMessage('Show episode information'),
     'episode_filter_clear_filters_button_label': MessageLookupByLibrary.simpleMessage('Clear Filters'),
-    'episode_filter_no_episodes_title_description': MessageLookupByLibrary.simpleMessage('There are no episodes available that match the selected filter'),
+    'episode_filter_no_episodes_title_description': MessageLookupByLibrary.simpleMessage('This podcast has no episodes matching your search criteria and filter'),
     'episode_filter_no_episodes_title_label': MessageLookupByLibrary.simpleMessage('No Episodes Found'),
     'episode_filter_none_label': MessageLookupByLibrary.simpleMessage('None'),
     'episode_filter_played_label': MessageLookupByLibrary.simpleMessage('Played'),
@@ -101,6 +103,7 @@ class MessageLookup extends MessageLookupByLibrary {
     'opml_import_export_label': MessageLookupByLibrary.simpleMessage('OPML Import/Export'),
     'pause_button_label': MessageLookupByLibrary.simpleMessage('Pause episode'),
     'play_button_label': MessageLookupByLibrary.simpleMessage('Play episode'),
+    'play_download_button_label': MessageLookupByLibrary.simpleMessage('Play downloaded episode'),
     'playback_speed_label': MessageLookupByLibrary.simpleMessage('Playback speed'),
     'podcast_funding_dialog_header': MessageLookupByLibrary.simpleMessage('Podcast Funding'),
     'podcast_options_overflow_menu_semantic_label': MessageLookupByLibrary.simpleMessage('Options menu'),
@@ -110,16 +113,24 @@ class MessageLookup extends MessageLookupByLibrary {
     'queue_clear_label_title': MessageLookupByLibrary.simpleMessage('Clear Queue'),
     'queue_remove_label': MessageLookupByLibrary.simpleMessage('Remove'),
     'refresh_feed_label': MessageLookupByLibrary.simpleMessage('Refresh episodes'),
+    'resume_button_label': MessageLookupByLibrary.simpleMessage('Resume episode'),
     'rewind_button_label': MessageLookupByLibrary.simpleMessage('Rewind episode 10 seconds'),
+    'scrim_episode_details_selector': MessageLookupByLibrary.simpleMessage('Dismiss episode details'),
+    'scrim_episode_filter_selector': MessageLookupByLibrary.simpleMessage('Dismiss episode filter'),
+    'scrim_episode_sort_selector': MessageLookupByLibrary.simpleMessage('Dismiss episode sort'),
     'scrim_layout_selector': MessageLookupByLibrary.simpleMessage('Dismiss layout selector'),
+    'scrim_sleep_timer_selector': MessageLookupByLibrary.simpleMessage('Dismiss sleep timer selector'),
+    'scrim_speed_selector': MessageLookupByLibrary.simpleMessage('Dismiss playback speed selector'),
     'search_back_button_label': MessageLookupByLibrary.simpleMessage('Back'),
     'search_button_label': MessageLookupByLibrary.simpleMessage('Search'),
+    'search_episodes_label': MessageLookupByLibrary.simpleMessage('Search episodes'),
     'search_for_podcasts_hint': MessageLookupByLibrary.simpleMessage('Search for podcasts'),
     'search_provider_label': MessageLookupByLibrary.simpleMessage('Search provider'),
     'search_transcript_label': MessageLookupByLibrary.simpleMessage('Search transcript'),
     'semantic_announce_searching': MessageLookupByLibrary.simpleMessage('Searching, please wait.'),
     'semantic_chapter_link_label': MessageLookupByLibrary.simpleMessage('Chapter web link'),
     'semantic_current_chapter_label': MessageLookupByLibrary.simpleMessage('Current chapter'),
+    'semantic_current_value_label': MessageLookupByLibrary.simpleMessage('Current value'),
     'semantic_playing_options_collapse_label': MessageLookupByLibrary.simpleMessage('Close playing options slider'),
     'semantic_playing_options_expand_label': MessageLookupByLibrary.simpleMessage('Open playing options slider'),
     'semantic_podcast_artwork_label': MessageLookupByLibrary.simpleMessage('Podcast artwork'),
@@ -154,6 +165,7 @@ class MessageLookup extends MessageLookupByLibrary {
     'settings_auto_update_episodes_heading': MessageLookupByLibrary.simpleMessage('Refresh episodes on details screen after'),
     'settings_auto_update_episodes_never': MessageLookupByLibrary.simpleMessage('Never'),
     'settings_data_divider_label': MessageLookupByLibrary.simpleMessage('DATA'),
+    'settings_delete_played_label': MessageLookupByLibrary.simpleMessage('Delete downloaded episodes once played'),
     'settings_download_sd_card_label': MessageLookupByLibrary.simpleMessage('Download episodes to SD card'),
     'settings_download_switch_card': MessageLookupByLibrary.simpleMessage('New downloads will be saved to the SD card. Existing downloads will remain on internal storage.'),
     'settings_download_switch_internal': MessageLookupByLibrary.simpleMessage('New downloads will be saved to internal storage. Existing downloads will remain on the SD card.'),

@@ -79,6 +79,15 @@ class _SettingsState extends State<Settings> {
                   ),
                 ),
               ),
+              MergeSemantics(
+                child: ListTile(
+                    shape: const RoundedRectangleBorder(side: BorderSide.none),
+                    title: Text(L.of(context)!.settings_delete_played_label),
+                    trailing: Switch.adaptive(
+                      value: snapshot.data!.deleteDownloadedPlayedEpisodes,
+                      onChanged: (value) => setState(() => settingsBloc.deleteDownloadedPlayedEpisodes(value)),
+                    )),
+              ),
               sdcard
                   ? MergeSemantics(
                       child: ListTile(
@@ -132,7 +141,7 @@ class _SettingsState extends State<Settings> {
                         context: context,
                         builder: (_) => PopScope(
                           canPop: true,
-                          onPopInvoked: (didPop) async => false,
+                          onPopInvokedWithResult: (didPop, result) async => false,
                           child: BasicDialogAlert(
                             title: Text(L.of(context)!.settings_import_opml),
                             content: OPMLImport(file: file.path!),
@@ -192,6 +201,16 @@ class _SettingsState extends State<Settings> {
   Widget _buildIos(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
+        padding: const EdgeInsetsDirectional.all(0.0),
+        leading: CupertinoButton(
+            child: const Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
+        middle: Text(
+          L.of(context)!.settings_label,
+          style: TextStyle(color: Theme.of(context).colorScheme.primary),
+        ),
         backgroundColor: Theme.of(context).colorScheme.surface,
       ),
       child: Material(child: _buildList(context)),

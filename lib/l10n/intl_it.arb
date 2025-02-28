@@ -246,6 +246,12 @@
     "type": "text",
     "placeholders": {}
   },
+  "settings_delete_played_label": "Elimina gli episodi scaricati una volta riprodotti",
+  "@settings_delete_played_label": {
+    "description": "Delete downloaded episodes once played setting",
+    "type": "text",
+    "placeholders": {}
+  },
   "settings_download_sd_card_label": "Scarica gli episodi nella card SD",
   "@settings_download_sd_card_label": {
     "description": "Download episodes to SD card setting",
@@ -909,7 +915,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "episode_filter_no_episodes_title_description": "Non ci sono episodi disponibili che corrispondo ai filtri selezionati",
+  "episode_filter_no_episodes_title_description": "Questo podcast non ha episodi che corrispondono ai tuoi criteri di ricerca e filtro",
   "@episode_filter_no_episodes_title_description": {
     "description": "No episodes found description",
     "type": "text",
@@ -992,5 +998,71 @@
     "description": "Episode time remaining slider control label",
     "type": "text",
     "placeholders": {}
-  }
+  },
+  "resume_button_label": "Riprendi episodio",
+  "@resume_button_label": {
+    "description": "Semantic label for the resume button",
+    "type": "text",
+    "placeholders": {}
+  },
+  "play_download_button_label": "Riproduci l'episodio scaricato",
+  "@play_download_button_label": {
+    "description": "Semantic label for the play downloaded episode button",
+    "type": "text",
+    "placeholders": {}
+  },
+  "cancel_download_button_label": "Annulla il download",
+  "@cancel_download_button_label": {
+    "description": "Semantic label for the play cancel download button",
+    "type": "text",
+    "placeholders": {}
+  },
+  "episode_details_button_label": "Mostra le informazioni sull'episodio",
+  "@episode_details_button_label": {
+    "description": "Semantic label for the show info button.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "scrim_sleep_timer_selector": "Chiudere il selettore del timer di spegnimento",
+  "@scrim_sleep_timer_selector": {
+    "description": "Replaces default scrim label for custom.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "scrim_speed_selector": "Chiudere il selettore della velocità di riproduzione",
+  "@scrim_speed_selector": {
+    "description": "Replaces default scrim label for custom.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "semantic_current_value_label": "Impostazioni correnti",
+  "@semantic_current_value_label": {
+    "description": "For current sleep setting",
+    "type": "text",
+    "placeholders": {}
+   },
+   "scrim_episode_details_selector": "Chiudi i dettagli dell'episodio",
+   "@scrim_episode_details_selector": {
+     "description": "Replaces default scrim label for episode details bottom sheet.",
+     "type": "text",
+     "placeholders": {}
+  },
+  "scrim_episode_sort_selector": "Chiudi ordinamento degli episodi",
+  "@scrim_episode_sort_selector": {
+    "description": "Replaces default scrim label for episode sort bottom sheet.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "scrim_episode_filter_selector": "Chiudi il filtro degli episodi",
+  "@scrim_episode_filter_selector": {
+    "description": "Replaces default scrim label for episode filter bottom sheet.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "search_episodes_label": "Cerca episodi",
+  "@search_episodes_label": {
+    "description": "Hint text for episode search box",
+    "type": "text",
+    "placeholders": {}
+ }
 }

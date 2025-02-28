@@ -458,6 +458,16 @@ class L {
         );
   }
 
+  String get settings_delete_played_label {
+    return message('settings_delete_played_label') ??
+        Intl.message(
+          'Delete downloaded episodes once played',
+          name: 'settings_delete_played_label',
+          desc: 'Delete downloaded episodes once played setting',
+          locale: localeName,
+        );
+  }
+
   String get settings_download_sd_card_label {
     return message('settings_download_sd_card_label') ??
         Intl.message(
@@ -1474,7 +1484,7 @@ class L {
         Intl.message(
           'No Episodes Found',
           name: 'episode_filter_no_episodes_title_description',
-          desc: 'There are no episodes available that match the selected filter',
+          desc: 'This podcast has no episodes matching your search criteria and filter',
           locale: localeName,
         );
   }
@@ -1605,6 +1615,116 @@ class L {
           'Time remaining',
           name: 'now_playing_episode_time_remaining',
           desc: 'Episode time remaining slider control label',
+          locale: localeName,
+        );
+  }
+
+  String get resume_button_label {
+    return message('resume_button_label') ??
+        Intl.message(
+          'Resume episode',
+          name: 'resume_button_label',
+          desc: 'Semantic label for the resume button',
+          locale: localeName,
+        );
+  }
+
+  String get play_download_button_label {
+    return message('play_download_button_label') ??
+        Intl.message(
+          'Play downloaded episode',
+          name: 'play_download_button_label',
+          desc: 'Semantic label for the play downloaded episode button',
+          locale: localeName,
+        );
+  }
+
+  String get cancel_download_button_label {
+    return message('cancel_download_button_label') ??
+        Intl.message(
+          'Cancel download',
+          name: 'cancel_download_button_label',
+          desc: 'Semantic label for the play cancel download button',
+          locale: localeName,
+        );
+  }
+
+  String get episode_details_button_label {
+    return message('episode_details_button_label') ??
+        Intl.message(
+          'Show episode information',
+          name: 'episode_details_button_label',
+          desc: 'Semantic label for the show info button.',
+          locale: localeName,
+        );
+  }
+
+  String get scrim_sleep_timer_selector {
+    return message('scrim_sleep_timer_selector') ??
+        Intl.message(
+          'Dismiss sleep timer selector',
+          name: 'scrim_sleep_timer_selector',
+          desc: 'Replaces default scrim label for custom.',
+          locale: localeName,
+        );
+  }
+
+  String get scrim_speed_selector {
+    return message('scrim_speed_selector') ??
+        Intl.message(
+          'Dismiss playback speed selector',
+          name: 'scrim_speed_selector',
+          desc: 'Replaces default scrim label for custom.',
+          locale: localeName,
+        );
+  }
+
+  String get semantic_current_value_label {
+    return message('semantic_current_value_label') ??
+        Intl.message(
+          'Current value',
+          name: 'semantic_current_value_label',
+          desc: 'For current sleep setting',
+          locale: localeName,
+        );
+  }
+
+  String get scrim_episode_details_selector {
+    return message('scrim_episode_details_selector') ??
+        Intl.message(
+          'Dismiss episode details',
+          name: 'scrim_episode_details_selector',
+          desc: 'Replaces default scrim label for episode details bottom sheet.',
+          locale: localeName,
+        );
+  }
+
+  String get scrim_episode_sort_selector {
+    return message('scrim_episode_sort_selector') ??
+        Intl.message(
+          'Dismiss episode sort',
+          name: 'scrim_episode_sort_selector',
+          desc: 'Replaces default scrim label for episode sort bottom sheet.',
+          locale: localeName,
+        );
+  }
+
+  String get scrim_episode_filter_selector {
+    return message('scrim_episode_filter_selector') ??
+        Intl.message(
+          'Dismiss episode filter',
+          name: 'scrim_episode_filter_selector',
+          desc: 'Replaces default scrim label for episode filter bottom sheet.',
+          locale: localeName,
+        );
+  }
+
+  String get search_episodes_label {
+    return message('search_episodes_label') ??
+        Intl.message(
+          'Search episodes',
+          name: 'search_episodes_label',
+          desc: 'Hint text for episode search box',
           locale: localeName,
         );
   }

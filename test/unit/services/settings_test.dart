@@ -48,8 +48,8 @@ void main() {
   test('Test playback speed', () async {
     expect(mobileSettingsService?.playbackSpeed, 1.0);
     expectLater(settingsListener, emits('speed'));
-    mobileSettingsService?.playbackSpeed = 1.25;
-    expect(mobileSettingsService?.playbackSpeed, 1.25);
+    mobileSettingsService?.playbackSpeed = 1.2;
+    expect(mobileSettingsService?.playbackSpeed, 1.2);
   }, timeout: const Timeout(Duration(milliseconds: timeout)));
 
   test('Test search provider', () async {
@@ -107,5 +107,12 @@ void main() {
     expectLater(settingsListener, emits('layout'));
     mobileSettingsService?.layoutMode = 1;
     expect(mobileSettingsService?.layoutMode, 1);
+  }, timeout: const Timeout(Duration(milliseconds: timeout)));
+
+  test('Test delete played downloaded episodes', () async {
+    expect(mobileSettingsService?.deleteDownloadedPlayedEpisodes, false);
+    expectLater(settingsListener, emits('deleteDownloadedPlayedEpisodes'));
+    mobileSettingsService?.deleteDownloadedPlayedEpisodes = true;
+    expect(mobileSettingsService?.deleteDownloadedPlayedEpisodes, true);
   }, timeout: const Timeout(Duration(milliseconds: timeout)));
 }

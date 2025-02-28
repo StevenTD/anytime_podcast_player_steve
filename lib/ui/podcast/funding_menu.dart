@@ -134,7 +134,9 @@ class _CupertinoFundingMenu extends StatelessWidget {
                                 context,
                               ).then((value) {
                                 settingsBloc.setExternalLinkConsent(value);
-                                Navigator.pop(context, 'Cancel');
+                                if (context.mounted) {
+                                  Navigator.of(context).pop('Cancel');
+                                }
                               });
                             },
                             child: Text(funding![index].value),
@@ -179,7 +181,10 @@ class FundingLink {
         context: context,
         useRootNavigator: false,
         builder: (_) => BasicDialogAlert(
-          title: Text(L.of(context)!.podcast_funding_dialog_header),
+          title: Semantics(
+            header: true,
+            child: Text(L.of(context)!.podcast_funding_dialog_header),
+          ),
           content: Text(L.of(context)!.consent_message),
           actions: <Widget>[
             BasicDialogAction(

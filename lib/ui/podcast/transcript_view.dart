@@ -253,6 +253,7 @@ class _TranscriptViewState extends State<TranscriptView> {
                           child: TextField(
                             controller: _transcriptSearchController,
                             decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.all(0.0),
                               prefixIcon: const Icon(Icons.search),
                               suffixIcon: IconButton(
                                 icon: const Icon(Icons.close),
@@ -431,9 +432,8 @@ class SubtitleWidget extends StatelessWidget {
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
-        color: highlight
-            ? Theme.of(context).colorScheme.primary
-            : Colors.transparent,
+        color:
+            highlight ? Theme.of(context).cardTheme.color : Colors.transparent,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,

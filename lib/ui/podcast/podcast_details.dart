@@ -175,6 +175,7 @@ class _PodcastDetailsState extends State<PodcastDetails> {
     });
   }
 
+  /// TODO: This really needs a refactor. There are too many nested streams on this now and it needs simplifying.
   @override
   Widget build(BuildContext context) {
     final podcastBloc = Provider.of<PodcastBloc>(context, listen: false);
@@ -185,8 +186,9 @@ class _PodcastDetailsState extends State<PodcastDetails> {
       label: L.of(context)!.semantics_podcast_details_header,
       child: PopScope(
         canPop: true,
-        onPopInvoked: (didPop) {
+        onPopInvokedWithResult: (didPop, result) {
           _resetSystemOverlayStyle();
+          podcastBloc.podcastSearchEvent('');
         },
         child: ScaffoldMessenger(
           key: scaffoldMessengerKey,
@@ -308,7 +310,6 @@ class _PodcastDetailsState extends State<PodcastDetails> {
                               children: <Widget>[
                                 PodcastTitle(state.results!),
                                 const Divider(),
-                                NoEpisodesFound(state.results!),
                               ],
                             ),
                           ));
@@ -321,16 +322,40 @@ class _PodcastDetailsState extends State<PodcastDetails> {
                           ),
                         );
                       }),
-                  StreamBuilder<List<Episode?>?>(
-                      stream: podcastBloc.episodes,
-                      builder: (context, snapshot) {
-                        return snapshot.hasData && snapshot.data!.isNotEmpty
-                            ? PodcastEpisodeList(
-                                episodes: snapshot.data!,
-                                play: true,
-                                download: true,
-                              )
-                            : SliverToBoxAdapter(child: Container());
+                  StreamBuilder<BlocState<Podcast>>(
+                      initialData: BlocEmptyState<Podcast>(),
+                      stream: podcastBloc.details,
+                      builder: (context1, snapshot1) {
+                        final state = snapshot1.data;
+
+                        if (state is BlocPopulatedState<Podcast>) {
+                          return StreamBuilder<List<Episode?>?>(
+                              stream: podcastBloc.episodes,
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  return snapshot.data!.isNotEmpty
+                                      ? PodcastEpisodeList(
+                                          episodes: snapshot.data!,
+                                          play: true,
+                                          download: true,
+                                        )
+                                      : const SliverToBoxAdapter(
+                                          child: NoEpisodesFound());
+                                } else {
+                                  return const SliverToBoxAdapter(
+                                      child: SizedBox(
+                                    height: 200,
+                                    width: 200,
+                                  ));
+                                }
+                              });
+                        } else {
+                          return const SliverToBoxAdapter(
+                              child: SizedBox(
+                            height: 200,
+                            width: 200,
+                          ));
+                        }
                       }),
                 ],
               ),
@@ -395,18 +420,32 @@ class PodcastTitle extends StatefulWidget {
   State<PodcastTitle> createState() => _PodcastTitleState();
 }
 
-class _PodcastTitleState extends State<PodcastTitle> {
+class _PodcastTitleState extends State<PodcastTitle>
+    with SingleTickerProviderStateMixin {
   final GlobalKey descriptionKey = GlobalKey();
   final maxHeight = 100.0;
   PodcastHtml? description;
   bool showOverflow = false;
+  bool showEpisodeSearch = false;
   final StreamController<bool> isDescriptionExpandedStream =
       StreamController<bool>.broadcast();
+  final _episodeSearchController = TextEditingController();
+  final _searchFocus = FocusNode();
+
+  late final AnimationController _controller = AnimationController(
+    duration: const Duration(milliseconds: 200),
+    vsync: this,
+  );
+  late final Animation<double> _animation = CurvedAnimation(
+    parent: _controller,
+    curve: Curves.fastOutSlowIn,
+  );
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final settings = Provider.of<SettingsBloc>(context).currentSettings;
+    final podcastBloc = Provider.of<PodcastBloc>(context, listen: false);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
@@ -490,9 +529,28 @@ class _PodcastTitleState extends State<PodcastTitle> {
             padding: const EdgeInsets.only(left: 8.0, right: 8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 FollowButton(widget.podcast),
                 PodcastContextMenu(widget.podcast),
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      if (showEpisodeSearch) {
+                        _controller.reverse();
+                      } else {
+                        _controller.forward();
+                        _searchFocus.requestFocus();
+                      }
+                      showEpisodeSearch = !showEpisodeSearch;
+                    });
+                  },
+                  icon: Icon(
+                    Icons.search,
+                    semanticLabel: L.of(context)!.search_episodes_label,
+                  ),
+                  visualDensity: VisualDensity.compact,
+                ),
                 SortButton(widget.podcast),
                 FilterButton(widget.podcast),
                 settings.showFunding
@@ -508,7 +566,45 @@ class _PodcastTitleState extends State<PodcastTitle> {
                 )),
               ],
             ),
-          )
+          ),
+          SizeTransition(
+            sizeFactor: _animation,
+            child: Padding(
+                padding: const EdgeInsets.all(7.0),
+                child: TextField(
+                    focusNode: _searchFocus,
+                    controller: _episodeSearchController,
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.all(0.0),
+                      prefixIcon: const Icon(Icons.search),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          Icons.close,
+                          semanticLabel:
+                              L.of(context)!.clear_search_button_label,
+                        ),
+                        onPressed: () {
+                          _episodeSearchController.clear();
+                          podcastBloc.podcastSearchEvent('');
+                        },
+                      ),
+                      isDense: true,
+                      filled: true,
+                      border: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                        borderSide: BorderSide.none,
+                        gapPadding: 0.0,
+                      ),
+                      hintText: L.of(context)!.search_episodes_label,
+                    ),
+                    onChanged: ((search) {
+                      podcastBloc.podcastSearchEvent(search);
+                    }),
+                    onSubmitted: ((search) {
+                      podcastBloc.podcastSearchEvent(search);
+                    }),
+                    onTapOutside: (event) => _searchFocus.unfocus())),
+          ),
         ],
       ),
     );
@@ -530,6 +626,13 @@ class _PodcastTitleState extends State<PodcastTitle> {
         });
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _episodeSearchController.dispose();
+    _searchFocus.dispose();
+    super.dispose();
   }
 }
 
@@ -588,67 +691,32 @@ class PodcastDescription extends StatelessWidget {
 }
 
 class NoEpisodesFound extends StatelessWidget {
-  final Podcast podcast;
-
-  const NoEpisodesFound(this.podcast, {super.key});
+  const NoEpisodesFound({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final podcastBloc = Provider.of<PodcastBloc>(context);
-
-    if (podcast.episodes.isEmpty) {
-      if (podcast.filter == PodcastEpisodeFilter.none) {
-        return Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                L.of(context)!.episode_filter_no_episodes_title_label,
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-            ),
-          ],
-        );
-      } else {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                L.of(context)!.episode_filter_no_episodes_title_label,
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
-                child: Text(
-                  L.of(context)!.episode_filter_no_episodes_title_description,
-                  style: Theme.of(context).textTheme.titleSmall,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              OutlinedButton(
-                onPressed: () {
-                  podcastBloc.podcastEvent(PodcastEvent.episodeFilterNone);
-                },
-                child: Text(
-                  L.of(context)!.episode_filter_clear_filters_button_label,
-                ),
-              ),
-            ],
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            L.of(context)!.episode_filter_no_episodes_title_label,
+            style: Theme.of(context).textTheme.titleLarge,
           ),
-        );
-      }
-    } else {
-      return const SizedBox(
-        height: 0,
-        width: 0,
-      );
-    }
+          Padding(
+            padding: const EdgeInsets.fromLTRB(64.0, 24.0, 64.0, 64.0),
+            child: Text(
+              L.of(context)!.episode_filter_no_episodes_title_description,
+              style: Theme.of(context).textTheme.titleSmall,
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -682,6 +750,7 @@ class FollowButton extends StatelessWidget {
             child: subscribed
                 ? OutlinedButton.icon(
                     style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.fromLTRB(10.0, 4.0, 10.0, 4.0),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0)),
                     ),
@@ -700,20 +769,16 @@ class FollowButton extends StatelessWidget {
                                     Text(L.of(context)!.unsubscribe_message),
                                 actions: <Widget>[
                                   BasicDialogAction(
-                                    title: ExcludeSemantics(
-                                      child: ActionText(
-                                        L.of(context)!.cancel_button_label,
-                                      ),
+                                    title: ActionText(
+                                      L.of(context)!.cancel_button_label,
                                     ),
                                     onPressed: () {
                                       Navigator.pop(context);
                                     },
                                   ),
                                   BasicDialogAction(
-                                    title: ExcludeSemantics(
-                                      child: ActionText(
-                                        L.of(context)!.unsubscribe_button_label,
-                                      ),
+                                    title: ActionText(
+                                      L.of(context)!.unsubscribe_button_label,
                                     ),
                                     iosIsDefaultAction: true,
                                     iosIsDestructiveAction: true,
@@ -733,6 +798,7 @@ class FollowButton extends StatelessWidget {
                   )
                 : OutlinedButton.icon(
                     style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.fromLTRB(10.0, 4.0, 10.0, 4.0),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0)),
                     ),

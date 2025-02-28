@@ -100,6 +100,7 @@ class DefaultAudioPlayerService extends AudioPlayerService {
       builder: () => _DefaultAudioPlayerHandler(
         repository: repository,
         settings: settingsService,
+        podcastService: podcastService,
       ),
       config: const AudioServiceConfig(
         androidResumeOnClick: true,
@@ -524,6 +525,19 @@ class DefaultAudioPlayerService extends AudioPlayerService {
 
     log.fine('We have completed episode ${_currentEpisode?.title}');
 
+    /// If we have sleep at end of episode enabled and we have more items in the
+    /// queue, we do not want to potentially delete the episode when we reach
+    /// the end. When the user continues playback, we'll complete fully and
+    /// can delete the episode.
+    final sleepy = _sleep.type == SleepType.episode && _queue.isNotEmpty;
+
+    if (
+        settingsService.deleteDownloadedPlayedEpisodes &&
+        _currentEpisode?.downloadState == DownloadState.downloaded && !sleepy
+    ) {
+      await podcastService.deleteDownload(_currentEpisode!);
+    }
+
     _stopPositionTicker();
 
     if (_queue.isEmpty) {
@@ -756,10 +770,10 @@ class DefaultAudioPlayerService extends AudioPlayerService {
   Stream<EpisodeState>? get episodeListener => repository.episodeListener;
 
   @override
-  Stream<PositionState> get playPosition => _playPosition.stream;
+  ValueStream<PositionState> get playPosition => _playPosition.stream;
 
   @override
-  Stream<Episode?> get episodeEvent => _episodeEvent.stream;
+  ValueStream<Episode?> get episodeEvent => _episodeEvent.stream;
 
   @override
   Stream<TranscriptState> get transcriptEvent => _transcriptEvent.stream;
@@ -781,6 +795,7 @@ class _DefaultAudioPlayerHandler extends BaseAudioHandler with SeekHandler {
   final log = Logger('DefaultAudioPlayerHandler');
   final Repository repository;
   final SettingsService settings;
+  final PodcastService podcastService;
 
   static const rewindMillis = 10001;
   static const fastForwardMillis = 30000;
@@ -807,6 +822,7 @@ class _DefaultAudioPlayerHandler extends BaseAudioHandler with SeekHandler {
   _DefaultAudioPlayerHandler({
     required this.repository,
     required this.settings,
+    required this.podcastService,
   }) {
     _initPlayer();
   }
@@ -872,9 +888,9 @@ class _DefaultAudioPlayerHandler extends BaseAudioHandler with SeekHandler {
     try {
       var duration = await _player.setAudioSource(source, initialPosition: start);
 
-      /// If we don't already have a duration and we have been able to calculate it from
-      /// beginning to fetch the media, update the current media item with the duration.
-      if (duration != null && (_currentItem!.duration == null || _currentItem!.duration!.inSeconds == 0)) {
+      /// As duration returned from the player library can be different from the duration in the feed - usually
+      /// because of DAI - if we have a duration from the player, use that.
+      if (duration != null) {
         _currentItem = _currentItem!.copyWith(duration: duration);
       }
 
@@ -934,6 +950,8 @@ class _DefaultAudioPlayerHandler extends BaseAudioHandler with SeekHandler {
 
     await _player.stop();
     await _savePosition();
+
+    await super.stop();
   }
 
   @override
@@ -942,6 +960,12 @@ class _DefaultAudioPlayerHandler extends BaseAudioHandler with SeekHandler {
 
     await _player.seek(Duration(milliseconds: forwardPosition + fastForwardMillis));
   }
+
+  @override
+  Future<void> skipToNext() => fastForward();
+
+  @override
+  Future<void> skipToPrevious() => rewind();
 
   @override
   Future<void> seek(Duration position) async {
@@ -1013,17 +1037,31 @@ class _DefaultAudioPlayerHandler extends BaseAudioHandler with SeekHandler {
   PlaybackState _transformEvent(PlaybackEvent event) {
     log.fine('_transformEvent Sending state ${_player.processingState}');
 
+    // To enable skip next and previous for headphones on iOS we need the
+    // add the skipToNext & skipToPrevious controls; however, on Android
+    // we don't need to specify them and doing so adds the next and previous
+    // buttons to the notification shade which we do not want.
+    final systemActions = Platform.isIOS
+        ? const {
+            MediaAction.seek,
+            MediaAction.seekForward,
+            MediaAction.seekBackward,
+            MediaAction.skipToNext,
+            MediaAction.skipToPrevious,
+          }
+        : const {
+            MediaAction.seek,
+            MediaAction.seekForward,
+            MediaAction.seekBackward,
+          };
+
     return PlaybackState(
       controls: [
         rewindControl,
         if (_player.playing) MediaControl.pause else MediaControl.play,
         fastforwardControl,
       ],
-      systemActions: const {
-        MediaAction.seek,
-        MediaAction.seekForward,
-        MediaAction.seekBackward,
-      },
+      systemActions: systemActions,
       androidCompactActionIndices: const [0, 1, 2],
       processingState: {
         ProcessingState.idle: _player.playing ? AudioProcessingState.ready : AudioProcessingState.idle,
@@ -1040,21 +1078,16 @@ class _DefaultAudioPlayerHandler extends BaseAudioHandler with SeekHandler {
     );
   }
 
-  Future<void> _savePosition({bool complete = false}) async {
+  Future<void> _savePosition() async {
     if (_currentItem != null) {
       // The episode may have been updated elsewhere - re-fetch it.
       var currentPosition = playbackState.value.position.inMilliseconds;
       var storedEpisode = (await repository.findEpisodeByGuid(_currentItem!.extras!['eid'] as String))!;
 
       log.fine(
-          '_savePosition(): Current position is $currentPosition - stored position is ${storedEpisode.position} complete is $complete on episode ${storedEpisode.title}');
+          '_savePosition(): Current position is $currentPosition - stored position is ${storedEpisode.position} on episode ${storedEpisode.title}');
 
-      if (complete) {
-        storedEpisode.position = 0;
-        storedEpisode.played = true;
-
-        await repository.saveEpisode(storedEpisode);
-      } else if (currentPosition != storedEpisode.position) {
+      if (currentPosition != storedEpisode.position) {
         storedEpisode.position = currentPosition;
 
         await repository.saveEpisode(storedEpisode);

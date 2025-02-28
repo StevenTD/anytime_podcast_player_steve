@@ -2,7 +2,7 @@
 // This is a library that provides messages for a de locale. All the
 // messages from the main program should be duplicated here with the same
 // function name.
-
+// @dart=2.12
 // Ignore issues from commonly used lints in this file.
 // ignore_for_file:unnecessary_brace_in_string_interps
 // ignore_for_file:prefer_single_quotes,comment_references, directives_ordering
@@ -36,6 +36,7 @@ class MessageLookup extends MessageLookupByLibrary {
     'audio_settings_playback_speed_label': MessageLookupByLibrary.simpleMessage('Wiedergabe Schnelligkeit'),
     'auto_scroll_transcript_label': MessageLookupByLibrary.simpleMessage('Follow the transcript'),
     'cancel_button_label': MessageLookupByLibrary.simpleMessage('Stornieren'),
+    'cancel_download_button_label': MessageLookupByLibrary.simpleMessage('Download abbrechen'),
     'cancel_option_label': MessageLookupByLibrary.simpleMessage('Stirbuereb'),
     'chapters_label': MessageLookupByLibrary.simpleMessage('Kapitel'),
     'clear_queue_button_label': MessageLookupByLibrary.simpleMessage('WARTESCHLANGE LÖSCHEN'),
@@ -54,8 +55,9 @@ class MessageLookup extends MessageLookupByLibrary {
     'download_episode_button_label': MessageLookupByLibrary.simpleMessage('Folge herunterladen'),
     'downloads': MessageLookupByLibrary.simpleMessage('Herunterladen'),
     'empty_queue_message': MessageLookupByLibrary.simpleMessage('Ihre Warteschlange ist leer'),
+    'episode_details_button_label': MessageLookupByLibrary.simpleMessage('Episodeninformationen anzeigen'),
     'episode_filter_clear_filters_button_label': MessageLookupByLibrary.simpleMessage('Filter zurücksetzen'),
-    'episode_filter_no_episodes_title_description': MessageLookupByLibrary.simpleMessage('Es sind keine Episoden verfügbar, die dem ausgewählten Filter entsprechen'),
+    'episode_filter_no_episodes_title_description': MessageLookupByLibrary.simpleMessage('Dieser Podcast hat keine Episoden, die Ihren Suchkriterien und Filtern entsprechen'),
     'episode_filter_no_episodes_title_label': MessageLookupByLibrary.simpleMessage('Keine Episoden Gefunden'),
     'episode_filter_none_label': MessageLookupByLibrary.simpleMessage('Keiner'),
     'episode_filter_played_label': MessageLookupByLibrary.simpleMessage('Gespielt'),
@@ -65,7 +67,7 @@ class MessageLookup extends MessageLookupByLibrary {
     'episode_label': MessageLookupByLibrary.simpleMessage('Episode'),
     'episode_sort_alphabetical_ascending_label': MessageLookupByLibrary.simpleMessage('Alphabetisch von A bis Z'),
     'episode_sort_alphabetical_descending_label': MessageLookupByLibrary.simpleMessage('Alphabetisch von Z bis A'),
-    'episode_sort_earliest_first_label': MessageLookupByLibrary.simpleMessage('Früheste zuerst'),
+    'episode_sort_earliest_first_label': MessageLookupByLibrary.simpleMessage('Das Älteste zuerst'),
     'episode_sort_latest_first_label': MessageLookupByLibrary.simpleMessage('Das Neueste zuerst'),
     'episode_sort_none_label': MessageLookupByLibrary.simpleMessage('Standard'),
     'episode_sort_semantic_label': MessageLookupByLibrary.simpleMessage('Episoden sortieren'),
@@ -101,6 +103,7 @@ class MessageLookup extends MessageLookupByLibrary {
     'opml_import_export_label': MessageLookupByLibrary.simpleMessage('OPML Importieren/Export'),
     'pause_button_label': MessageLookupByLibrary.simpleMessage('Folge pausieren'),
     'play_button_label': MessageLookupByLibrary.simpleMessage('Folge abspielen'),
+    'play_download_button_label': MessageLookupByLibrary.simpleMessage('Heruntergeladene Episode abspielen'),
     'playback_speed_label': MessageLookupByLibrary.simpleMessage('Stellen Sie die Wiedergabegeschwindigkeit ein'),
     'podcast_funding_dialog_header': MessageLookupByLibrary.simpleMessage('Podcast-Finanzierung'),
     'podcast_options_overflow_menu_semantic_label': MessageLookupByLibrary.simpleMessage('Optionsmenü'),
@@ -110,16 +113,24 @@ class MessageLookup extends MessageLookupByLibrary {
     'queue_clear_label_title': MessageLookupByLibrary.simpleMessage('Warteschlange löschen'),
     'queue_remove_label': MessageLookupByLibrary.simpleMessage('Entfernen'),
     'refresh_feed_label': MessageLookupByLibrary.simpleMessage('Holen Sie sich neue Episoden'),
+    'resume_button_label': MessageLookupByLibrary.simpleMessage('Folge fortsetzen'),
     'rewind_button_label': MessageLookupByLibrary.simpleMessage('10 Sekunden zurückspulen'),
+    'scrim_episode_details_selector': MessageLookupByLibrary.simpleMessage('Episodendetails schließen'),
+    'scrim_episode_filter_selector': MessageLookupByLibrary.simpleMessage('Episodenfilter schließen'),
+    'scrim_episode_sort_selector': MessageLookupByLibrary.simpleMessage('Episodensortierung schließen'),
     'scrim_layout_selector': MessageLookupByLibrary.simpleMessage('Layout-Auswahl schließen'),
+    'scrim_sleep_timer_selector': MessageLookupByLibrary.simpleMessage('Auswahl des Sleep-Timers schließen'),
+    'scrim_speed_selector': MessageLookupByLibrary.simpleMessage('Auswahl der Wiedergabegeschwindigkeit schließen'),
     'search_back_button_label': MessageLookupByLibrary.simpleMessage('Zurück'),
     'search_button_label': MessageLookupByLibrary.simpleMessage('Suche'),
+    'search_episodes_label': MessageLookupByLibrary.simpleMessage('Folgen suchen'),
     'search_for_podcasts_hint': MessageLookupByLibrary.simpleMessage('Suche nach Podcasts'),
     'search_provider_label': MessageLookupByLibrary.simpleMessage('Suchmaschine'),
     'search_transcript_label': MessageLookupByLibrary.simpleMessage('Transkript suchen'),
     'semantic_announce_searching': MessageLookupByLibrary.simpleMessage('Suchen, bitte warten.'),
     'semantic_chapter_link_label': MessageLookupByLibrary.simpleMessage('Weblink zum Kapitel'),
     'semantic_current_chapter_label': MessageLookupByLibrary.simpleMessage('Aktuelles Kapitel'),
+    'semantic_current_value_label': MessageLookupByLibrary.simpleMessage('Aktueller Wert'),
     'semantic_playing_options_collapse_label': MessageLookupByLibrary.simpleMessage('Schließen Sie den Schieberegler für die Wiedergabeoptionen'),
     'semantic_playing_options_expand_label': MessageLookupByLibrary.simpleMessage('Öffnen Sie den Schieberegler für die Wiedergabeoptionen'),
     'semantic_podcast_artwork_label': MessageLookupByLibrary.simpleMessage('Podcast-Artwork'),
@@ -154,6 +165,7 @@ class MessageLookup extends MessageLookupByLibrary {
     'settings_auto_update_episodes_heading': MessageLookupByLibrary.simpleMessage('Folgen in der Detailansicht aktualisieren, nachdem'),
     'settings_auto_update_episodes_never': MessageLookupByLibrary.simpleMessage('Noch nie'),
     'settings_data_divider_label': MessageLookupByLibrary.simpleMessage('DATEN'),
+    'settings_delete_played_label': MessageLookupByLibrary.simpleMessage('Heruntergeladene Episoden nach dem Abspielen löschen'),
     'settings_download_sd_card_label': MessageLookupByLibrary.simpleMessage('Episoden auf SD-Karte herunterladen'),
     'settings_download_switch_card': MessageLookupByLibrary.simpleMessage('Neue Downloads werden auf der SD-Karte gespeichert. Bestehende Downloads bleiben im internen Speicher.'),
     'settings_download_switch_internal': MessageLookupByLibrary.simpleMessage('Neue Downloads werden im internen Speicher gespeichert. Bestehende Downloads verbleiben auf der SD-Karte.'),

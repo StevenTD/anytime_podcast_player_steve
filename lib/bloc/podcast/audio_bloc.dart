@@ -5,6 +5,7 @@
 import 'dart:async';
 
 import 'package:anytime/bloc/bloc.dart';
+import 'package:anytime/core/extensions.dart';
 import 'package:anytime/entities/episode.dart';
 import 'package:anytime/entities/sleep.dart';
 import 'package:anytime/services/audio/audio_player_service.dart';
@@ -130,7 +131,7 @@ class AudioBloc extends Bloc {
   /// Listen for requests to adjust the playback speed.
   void _handlePlaybackSpeedTransitions() {
     _playbackSpeedSubject.listen((double speed) async {
-      await audioPlayerService.setPlaybackSpeed(speed);
+      await audioPlayerService.setPlaybackSpeed(speed.toTenth);
     });
   }
 
@@ -199,13 +200,13 @@ class AudioBloc extends Bloc {
   Stream<int>? get playbackError => audioPlayerService.playbackError;
 
   /// Get the current playing episode
-  Stream<Episode?>? get nowPlaying => audioPlayerService.episodeEvent;
+  ValueStream<Episode?>? get nowPlaying => audioPlayerService.episodeEvent;
 
   /// Get the current transcript (if there is one).
   Stream<TranscriptState>? get nowPlayingTranscript => audioPlayerService.transcriptEvent;
 
   /// Get position and percentage played of playing episode
-  Stream<PositionState>? get playPosition => audioPlayerService.playPosition;
+  ValueStream<PositionState>? get playPosition => audioPlayerService.playPosition;
 
   Stream<Sleep>? get sleepStream => audioPlayerService.sleepStream;
 

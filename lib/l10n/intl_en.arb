@@ -246,6 +246,12 @@
     "type": "text",
     "placeholders": {}
   },
+  "settings_delete_played_label": "Delete downloaded episodes once played",
+  "@settings_delete_played_label": {
+    "description": "Delete downloaded episodes once played setting",
+    "type": "text",
+    "placeholders": {}
+  },
   "settings_download_sd_card_label": "Download episodes to SD card",
   "@settings_download_sd_card_label": {
     "description": "Download episodes to SD card setting",
@@ -909,7 +915,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "episode_filter_no_episodes_title_description": "There are no episodes available that match the selected filter",
+  "episode_filter_no_episodes_title_description": "This podcast has no episodes matching your search criteria and filter",
   "@episode_filter_no_episodes_title_description": {
     "description": "No episodes found description",
     "type": "text",
@@ -992,5 +998,71 @@
     "description": "Episode time remaining slider control label",
     "type": "text",
     "placeholders": {}
-  }
+  },
+  "resume_button_label": "Resume episode",
+  "@resume_button_label": {
+    "description": "Semantic label for the resume button",
+    "type": "text",
+    "placeholders": {}
+  },
+  "play_download_button_label": "Play downloaded episode",
+  "@play_download_button_label": {
+    "description": "Semantic label for the play downloaded episode button",
+    "type": "text",
+    "placeholders": {}
+  },
+  "cancel_download_button_label": "Cancel download",
+  "@cancel_download_button_label": {
+    "description": "Semantic label for the play cancel download button",
+    "type": "text",
+    "placeholders": {}
+  },
+  "episode_details_button_label": "Show episode information",
+  "@episode_details_button_label": {
+    "description": "Semantic label for the show info button.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "scrim_sleep_timer_selector": "Dismiss sleep timer selector",
+  "@scrim_sleep_timer_selector": {
+    "description": "Replaces default scrim label for custom.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "scrim_speed_selector": "Dismiss playback speed selector",
+  "@scrim_speed_selector": {
+    "description": "Replaces default scrim label for custom.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "semantic_current_value_label": "Current value",
+  "@semantic_current_value_label": {
+    "description": "For current sleep setting",
+    "type": "text",
+    "placeholders": {}
+   },
+   "scrim_episode_details_selector": "Dismiss episode details",
+   "@scrim_episode_details_selector": {
+     "description": "Replaces default scrim label for episode details bottom sheet.",
+     "type": "text",
+     "placeholders": {}
+  },
+  "scrim_episode_sort_selector": "Dismiss episode sort",
+  "@scrim_episode_sort_selector": {
+    "description": "Replaces default scrim label for episode sort bottom sheet.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "scrim_episode_filter_selector": "Dismiss episode filter",
+  "@scrim_episode_filter_selector": {
+    "description": "Replaces default scrim label for episode filter bottom sheet.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "search_episodes_label": "Search episodes",
+  "@search_episodes_label": {
+    "description": "Hint text for episode search box",
+    "type": "text",
+    "placeholders": {}
+ }
 }

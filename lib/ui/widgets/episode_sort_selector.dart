@@ -47,9 +47,11 @@ class _EpisodeSortSelectorWidgetState extends State<EpisodeSortSelectorWidget> {
                       Icons.sort,
                       semanticLabel: L.of(context)!.episode_sort_semantic_label,
                     ),
+                    visualDensity: VisualDensity.compact,
                     onPressed: widget.podcast != null && widget.podcast!.subscribed
                         ? () {
                             showModalBottomSheet<void>(
+                                barrierLabel: L.of(context)!.scrim_episode_sort_selector,
                                 isScrollControlled: true,
                                 context: context,
                                 backgroundColor: theme.secondaryHeaderColor,
@@ -96,11 +98,14 @@ class _EpisodeSortSliderState extends State<EpisodeSortSlider> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           const SliderHandle(),
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-            child: Text(
-              L.of(context)!.episode_sort_semantic_label,
-              style: Theme.of(context).textTheme.titleLarge,
+          Semantics(
+            header: true,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+              child: Text(
+                L.of(context)!.episode_sort_semantic_label,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
             ),
           ),
           Padding(
@@ -194,9 +199,12 @@ class EpisodeSortSelectorEntry extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.max,
           children: [
-            Text(
-              label,
-              style: Theme.of(context).textTheme.bodyLarge,
+            Semantics(
+              selected: sort == selectedSort,
+              child: Text(
+                label,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
             ),
             if (sort == selectedSort)
               const Icon(

@@ -133,6 +133,7 @@ class _MiniPlayerBuilderState extends State<_MiniPlayerBuilder>
                 children: [
                   StreamBuilder<Episode?>(
                       stream: audioBloc.nowPlaying,
+                      initialData: audioBloc.nowPlaying?.valueOrNull,
                       builder: (context, snapshot) {
                         return StreamBuilder<AudioState>(
                             stream: audioBloc.playingState,
@@ -271,6 +272,7 @@ class _MiniPlayerBuilderState extends State<_MiniPlayerBuilder>
                       }),
                   StreamBuilder<PositionState>(
                       stream: audioBloc.playPosition,
+                      initialData: audioBloc.playPosition?.valueOrNull,
                       builder: (context, snapshot) {
                         var cw = 0.0;
                         var position = snapshot.hasData

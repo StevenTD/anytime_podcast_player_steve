@@ -45,7 +45,7 @@ import 'package:anytime/ui/themes.dart';
 import 'package:anytime/ui/widgets/action_text.dart';
 import 'package:anytime/ui/widgets/layout_selector.dart';
 import 'package:anytime/ui/widgets/search_slide_route.dart';
-import 'package:dynamic_color/dynamic_color.dart';
+import 'package:app_links/app_links.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -275,13 +275,11 @@ class AnytimePodcastAppState extends State<AnytimePodcastApp>
 class AnytimeHomePage extends StatefulWidget {
   final String? title;
   final bool topBarVisible;
-  final bool inlineSearch;
 
   const AnytimeHomePage({
     super.key,
     this.title,
     this.topBarVisible = true,
-    this.inlineSearch = false,
   });
 
   @override
@@ -290,7 +288,7 @@ class AnytimeHomePage extends StatefulWidget {
 
 class _AnytimeHomePageState extends State<AnytimeHomePage>
     with WidgetsBindingObserver {
-  StreamSubscription? deepLinkSubscription;
+  StreamSubscription<Uri>? deepLinkSubscription;
 
   final log = Logger('_AnytimeHomePageState');
   bool handledInitialLink = false;
@@ -313,27 +311,20 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
   /// We listen to external links from outside the app. For example, someone may navigate
   /// to a web page that supports 'Open with Anytime'.
   void _setupLinkListener() async {
-    /// First, setup a handler to listen for links whilst Anytime is running - a warm start
-    deepLinkSubscription = uriLinkStream.listen((uri) async {
-      _handleLinkEvent(uri!);
+    final appLinks = AppLinks(); // AppLinks is singleton
+
+    // Subscribe to all events (initial link and further)
+    deepLinkSubscription = appLinks.uriLinkStream.listen((uri) {
+      // Do something (navigation, ...)
+      _handleLinkEvent(uri);
     });
-
-    /// Handle initial link
-    if (!handledInitialLink) {
-      handledInitialLink = true;
-
-      final uri = await getInitialUri();
-
-      if (uri != null) {
-        _handleLinkEvent(uri);
-      }
-    }
   }
 
   /// This method handles the actual link supplied from [uni_links], either
   /// at app startup or during running.
   void _handleLinkEvent(Uri uri) async {
-    if (uri.scheme == 'anytime-subscribe' && uri.query.startsWith('uri=')) {
+    if ((uri.scheme == 'anytime-subscribe' || uri.scheme == 'https') &&
+        (uri.query.startsWith('uri=') || uri.query.startsWith('url='))) {
       var path = uri.query.substring(4);
       var loadPodcastBloc = Provider.of<PodcastBloc>(context, listen: false);
       var routeName = NavigationRouteObserver().top!.settings.name;
@@ -614,9 +605,8 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
     if (index == 0) {
       return YourFeed();
     } else if (index == 1) {
-      return Discovery(
+      return const Discovery(
         categories: true,
-        inlineSearch: widget.inlineSearch,
       );
     } else {
       return const Downloads();
@@ -660,6 +650,7 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
         await Navigator.push(
           context,
           MaterialPageRoute<void>(
+            fullscreenDialog: true,
             settings: const RouteSettings(name: 'settings'),
             builder: (context) => const Settings(),
           ),
@@ -721,7 +712,11 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
                         settings: const RouteSettings(name: 'podcastdetails'),
                         builder: (context) => PodcastDetails(
                             Podcast.fromUrl(url: url), podcastBloc)),
-                  ).then((value) => Navigator.pop(context));
+                  ).then((value) {
+                    if (mounted) {
+                      Navigator.of(context).pop();
+                    }
+                  });
                 },
               ),
             ],

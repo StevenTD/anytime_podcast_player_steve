@@ -4,6 +4,7 @@
 
 import 'package:anytime/bloc/podcast/audio_bloc.dart';
 import 'package:anytime/bloc/settings/settings_bloc.dart';
+import 'package:anytime/core/extensions.dart';
 import 'package:anytime/entities/app_settings.dart';
 import 'package:anytime/l10n/L.dart';
 import 'package:anytime/ui/widgets/slider_handle.dart';
@@ -53,6 +54,7 @@ class _SpeedSelectorWidgetState extends State<SpeedSelectorWidget> {
                   showModalBottomSheet<void>(
                       context: context,
                       backgroundColor: theme.secondaryHeaderColor,
+                      barrierLabel: L.of(context)!.scrim_speed_selector,
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(16.0),
@@ -67,12 +69,15 @@ class _SpeedSelectorWidgetState extends State<SpeedSelectorWidget> {
                   height: 48.0,
                   width: 48.0,
                   child: Center(
-                    child: Text(
-                      snapshot.data!.playbackSpeed == 1.0 ? 'x1' : 'x${snapshot.data!.playbackSpeed}',
-                      semanticsLabel: L.of(context)!.playback_speed_label,
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        color: Theme.of(context).iconTheme.color,
+                    child: Semantics(
+                      button: true,
+                      child: Text(
+                        semanticsLabel: '${L.of(context)!.playback_speed_label} ${snapshot.data!.playbackSpeed.toTenth}',
+                        snapshot.data!.playbackSpeed == 1.0 ? 'x1' : 'x${snapshot.data!.playbackSpeed.toTenth}',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          color: Theme.of(context).iconTheme.color,
+                        ),
                       ),
                     ),
                   ),
@@ -130,7 +135,7 @@ class _SpeedSliderState extends State<SpeedSlider> {
         Padding(
           padding: const EdgeInsets.only(top: 16.0),
           child: Text(
-            '${speed.toString()}x',
+            '${speed.toStringAsFixed(1)}x',
             style: Theme.of(context).textTheme.headlineSmall,
           ),
         ),
@@ -147,7 +152,8 @@ class _SpeedSliderState extends State<SpeedSlider> {
                     ? null
                     : () {
                         setState(() {
-                          speed -= 0.25;
+                          speed -= 0.1;
+                          speed = speed.toTenth;
                           audioBloc.playbackSpeed(speed);
                           settingsBloc.setPlaybackSpeed(speed);
                         });
@@ -157,10 +163,10 @@ class _SpeedSliderState extends State<SpeedSlider> {
             Expanded(
               flex: 4,
               child: Slider(
-                value: speed,
+                value: speed.toTenth,
                 min: 0.5,
                 max: 2.0,
-                divisions: 6,
+                divisions: 15,
                 onChanged: (value) {
                   setState(() {
                     speed = value;
@@ -177,11 +183,12 @@ class _SpeedSliderState extends State<SpeedSlider> {
                 tooltip: L.of(context)!.semantics_increase_playback_speed,
                 iconSize: 28.0,
                 icon: const Icon(Icons.add_circle_outline),
-                onPressed: (speed >= 2.0)
+                onPressed: (speed > 1.9)
                     ? null
                     : () {
                         setState(() {
-                          speed += 0.25;
+                          speed += 0.1;
+                          speed = speed.toTenth;
                           audioBloc.playbackSpeed(speed);
                           settingsBloc.setPlaybackSpeed(speed);
                         });

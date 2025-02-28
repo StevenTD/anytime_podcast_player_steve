@@ -49,10 +49,12 @@ class _EpisodeFilterSelectorWidgetState extends State<EpisodeFilterSelectorWidge
                           : Icons.filter_alt_off_outlined,
                       semanticLabel: L.of(context)!.episode_filter_semantic_label,
                     ),
+                    visualDensity: VisualDensity.compact,
                     onPressed: widget.podcast != null && widget.podcast!.subscribed
                         ? () {
                             showModalBottomSheet<void>(
                                 isScrollControlled: true,
+                                barrierLabel: L.of(context)!.scrim_episode_filter_selector,
                                 context: context,
                                 backgroundColor: theme.secondaryHeaderColor,
                                 shape: const RoundedRectangleBorder(
@@ -100,9 +102,12 @@ class _EpisodeFilterSliderState extends State<EpisodeFilterSlider> {
           const SliderHandle(),
           Padding(
             padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-            child: Text(
-              'Episode Filter',
-              style: Theme.of(context).textTheme.titleLarge,
+            child: Semantics(
+              header: true,
+              child: Text(
+                'Episode Filter',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
             ),
           ),
           Padding(
@@ -187,9 +192,12 @@ class EpisodeFilterSelectorEntry extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.max,
           children: [
-            Text(
-              label,
-              style: Theme.of(context).textTheme.bodyLarge,
+            Semantics(
+              selected: filter == selectedFilter,
+              child: Text(
+                label,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
             ),
             if (filter == selectedFilter)
               const Icon(

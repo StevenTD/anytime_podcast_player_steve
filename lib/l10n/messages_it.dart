@@ -2,7 +2,7 @@
 // This is a library that provides messages for a it locale. All the
 // messages from the main program should be duplicated here with the same
 // function name.
-
+// @dart=2.12
 // Ignore issues from commonly used lints in this file.
 // ignore_for_file:unnecessary_brace_in_string_interps
 // ignore_for_file:prefer_single_quotes,comment_references, directives_ordering
@@ -36,6 +36,7 @@ class MessageLookup extends MessageLookupByLibrary {
     'audio_settings_playback_speed_label': MessageLookupByLibrary.simpleMessage('Velocità Riproduzione'),
     'auto_scroll_transcript_label': MessageLookupByLibrary.simpleMessage('Trascrizione sincronizzata'),
     'cancel_button_label': MessageLookupByLibrary.simpleMessage('Annulla'),
+    'cancel_download_button_label': MessageLookupByLibrary.simpleMessage('Annulla il download'),
     'cancel_option_label': MessageLookupByLibrary.simpleMessage('Annulla'),
     'chapters_label': MessageLookupByLibrary.simpleMessage('Capitoli'),
     'clear_queue_button_label': MessageLookupByLibrary.simpleMessage('PULISCI CODA'),
@@ -54,8 +55,9 @@ class MessageLookup extends MessageLookupByLibrary {
     'download_episode_button_label': MessageLookupByLibrary.simpleMessage('Scarica episodio'),
     'downloads': MessageLookupByLibrary.simpleMessage('Scaricati'),
     'empty_queue_message': MessageLookupByLibrary.simpleMessage('La tua coda è vuota'),
+    'episode_details_button_label': MessageLookupByLibrary.simpleMessage('Mostra le informazioni sull\'episodio'),
     'episode_filter_clear_filters_button_label': MessageLookupByLibrary.simpleMessage('Pulisci i Filtri'),
-    'episode_filter_no_episodes_title_description': MessageLookupByLibrary.simpleMessage('Non ci sono episodi disponibili che corrispondo ai filtri selezionati'),
+    'episode_filter_no_episodes_title_description': MessageLookupByLibrary.simpleMessage('Questo podcast non ha episodi che corrispondono ai tuoi criteri di ricerca e filtro'),
     'episode_filter_no_episodes_title_label': MessageLookupByLibrary.simpleMessage('Nessun episodio trovato'),
     'episode_filter_none_label': MessageLookupByLibrary.simpleMessage('Nessuno'),
     'episode_filter_played_label': MessageLookupByLibrary.simpleMessage('Riprodotto'),
@@ -101,6 +103,7 @@ class MessageLookup extends MessageLookupByLibrary {
     'opml_import_export_label': MessageLookupByLibrary.simpleMessage('OPML Importa/Esporta'),
     'pause_button_label': MessageLookupByLibrary.simpleMessage('Sospendi episodio'),
     'play_button_label': MessageLookupByLibrary.simpleMessage('Riproduci episodio'),
+    'play_download_button_label': MessageLookupByLibrary.simpleMessage('Riproduci l\'episodio scaricato'),
     'playback_speed_label': MessageLookupByLibrary.simpleMessage('Velocità di riproduzione'),
     'podcast_funding_dialog_header': MessageLookupByLibrary.simpleMessage('Podcast Fondi'),
     'podcast_options_overflow_menu_semantic_label': MessageLookupByLibrary.simpleMessage('Menu opzioni'),
@@ -110,16 +113,24 @@ class MessageLookup extends MessageLookupByLibrary {
     'queue_clear_label_title': MessageLookupByLibrary.simpleMessage('Svuota la Coda'),
     'queue_remove_label': MessageLookupByLibrary.simpleMessage('Rimuovi'),
     'refresh_feed_label': MessageLookupByLibrary.simpleMessage('Recupera nuovi episodi'),
+    'resume_button_label': MessageLookupByLibrary.simpleMessage('Riprendi episodio'),
     'rewind_button_label': MessageLookupByLibrary.simpleMessage('Riavvolgi di 10 secondi'),
+    'scrim_episode_details_selector': MessageLookupByLibrary.simpleMessage('Chiudi i dettagli dell\'episodio'),
+    'scrim_episode_filter_selector': MessageLookupByLibrary.simpleMessage('Chiudi il filtro degli episodi'),
+    'scrim_episode_sort_selector': MessageLookupByLibrary.simpleMessage('Chiudi ordinamento degli episodi'),
     'scrim_layout_selector': MessageLookupByLibrary.simpleMessage('Chiudi il selettore del layout'),
+    'scrim_sleep_timer_selector': MessageLookupByLibrary.simpleMessage('Chiudere il selettore del timer di spegnimento'),
+    'scrim_speed_selector': MessageLookupByLibrary.simpleMessage('Chiudere il selettore della velocità di riproduzione'),
     'search_back_button_label': MessageLookupByLibrary.simpleMessage('Indietro'),
     'search_button_label': MessageLookupByLibrary.simpleMessage('Cerca'),
+    'search_episodes_label': MessageLookupByLibrary.simpleMessage('Cerca episodi'),
     'search_for_podcasts_hint': MessageLookupByLibrary.simpleMessage('Ricerca dei podcasts'),
     'search_provider_label': MessageLookupByLibrary.simpleMessage('Provider di ricerca'),
     'search_transcript_label': MessageLookupByLibrary.simpleMessage('Cerca trascrizione'),
     'semantic_announce_searching': MessageLookupByLibrary.simpleMessage('Ricerca in corso, attender prego.'),
     'semantic_chapter_link_label': MessageLookupByLibrary.simpleMessage('Web link al capitolo'),
     'semantic_current_chapter_label': MessageLookupByLibrary.simpleMessage('Capitolo attuale'),
+    'semantic_current_value_label': MessageLookupByLibrary.simpleMessage('Impostazioni correnti'),
     'semantic_playing_options_collapse_label': MessageLookupByLibrary.simpleMessage('Chiudere il cursore delle opzioni di riproduzione'),
     'semantic_playing_options_expand_label': MessageLookupByLibrary.simpleMessage('Aprire il cursore delle opzioni di riproduzione'),
     'semantic_podcast_artwork_label': MessageLookupByLibrary.simpleMessage('Podcast artwork'),
@@ -154,6 +165,7 @@ class MessageLookup extends MessageLookupByLibrary {
     'settings_auto_update_episodes_heading': MessageLookupByLibrary.simpleMessage('Aggiorna gli episodi nella schermata successiva'),
     'settings_auto_update_episodes_never': MessageLookupByLibrary.simpleMessage('Mai'),
     'settings_data_divider_label': MessageLookupByLibrary.simpleMessage('DATI'),
+    'settings_delete_played_label': MessageLookupByLibrary.simpleMessage('Elimina gli episodi scaricati una volta riprodotti'),
     'settings_download_sd_card_label': MessageLookupByLibrary.simpleMessage('Scarica gli episodi nella card SD'),
     'settings_download_switch_card': MessageLookupByLibrary.simpleMessage('I nuovi downloads saranno salvati nella card SD. I downloads esistenti rimarranno nello storage interno.'),
     'settings_download_switch_internal': MessageLookupByLibrary.simpleMessage('I nuovi downloads saranno salvati nello storage interno. I downloads esistenti rimarranno nella card SD.'),

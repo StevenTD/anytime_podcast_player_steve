@@ -23,30 +23,29 @@ class PodcastHtml extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return SingleChildScrollView(
-      child: Html(
-        data: content,
-        extensions: const [
-          SvgHtmlExtension(),
-          TableHtmlExtension(),
-        ],
-        style: {
-          'html': Style(
-            fontWeight: textTheme.bodyLarge!.fontWeight,
-            fontSize: fontSize ?? FontSize.large,
+    return Html(
+      data: content,
+      extensions: const [
+        SvgHtmlExtension(),
+        TableHtmlExtension(),
+      ],
+      style: {
+        'html': Style(
+          fontSize: FontSize(16.25),
+          lineHeight: LineHeight.percent(110),
+        ),
+        'p': Style(
+          margin: Margins.only(
+            top: 0,
+            bottom: 12,
           ),
-          'p': Style(
-            margin: Margins.only(top: 0, bottom: 12),
-          )
-        },
-        onLinkTap: (url, _, __) =>
-            canLaunchUrl(Uri.parse(url!)).then((value) => launchUrl(
-                  Uri.parse(url),
-                  mode: LaunchMode.externalApplication,
-                )),
-      ),
+        ),
+      },
+      onLinkTap: (url, _, __) =>
+          canLaunchUrl(Uri.parse(url!)).then((value) => launchUrl(
+                Uri.parse(url),
+                mode: LaunchMode.externalApplication,
+              )),
     );
   }
 }

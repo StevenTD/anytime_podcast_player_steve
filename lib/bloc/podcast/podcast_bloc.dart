@@ -65,10 +65,13 @@ class PodcastBloc extends Bloc {
   /// Receives subscription and mark/clear as played events.
   final PublishSubject<PodcastEvent> _podcastEvent = PublishSubject<PodcastEvent>();
 
+  final BehaviorSubject<String> _podcastSearchEvent = BehaviorSubject<String>();
+
   final BehaviorSubject<BlocState<void>> _backgroundLoadStream = BehaviorSubject<BlocState<void>>();
 
   Podcast? _podcast;
   List<Episode> _episodes = <Episode>[];
+  String _searchTerm = '';
   late Feed lastFeed;
   bool first = true;
 
@@ -99,6 +102,9 @@ class PodcastBloc extends Bloc {
 
     /// Listen to Podcast subscription, mark/cleared played events
     _listenPodcastStateEvents();
+
+    /// Listen for episode search requests
+    _listenPodcastSearchEvents();
   }
 
   void _loadSubscriptions() async {
@@ -115,7 +121,7 @@ class PodcastBloc extends Bloc {
       lastFeed = feed;
 
       _episodes = [];
-      _episodesStream.add(_episodes);
+      _refresh();
 
       _podcastStream.sink.add(BlocLoadingState<Podcast>(feed.podcast));
 
@@ -178,7 +184,7 @@ class PodcastBloc extends Bloc {
     if (_podcast != null && _podcast?.url != null) {
       if (lastFeed.podcast.url == _podcast!.url) {
         _episodes = _podcast!.episodes;
-        _episodesStream.add(_episodes);
+        _refresh();
 
         _podcastStream.sink.add(BlocPopulatedState<Podcast>(results: _podcast));
       }
@@ -186,7 +192,7 @@ class PodcastBloc extends Bloc {
   }
 
   void _refresh() {
-    _episodesStream.add(_episodes);
+    applySearchFilter();
   }
 
   Future<void> _loadNewEpisodes(Feed feed) async {
@@ -207,7 +213,7 @@ class PodcastBloc extends Bloc {
         _podcastStream.sink.add(BlocPopulatedState<Podcast>(results: _podcast));
       } else if (_podcast!.updatedEpisodes) {
         log.fine('We have updated episodes to re-display');
-        _episodesStream.add(_episodes);
+        _refresh();
       }
     }
 
@@ -243,7 +249,7 @@ class PodcastBloc extends Bloc {
         print('Download Episode Not Null');
         episode.downloadState = e.downloadState = DownloadState.queued;
 
-        _episodesStream.add(_episodes);
+        _refresh();
 
         var result = await downloadService.downloadEpisode(e);
 
@@ -251,9 +257,9 @@ class PodcastBloc extends Bloc {
         // and then restore to none.
         if (!result) {
           episode.downloadState = e.downloadState = DownloadState.failed;
-          _episodesStream.add(_episodes);
+          _refresh();
           episode.downloadState = e.downloadState = DownloadState.none;
-          _episodesStream.add(_episodes);
+          _refresh();
         }
       }else {
         print('Download Episode ');
@@ -290,7 +296,7 @@ class PodcastBloc extends Bloc {
 
           if (episode != null) {
             // Update the stream.
-            _episodesStream.add(_episodes);
+            _refresh();
           }
         } else {
           log.severe('Downloadable not found with id ${downloadProgress.id}');
@@ -307,7 +313,7 @@ class PodcastBloc extends Bloc {
 
       if (eidx != -1) {
         _episodes[eidx] = state.episode;
-        _episodesStream.add(_episodes);
+        _refresh();
       }
     });
   }
@@ -424,6 +430,23 @@ class PodcastBloc extends Bloc {
     });
   }
 
+  void _listenPodcastSearchEvents() {
+    _podcastSearchEvent.debounceTime(const Duration(milliseconds: 200)).listen((search) {
+      _searchTerm = search;
+      applySearchFilter();
+    });
+  }
+
+  void applySearchFilter() {
+    if (_searchTerm.isEmpty) {
+      _episodesStream.add(_episodes);
+    } else {
+      var searchFilteredEpisodes =
+          _episodes.where((e) => e.title!.toLowerCase().contains(_searchTerm.trim().toLowerCase())).toList();
+      _episodesStream.add(searchFilteredEpisodes);
+    }
+  }
+
   @override
   void detach() {
     downloadService.dispose();
@@ -449,6 +472,8 @@ class PodcastBloc extends Bloc {
   void Function(Episode?) get downloadEpisode => _downloadEpisode.add;
 
   void Function(PodcastEvent) get podcastEvent => _podcastEvent.add;
+
+  void Function(String) get podcastSearchEvent => _podcastSearchEvent.add;
 
   /// Stream containing the current state of the podcast load.
   Stream<BlocState<Podcast>> get details => _podcastStream.stream;
