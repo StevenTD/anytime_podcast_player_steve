@@ -54,10 +54,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 import 'package:sliver_tools/sliver_tools.dart';
-import 'package:uni_links/uni_links.dart';
+// import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:material_color_utilities/material_color_utilities.dart';
-import 'package:is_lock_screen2/is_lock_screen2.dart';
+// import 'package:is_lock_screen2/is_lock_screen2.dart';
+import 'package:dynamic_color/dynamic_color.dart';
 
 ColorScheme? currentDynamicColorsLight;
 ColorScheme? currentDynamicColorsDark;
@@ -167,25 +168,26 @@ class AnytimePodcastAppState extends State<AnytimePodcastApp>
     });
   }
 
-  Future<bool?> checkLockScreen() async {
-    var lock = await isLockScreen();
+  // Future<bool?> checkLockScreen() async {
+  //   var lock = await isLockScreen();
 
-    return lock;
-  }
+  //   return lock;
+  // }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    _state = state;
-    if (state == AppLifecycleState.inactive) {
-      checkLockScreen().then((isLocked) {
-        if (!isLocked!) {
-          debugPrint('App minimized!');
-        }
-      });
-    } else if (state == AppLifecycleState.resumed) {
-      debugPrint('App resumed, reapplying theme');
-      setCurrentColor();
-    }
+//    _state = state;
+    setCurrentColor();
+    // if (state == AppLifecycleState.inactive) {
+    //   checkLockScreen().then((isLocked) {
+    //     if (!isLocked!) {
+    //       debugPrint('App minimized!');
+    //     }
+    //   });
+    // } else if (state == AppLifecycleState.resumed) {
+    //   debugPrint('App resumed, reapplying theme');
+    //   setCurrentColor();
+    // }
   }
 
   @override
