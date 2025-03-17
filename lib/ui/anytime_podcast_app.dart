@@ -628,7 +628,7 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
             applicationName: 'Anytime Podcast Player',
             applicationVersion: 'v${Environment.projectVersion}',
             applicationIcon: Image.asset(
-              'assets/images/anytime-logo-s.png',
+              'assets/images/AdoptCast.png',
               width: 52.0,
               height: 52.0,
             ),
@@ -783,14 +783,14 @@ class TitleWidget extends StatelessWidget {
       child: Row(
         children: <Widget>[
           Text(
-            'Your ',
-            style: _titleTheme1,
-          ),
-          Text(
-            'Player',
+            'Adapt',
             style: Theme.of(context).brightness == Brightness.light
                 ? _titleTheme2Light
                 : _titleTheme2Dark,
+          ),
+          Text(
+            'Cast',
+            style: _titleTheme1,
           ),
         ],
       ),
