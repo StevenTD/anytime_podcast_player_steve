@@ -347,7 +347,6 @@ class _EpisodeTileState extends State<EpisodeTileMoreDetails> {
               episode: widget.episode,
               download: true,
               play: true,
-
             ),
           ),
         ),
@@ -375,15 +374,15 @@ class EpisodeTransportControls extends StatelessWidget {
 
     if (play) {
       buttons.add(
-         Padding(
-           padding: const EdgeInsets.only(right: 8.0),
-           child: Semantics(
-             container: true,
-             child: PlayControlWithRect(
+        Padding(
+          padding: const EdgeInsets.only(right: 8.0),
+          child: Semantics(
+            container: true,
+            child: PlayControlWithRect(
               episode: episode,
-                     ),
-           ),
-         ),
+            ),
+          ),
+        ),
       );
     }
 

@@ -209,6 +209,7 @@ class AnytimePodcastAppState extends State<AnytimePodcastApp>
           Provider<EpisodeBloc>(
             create: (_) => EpisodeBloc(
                 podcastService: widget.podcastService!,
+                downloadService: widget.downloadService,
                 audioPlayerService: widget.audioPlayerService),
             dispose: (_, value) => value.dispose(),
           ),

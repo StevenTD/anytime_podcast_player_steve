@@ -10,6 +10,7 @@ import 'package:anytime/entities/podcast.dart';
 import 'package:anytime/l10n/L.dart';
 import 'package:anytime/state/bloc_state.dart';
 import 'package:anytime/state/queue_event_state.dart';
+import 'package:anytime/ui/podcast/podcast_details.dart';
 import 'package:anytime/ui/podcast/podcast_episode_list.dart';
 import 'package:anytime/ui/widgets/episode_tile.dart';
 import 'package:anytime/ui/widgets/platform_progress_indicator.dart';
@@ -52,13 +53,25 @@ class _EpisodesState extends State<Episodes> {
         final state = snapshot.data;
 
         if (state is BlocPopulatedState) {
-          return PodcastEpisodeList(
-            episodes: state.results,
-            play: true,
-            download: true,
-            icon: Icons.cloud_download,
-            emptyMessage: L.of(context)!.no_ep_followed_message,
-          );
+          return StreamBuilder<List<Episode?>?>(
+              stream: bloc.episodesStream,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return snapshot.data!.isNotEmpty
+                      ? PodcastEpisodeList(
+                          episodes: snapshot.data!,
+                          play: true,
+                          download: true,
+                        )
+                      : const SliverToBoxAdapter(child: NoEpisodesFound());
+                } else {
+                  return const SliverToBoxAdapter(
+                      child: SizedBox(
+                    height: 200,
+                    width: 200,
+                  ));
+                }
+              });
         } else {
           if (state is BlocLoadingState) {
             return const SliverFillRemaining(
@@ -102,7 +115,8 @@ class _EpisodesState extends State<Episodes> {
                 var episode = episodes[index];
 
                 if (snapshot.hasData) {
-                  queued = snapshot.data!.queue.any((element) => element.guid == episode.guid);
+                  queued = snapshot.data!.queue
+                      .any((element) => element.guid == episode.guid);
                 }
 
                 return EpisodeTile(
