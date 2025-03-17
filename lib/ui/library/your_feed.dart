@@ -4,6 +4,7 @@ import 'package:anytime/bloc/podcast/podcast_bloc.dart';
 import 'package:anytime/entities/podcast.dart';
 import 'package:anytime/ui/library/discovery.dart';
 import 'package:anytime/ui/library/episodes.dart';
+import 'package:anytime/ui/widgets/carousel_view.dart';
 import 'package:anytime/ui/widgets/tile_image.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
@@ -12,14 +13,15 @@ import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
-
 class YourFeed extends StatefulWidget {
   static const fetchSize = 20;
   final bool categories;
   final bool inlineSearch;
-  const YourFeed({  super.key,
+  const YourFeed({
+    super.key,
     this.categories = false,
-    this.inlineSearch = false,});
+    this.inlineSearch = false,
+  });
 
   @override
   State<YourFeed> createState() => _YourFeedState();
@@ -36,40 +38,27 @@ class _YourFeedState extends State<YourFeed> {
       count: Discovery.fetchSize,
       genre: bloc.selectedGenre.genre,
       countryCode:
-      PlatformDispatcher.instance.locale.countryCode?.toLowerCase() ?? '',
+          PlatformDispatcher.instance.locale.countryCode?.toLowerCase() ?? '',
       languageCode: PlatformDispatcher.instance.locale.languageCode,
     ));
   }
 
   @override
   Widget build(BuildContext context) {
-    final bloc = Provider.of<DiscoveryBloc>(context);
+    //final bloc = Provider.of<DiscoveryBloc>(context);
 
-    return  MultiSliver(children: [
-      Padding(
-        padding: const EdgeInsets.only(left:15.0,right: 12.0),
-        child: Row(
-          children: [
-            Text('Subscription', style: Theme.of(context).textTheme.titleMedium,),
-            Spacer(),
-            TextButton(
-              onPressed: (){},
-
-              child: Text('More', )),
-          ],
-        ),
-      ),
-
-      SliverPersistentHeader(
-        delegate: MyHeaderDelegateSubscription(bloc),
-        pinned: true,
-        floating: true,
-      ),
-      Divider(),
-      const Episodes()]);;
+    return MultiSliver(children: const [
+      SizedBox(height: 200, width: 200, child: CarouselViewSubscriptions()),
+      // SliverPersistentHeader(
+      //   delegate: MyHeaderDelegateSubscription(bloc),
+      //   pinned: true,
+      //   floating: true,
+      // ),
+      // Divider(),
+      Episodes()
+    ]);
   }
 }
-
 
 class MyHeaderDelegateSubscription extends SliverPersistentHeaderDelegate {
   final DiscoveryBloc discoveryBloc;
@@ -93,22 +82,23 @@ class MyHeaderDelegateSubscription extends SliverPersistentHeaderDelegate {
       true;
 }
 
-
 class SubscriptionSelectorWidget extends StatefulWidget {
   final ItemScrollController itemScrollController = ItemScrollController();
 
   SubscriptionSelectorWidget({
     super.key,
-  //  required this.discoveryBloc,
+    //  required this.discoveryBloc,
   });
 
- // final DiscoveryBloc discoveryBloc;
+  // final DiscoveryBloc discoveryBloc;
 
   @override
-  State<SubscriptionSelectorWidget> createState() => _SubsciprionSelectorWidgetState();
+  State<SubscriptionSelectorWidget> createState() =>
+      _SubsciprionSelectorWidgetState();
 }
 
-class _SubsciprionSelectorWidgetState extends State<SubscriptionSelectorWidget> {
+class _SubsciprionSelectorWidgetState
+    extends State<SubscriptionSelectorWidget> {
   @override
   Widget build(BuildContext context) {
     //String selectedCategory = widget.discoveryBloc.selectedGenre.genre;
@@ -121,66 +111,64 @@ class _SubsciprionSelectorWidgetState extends State<SubscriptionSelectorWidget> 
           stream: podcastBloc.subscriptions,
           initialData: const [],
           builder: (context, snapshot) {
-          //  var i = podcastBloc.selectedGenre.index;
+            //  var i = podcastBloc.selectedGenre.index;
 
             return snapshot.hasData && snapshot.data!.isNotEmpty
                 ? ScrollablePositionedList.builder(
-              //  initialScrollIndex: (i > 0) ? i : 0,
-                itemScrollController: widget.itemScrollController,
-                itemCount: snapshot.data!.length,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, i) {
-                  final item = snapshot.data![i];
-                  final padding = i == 0 ? 14.0 : 2.0;
+                    //  initialScrollIndex: (i > 0) ? i : 0,
+                    itemScrollController: widget.itemScrollController,
+                    itemCount: snapshot.data!.length,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, i) {
+                      final item = snapshot.data![i];
+                      final padding = i == 0 ? 14.0 : 2.0;
 
-                  return Container(
-                    margin: EdgeInsets.only(left: padding),
-                    child: Card(
-                      // color: item == selectedCategory ||
-                      //     (selectedCategory.isEmpty && i == 0)
-                      //     ? Theme.of(context).cardTheme.shadowColor
-                      //     : Theme.of(context).cardTheme.color,
-                      // child: TextButton(
-                      //   style: TextButton.styleFrom(
-                      //     foregroundColor: const Color(0xffffffff),
-                      //     visualDensity: VisualDensity.compact,
-                      //   ),
-                      //   onPressed: () {
-                      //     setState(() {
-                      //     //  selectedCategory = item;
-                      //     });
-                      //
-                      //     widget.discoveryBloc.discover(DiscoveryChartEvent(
-                      //       count: Discovery.fetchSize,
-                      //       genre: item,
-                      //       countryCode: PlatformDispatcher
-                      //           .instance.locale.countryCode
-                      //           ?.toLowerCase() ??
-                      //           '',
-                      //       languageCode: PlatformDispatcher
-                      //           .instance.locale.languageCode,
-                      //     ));
-                      //   },
-                        child: Column(
-                          children: [
-
-                            ClipRRect(
-                              borderRadius: BorderRadius.all(Radius.circular(15)),
-                              child: TileImage(
-                                url: item.imageUrl!,
-                                size: 60,
-                              ),
-                            )
-                          ],
+                      return Container(
+                        margin: EdgeInsets.only(left: padding),
+                        child: Card(
+                          // color: item == selectedCategory ||
+                          //     (selectedCategory.isEmpty && i == 0)
+                          //     ? Theme.of(context).cardTheme.shadowColor
+                          //     : Theme.of(context).cardTheme.color,
+                          // child: TextButton(
+                          //   style: TextButton.styleFrom(
+                          //     foregroundColor: const Color(0xffffffff),
+                          //     visualDensity: VisualDensity.compact,
+                          //   ),
+                          //   onPressed: () {
+                          //     setState(() {
+                          //     //  selectedCategory = item;
+                          //     });
+                          //
+                          //     widget.discoveryBloc.discover(DiscoveryChartEvent(
+                          //       count: Discovery.fetchSize,
+                          //       genre: item,
+                          //       countryCode: PlatformDispatcher
+                          //           .instance.locale.countryCode
+                          //           ?.toLowerCase() ??
+                          //           '',
+                          //       languageCode: PlatformDispatcher
+                          //           .instance.locale.languageCode,
+                          //     ));
+                          //   },
+                          child: Column(
+                            children: [
+                              ClipRRect(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15)),
+                                child: TileImage(
+                                  url: item.imageUrl!,
+                                  size: 60,
+                                ),
+                              )
+                            ],
+                          ),
+                          //),
                         ),
-                      //),
-                    ),
-                  );
-                })
+                      );
+                    })
                 : Container();
           }),
     );
   }
 }
-
-
