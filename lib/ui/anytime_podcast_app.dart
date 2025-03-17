@@ -784,7 +784,7 @@ class TitleWidget extends StatelessWidget {
       child: Row(
         children: <Widget>[
           Text(
-            'Adapt',
+            'Tinig',
             style: Theme.of(context).brightness == Brightness.light
                 ? _titleTheme2Light
                 : _titleTheme2Dark,
