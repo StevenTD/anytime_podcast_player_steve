@@ -13,6 +13,7 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:logging/logging.dart';
 
 /// A [DownloadManager] for handling downloading of podcasts on a mobile device.
+@pragma('vm:entry-point')
 class MobileDownloaderManager implements DownloadManager {
   static const portName = 'downloader_send_port';
   final log = Logger('MobileDownloaderManager');
@@ -41,11 +42,14 @@ class MobileDownloaderManager implements DownloadManager {
     // AnyTime was close or in the background.
     if (tasks != null && tasks.isNotEmpty) {
       for (var t in tasks) {
-        _updateDownloadState(id: t.taskId, progress: t.progress, status: t.status);
+        _updateDownloadState(
+            id: t.taskId, progress: t.progress, status: t.status);
 
         /// If we are not queued or running we can safely clean up this event
-        if (t.status != DownloadTaskStatus.enqueued && t.status != DownloadTaskStatus.running) {
-          FlutterDownloader.remove(taskId: t.taskId, shouldDeleteContent: false);
+        if (t.status != DownloadTaskStatus.enqueued &&
+            t.status != DownloadTaskStatus.running) {
+          FlutterDownloader.remove(
+              taskId: t.taskId, shouldDeleteContent: false);
         }
       }
     }
@@ -62,7 +66,8 @@ class MobileDownloaderManager implements DownloadManager {
   }
 
   @override
-  Future<String?> enqueueTask(String url, String downloadPath, String fileName) async {
+  Future<String?> enqueueTask(
+      String url, String downloadPath, String fileName) async {
     return await FlutterDownloader.enqueue(
       url: url,
       savedDir: downloadPath,
@@ -81,7 +86,10 @@ class MobileDownloaderManager implements DownloadManager {
     downloadController.close();
   }
 
-  void _updateDownloadState({required String id, required int progress, required DownloadTaskStatus status}) {
+  void _updateDownloadState(
+      {required String id,
+      required int progress,
+      required DownloadTaskStatus status}) {
     var state = DownloadState.none;
     var updateTime = DateTime.now().millisecondsSinceEpoch;
 
@@ -113,6 +121,7 @@ class MobileDownloaderManager implements DownloadManager {
 
   @pragma('vm:entry-point')
   static void downloadCallback(String id, int status, int progress) {
-    IsolateNameServer.lookupPortByName('downloader_send_port')?.send([id, status, progress]);
+    IsolateNameServer.lookupPortByName('downloader_send_port')
+        ?.send([id, status, progress]);
   }
 }
