@@ -5,6 +5,7 @@
 import 'package:anytime/bloc/discovery/discovery_bloc.dart';
 import 'package:anytime/bloc/discovery/discovery_state_event.dart';
 import 'package:anytime/ui/library/discovery_results.dart';
+import 'package:anytime/ui/widgets/carousel_category_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -50,11 +51,15 @@ class _DiscoveryState extends State<Discovery> {
     return widget.categories
         ? MultiSliver(
             children: [
-              SliverPersistentHeader(
-                delegate: MyHeaderDelegate(bloc),
-                pinned: true,
-                floating: false,
+              CarouselExample(
+                discoveryBloc: bloc,
               ),
+              // SliverPersistentHeader(
+              //   delegate: CarouselCategorySelectorDelegate(),
+              //   // delegate: MyHeaderDelegate(bloc),
+              //   pinned: true,
+              //   floating: false,
+              // ),
               DiscoveryResults(data: bloc.results),
             ],
           )
