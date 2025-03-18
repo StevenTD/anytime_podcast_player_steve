@@ -66,6 +66,7 @@ class _EpisodeTileState extends State<EpisodeTileMoreDetails> {
               ? L.of(context)!.semantics_episode_tile_expanded_hint
               : L.of(context)!.semantics_episode_tile_collapsed_hint,
           child: ExpansionTile(
+            shape: const Border(),
             tilePadding: const EdgeInsets.fromLTRB(16.0, 0.0, 8.0, 0.0),
             key: Key('PT${widget.episode.guid}'),
             onExpansionChanged: (isExpanded) {
