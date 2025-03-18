@@ -626,7 +626,7 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
       case 'about':
         showAboutDialog(
           context: context,
-          applicationName: 'AdaptCast Podcast Player',
+          applicationName: 'Tinig Podcast Player',
           applicationVersion: 'v${Environment.projectVersion}',
           applicationIcon: Image.asset(
             'assets/images/AdaptCast.png',
@@ -797,7 +797,7 @@ class TitleWidget extends StatelessWidget {
                 : _titleTheme2Dark,
           ),
           Text(
-            'Cast',
+            ' Podcast',
             style: _titleTheme1,
           ),
         ],
