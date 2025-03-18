@@ -487,18 +487,23 @@ class NowPlayingTabs extends StatelessWidget {
           value: Theme.of(context).appBarTheme.systemOverlayStyle!.copyWith(
               systemNavigationBarColor: Theme.of(context).secondaryHeaderColor),
           child: FutureBuilder(
-              future: ColorScheme.fromImageProvider(provider: imageProvider),
+              future:
+                  null, // ColorScheme.fromImageProvider(provider: imageProvider),
               builder: (context, snapshot) {
-                final dynamicColor = snapshot.data?.primaryContainer;
+                // final dynamicColor = snapshot.data?.primaryContainer;
 
                 return Scaffold(
-                  backgroundColor: snapshot.hasData
-                      ? dynamicColor?.withAlpha(100)
-                      : Theme.of(context).scaffoldBackgroundColor,
+                  backgroundColor:
+                      //snapshot.hasData
+                      // ? dynamicColor?.withAlpha(100)
+                      //:
+                      Theme.of(context).scaffoldBackgroundColor,
                   appBar: AppBar(
-                    backgroundColor: snapshot.hasData
-                        ? dynamicColor?.withAlpha(100)
-                        : Theme.of(context).scaffoldBackgroundColor,
+                    backgroundColor:
+                        //snapshot.hasData
+                        //   ? dynamicColor?.withAlpha(100)
+                        // :
+                        Theme.of(context).scaffoldBackgroundColor,
                     elevation: 0.0,
                     leading: IconButton(
                       tooltip:
