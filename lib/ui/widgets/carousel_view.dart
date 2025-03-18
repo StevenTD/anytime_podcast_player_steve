@@ -1,5 +1,6 @@
 import 'package:anytime/bloc/podcast/podcast_bloc.dart';
 import 'package:anytime/entities/podcast.dart';
+import 'package:anytime/ui/podcast/podcast_details.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -61,6 +62,17 @@ class _CarouselExampleState extends State<CarouselExample> {
                     ConstrainedBox(
                       constraints: BoxConstraints(maxHeight: height / 4),
                       child: CarouselView.weighted(
+                        onTap: (value) {
+                          final podcast = snapshot.data![value];
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                                settings:
+                                    const RouteSettings(name: 'podcastdetails'),
+                                builder: (context) =>
+                                    PodcastDetails(podcast, podcastBloc)),
+                          );
+                        },
                         controller: controller,
                         itemSnapping: true,
                         consumeMaxWeight: false,
@@ -169,14 +181,18 @@ class HeroLayoutCard extends StatelessWidget {
           child: OverflowBox(
             maxWidth: width * 7 / 8,
             minWidth: width * 7 / 8,
-            child: CachedNetworkImage(
-              fit: BoxFit.cover,
-              imageUrl: podcast.imageUrl ?? '',
-              progressIndicatorBuilder: (context, url, downloadProgress) =>
-                  Center(
-                      child: CircularProgressIndicator(
-                          value: downloadProgress.progress)),
-              errorWidget: (context, url, error) => const Icon(Icons.error),
+            child: Hero(
+              key: Key('tilehero${podcast.imageUrl}:${podcast.link}'),
+              tag: '${podcast.imageUrl}:${podcast.link}',
+              child: CachedNetworkImage(
+                fit: BoxFit.cover,
+                imageUrl: podcast.imageUrl ?? '',
+                progressIndicatorBuilder: (context, url, downloadProgress) =>
+                    Center(
+                        child: CircularProgressIndicator(
+                            value: downloadProgress.progress)),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
+              ),
             ),
           ),
         ),
