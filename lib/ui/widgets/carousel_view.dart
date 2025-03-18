@@ -49,10 +49,10 @@ class _CarouselExampleState extends State<CarouselExample> {
                             'Subscription',
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
-                          Spacer(),
+                          const Spacer(),
                           TextButton(
                               onPressed: () {},
-                              child: Text(
+                              child: const Text(
                                 'More',
                               )),
                         ],
@@ -176,7 +176,7 @@ class HeroLayoutCard extends StatelessWidget {
                   Center(
                       child: CircularProgressIndicator(
                           value: downloadProgress.progress)),
-              errorWidget: (context, url, error) => Icon(Icons.error),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
             ),
           ),
         ),
@@ -200,7 +200,7 @@ class HeroLayoutCard extends StatelessWidget {
                   color: Colors.white,
                   shadows: [
                     Shadow(
-                      offset: Offset(1.0, 1.0),
+                      offset: const Offset(1.0, 1.0),
                       blurRadius: 3.0,
                       color: Colors.black.withValues(alpha: 5),
                     ),
@@ -216,7 +216,7 @@ class HeroLayoutCard extends StatelessWidget {
                   color: Colors.white,
                   shadows: [
                     Shadow(
-                      offset: Offset(1.0, 1.0),
+                      offset: const Offset(1.0, 1.0),
                       blurRadius: 3.0,
                       color: Colors.black.withValues(alpha: 5),
                     ),
