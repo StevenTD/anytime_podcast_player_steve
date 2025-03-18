@@ -174,16 +174,16 @@ class HeroLayoutCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.sizeOf(context).width;
-    return Stack(
-      alignment: AlignmentDirectional.bottomStart,
-      children: <Widget>[
-        ClipRect(
-          child: OverflowBox(
-            maxWidth: width * 7 / 8,
-            minWidth: width * 7 / 8,
-            child: Hero(
-              key: Key('tilehero${podcast.imageUrl}:${podcast.link}'),
-              tag: '${podcast.imageUrl}:${podcast.link}',
+    return Hero(
+      key: Key('tilehero${podcast.imageUrl}:${podcast.link}'),
+      tag: '${podcast.imageUrl}:${podcast.link}',
+      child: Stack(
+        alignment: AlignmentDirectional.bottomStart,
+        children: <Widget>[
+          ClipRect(
+            child: OverflowBox(
+              maxWidth: width * 7 / 8,
+              minWidth: width * 7 / 8,
               child: CachedNetworkImage(
                 fit: BoxFit.cover,
                 imageUrl: podcast.imageUrl ?? '',
@@ -195,54 +195,54 @@ class HeroLayoutCard extends StatelessWidget {
               ),
             ),
           ),
-        ),
-        // TINT COLOR OVERLAY
-        Container(
-          color: Theme.of(context)
-              .primaryColor
-              .withAlpha(110), // Adjust opacity as needed
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(
-                podcast.title,
-                overflow: TextOverflow.clip,
-                softWrap: false,
-                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                  color: Colors.white,
-                  shadows: [
-                    Shadow(
-                      offset: const Offset(1.0, 1.0),
-                      blurRadius: 3.0,
-                      color: Colors.black.withValues(alpha: 5),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                podcast.copyright ?? '',
-                overflow: TextOverflow.clip,
-                softWrap: false,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.white,
-                  shadows: [
-                    Shadow(
-                      offset: const Offset(1.0, 1.0),
-                      blurRadius: 3.0,
-                      color: Colors.black.withValues(alpha: 5),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+          // TINT COLOR OVERLAY
+          Container(
+            color: Theme.of(context)
+                .primaryColor
+                .withAlpha(110), // Adjust opacity as needed
           ),
-        ),
-      ],
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  podcast.title,
+                  overflow: TextOverflow.clip,
+                  softWrap: false,
+                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                    color: Colors.white,
+                    shadows: [
+                      Shadow(
+                        offset: const Offset(1.0, 1.0),
+                        blurRadius: 3.0,
+                        color: Colors.black.withValues(alpha: 5),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  podcast.copyright ?? '',
+                  overflow: TextOverflow.clip,
+                  softWrap: false,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.white,
+                    shadows: [
+                      Shadow(
+                        offset: const Offset(1.0, 1.0),
+                        blurRadius: 3.0,
+                        color: Colors.black.withValues(alpha: 5),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
