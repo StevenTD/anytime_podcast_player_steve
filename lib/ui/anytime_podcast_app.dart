@@ -625,29 +625,36 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
     switch (choice) {
       case 'about':
         showAboutDialog(
-            context: context,
-            applicationName: 'Anytime Podcast Player',
-            applicationVersion: 'v${Environment.projectVersion}',
-            applicationIcon: Image.asset(
-              'assets/images/AdoptCast.png',
-              width: 52.0,
-              height: 52.0,
+          context: context,
+          applicationName: 'AdaptCast Podcast Player',
+          applicationVersion: 'v${Environment.projectVersion}',
+          applicationIcon: Image.asset(
+            'assets/images/AdaptCast.png',
+            width: 52.0,
+            height: 52.0,
+          ),
+          children: <Widget>[
+            const Text('© 2025 Steven Dela Rosa\n'),
+            const Text(
+              'This app is based on Anytime Podcast Player © 2020 Ben Hills and the project contributors.\n'
+              'Licensed under the BSD 3-Clause License.',
             ),
-            children: <Widget>[
-              const Text('\u00a9 2020 Ben Hills'),
-              GestureDetector(
-                onTap: () {
-                  _launchEmail();
-                },
-                child: Text(
-                  'hello@anytimeplayer.app',
-                  style: TextStyle(
-                    decoration: TextDecoration.underline,
-                    color: Theme.of(context).indicatorColor,
-                  ),
+            const SizedBox(height: 8),
+            GestureDetector(
+              onTap: () {
+                _launchEmail();
+              },
+              child: Text(
+                'steventdstr@gmail.com',
+                style: TextStyle(
+                  decoration: TextDecoration.underline,
+                  color: Theme.of(context).indicatorColor,
                 ),
               ),
-            ]);
+            ),
+          ],
+        );
+
         break;
       case 'settings':
         await Navigator.push(
