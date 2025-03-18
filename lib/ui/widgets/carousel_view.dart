@@ -63,7 +63,8 @@ class _CarouselExampleState extends State<CarouselExample> {
                       child: CarouselView.weighted(
                         controller: controller,
                         itemSnapping: true,
-                        flexWeights: const <int>[1, 3, 1],
+                        consumeMaxWeight: false,
+                        flexWeights: const <int>[2, 4, 2],
                         children: List.generate(snapshot.data!.length, (index) {
                           final podcast = snapshot.data![index];
                           return HeroLayoutCard(podcast: podcast);
