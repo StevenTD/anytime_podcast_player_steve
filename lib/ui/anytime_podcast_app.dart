@@ -748,7 +748,7 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
   }
 
   void _launchEmail() async {
-    final uri = Uri.parse('mailto:hello@anytimeplayer.app');
+    final uri = Uri.parse('mailto:steventdstr@gmail.com');
 
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
