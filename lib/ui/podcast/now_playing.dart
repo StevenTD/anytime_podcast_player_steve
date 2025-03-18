@@ -21,6 +21,7 @@ import 'package:anytime/ui/widgets/placeholder_builder.dart';
 import 'package:anytime/ui/widgets/podcast_html.dart';
 import 'package:anytime/ui/widgets/podcast_image.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -476,60 +477,76 @@ class NowPlayingTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final imageProvider = CachedNetworkImageProvider(
+      episode.thumbImageUrl ?? episode.imageUrl!,
+    );
     return DefaultTabController(
         length: episode.hasChapters ? 3 : 2,
         initialIndex: episode.hasChapters ? 1 : 0,
         child: AnnotatedRegion<SystemUiOverlayStyle>(
           value: Theme.of(context).appBarTheme.systemOverlayStyle!.copyWith(
               systemNavigationBarColor: Theme.of(context).secondaryHeaderColor),
-          child: Scaffold(
-            appBar: AppBar(
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              elevation: 0.0,
-              leading: IconButton(
-                tooltip: L.of(context)!.minimise_player_window_button_label,
-                icon: Icon(
-                  Icons.keyboard_arrow_down,
-                  color: Theme.of(context).primaryIconTheme.color,
-                ),
-                onPressed: () => {
-                  Navigator.pop(context),
-                },
-              ),
-              flexibleSpace: PlaybackErrorListener(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    EpisodeTabBar(
-                      chapters: episode.hasChapters,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            body: Column(
-              children: [
-                Expanded(
-                  flex: 5,
-                  child: EpisodeTabBarView(
-                    episode: episode,
-                    chapters: episode.hasChapters,
-                  ),
-                ),
-                transportBuilder != null
-                    ? transportBuilder!(context)
-                    : const SizedBox(
-                        height: 148.0,
-                        child: NowPlayingTransport(),
+          child: FutureBuilder(
+              future: ColorScheme.fromImageProvider(provider: imageProvider),
+              builder: (context, snapshot) {
+                final dynamicColor = snapshot.data?.primaryContainer;
+
+                return Scaffold(
+                  backgroundColor: snapshot.hasData
+                      ? dynamicColor?.withAlpha(100)
+                      : Theme.of(context).scaffoldBackgroundColor,
+                  appBar: AppBar(
+                    backgroundColor: snapshot.hasData
+                        ? dynamicColor?.withAlpha(100)
+                        : Theme.of(context).scaffoldBackgroundColor,
+                    elevation: 0.0,
+                    leading: IconButton(
+                      tooltip:
+                          L.of(context)!.minimise_player_window_button_label,
+                      icon: Icon(
+                        Icons.keyboard_arrow_down,
+                        color: Theme.of(context).primaryIconTheme.color,
                       ),
-                if (MediaQuery.of(context).orientation == Orientation.portrait)
-                  const Expanded(
-                    flex: 1,
-                    child: NowPlayingOptionsScaffold(),
+                      onPressed: () => {
+                        Navigator.pop(context),
+                      },
+                    ),
+                    flexibleSpace: PlaybackErrorListener(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          EpisodeTabBar(
+                            chapters: episode.hasChapters,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-              ],
-            ),
-          ),
+                  body: Column(
+                    children: [
+                      Expanded(
+                        flex: 5,
+                        child: EpisodeTabBarView(
+                          episode: episode,
+                          chapters: episode.hasChapters,
+                        ),
+                      ),
+                      transportBuilder != null
+                          ? transportBuilder!(context)
+                          : const SizedBox(
+                              height: 148.0,
+                              child: NowPlayingTransport(),
+                            ),
+                      if (MediaQuery.of(context).orientation ==
+                          Orientation.portrait)
+                        const Expanded(
+                          flex: 1,
+                          child: NowPlayingOptionsScaffold(),
+                        ),
+                    ],
+                  ),
+                );
+              }),
         ));
   }
 }
