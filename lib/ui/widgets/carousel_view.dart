@@ -180,6 +180,12 @@ class HeroLayoutCard extends StatelessWidget {
             ),
           ),
         ),
+        // TINT COLOR OVERLAY
+        Container(
+          color: Theme.of(context)
+              .primaryColor
+              .withAlpha(110), // Adjust opacity as needed
+        ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
