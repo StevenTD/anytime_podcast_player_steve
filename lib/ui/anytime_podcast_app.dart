@@ -251,7 +251,7 @@ class AnytimePodcastAppState extends State<AnytimePodcastApp>
             return MaterialApp(
               debugShowCheckedModeBanner: false,
               showSemanticsDebugger: false,
-              title: 'Anytime Podcast Player',
+              title: 'Tinig Postcast Player',
               navigatorObservers: [NavigationRouteObserver()],
               localizationsDelegates: const <LocalizationsDelegate<Object>>[
                 AnytimeLocalisationsDelegate(),
