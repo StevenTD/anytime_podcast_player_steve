@@ -158,7 +158,7 @@ class _NowPlayingOptionsSelectorState extends State<NowPlayingOptionsSelector> {
                                 tabs: [
                                   Padding(
                                     padding: const EdgeInsets.only(
-                                        top: 8.0, bottom: 8.0),
+                                        top: 8.0, bottom: 25.0),
                                     child: Text(
                                       L
                                           .of(context)!
@@ -171,7 +171,7 @@ class _NowPlayingOptionsSelectorState extends State<NowPlayingOptionsSelector> {
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(
-                                        top: 8.0, bottom: 8.0),
+                                        top: 8.0, bottom: 25.0),
                                     // If the episode does not support transcripts, grey out
                                     // the option.
                                     child: snapshot.hasData &&
