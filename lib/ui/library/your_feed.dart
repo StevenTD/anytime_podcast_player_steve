@@ -48,7 +48,7 @@ class _YourFeedState extends State<YourFeed> {
     //final bloc = Provider.of<DiscoveryBloc>(context);
 
     return MultiSliver(children: const [
-      SizedBox(height: 200, width: 200, child: CarouselViewSubscriptions()),
+      SizedBox(height: 300, width: 200, child: CarouselViewSubscriptions()),
       // SliverPersistentHeader(
       //   delegate: MyHeaderDelegateSubscription(bloc),
       //   pinned: true,

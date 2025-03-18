@@ -54,6 +54,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   dynamic_color: ^1.7.0
+  cached_network_image: ^3.4.1
   # is_lock_screen2: ^2.0.2
   #uni_links: ^0.5.1
 

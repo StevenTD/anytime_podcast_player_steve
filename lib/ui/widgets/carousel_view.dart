@@ -2,6 +2,7 @@ import 'package:anytime/bloc/podcast/podcast_bloc.dart';
 import 'package:anytime/entities/podcast.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class CarouselViewSubscriptions extends StatelessWidget {
   const CarouselViewSubscriptions({super.key});
@@ -58,7 +59,7 @@ class _CarouselExampleState extends State<CarouselExample> {
                       ),
                     ),
                     ConstrainedBox(
-                      constraints: BoxConstraints(maxHeight: height / 6),
+                      constraints: BoxConstraints(maxHeight: height / 4),
                       child: CarouselView.weighted(
                         controller: controller,
                         itemSnapping: true,
@@ -167,11 +168,14 @@ class HeroLayoutCard extends StatelessWidget {
           child: OverflowBox(
             maxWidth: width * 7 / 8,
             minWidth: width * 7 / 8,
-            child: Image(
+            child: CachedNetworkImage(
               fit: BoxFit.cover,
-              image: NetworkImage(
-                podcast.imageUrl ?? '',
-              ),
+              imageUrl: podcast.imageUrl ?? '',
+              progressIndicatorBuilder: (context, url, downloadProgress) =>
+                  Center(
+                      child: CircularProgressIndicator(
+                          value: downloadProgress.progress)),
+              errorWidget: (context, url, error) => Icon(Icons.error),
             ),
           ),
         ),
