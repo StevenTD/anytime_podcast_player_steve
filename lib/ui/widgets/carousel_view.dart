@@ -189,20 +189,32 @@ class HeroLayoutCard extends StatelessWidget {
                 podcast.title,
                 overflow: TextOverflow.clip,
                 softWrap: false,
-                style: Theme.of(context)
-                    .textTheme
-                    .headlineLarge
-                    ?.copyWith(color: Colors.white),
+                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                  color: Colors.white,
+                  shadows: [
+                    Shadow(
+                      offset: Offset(1.0, 1.0),
+                      blurRadius: 3.0,
+                      color: Colors.black.withValues(alpha: 5),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 10),
               Text(
-                '',
+                podcast.copyright ?? '',
                 overflow: TextOverflow.clip,
                 softWrap: false,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium
-                    ?.copyWith(color: Colors.white),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Colors.white,
+                  shadows: [
+                    Shadow(
+                      offset: Offset(1.0, 1.0),
+                      blurRadius: 3.0,
+                      color: Colors.black.withValues(alpha: 5),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
