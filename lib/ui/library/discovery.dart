@@ -8,6 +8,7 @@ import 'package:anytime/ui/library/discovery_results.dart';
 import 'package:anytime/ui/widgets/carousel_category_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:podcast_search/podcast_search.dart' show Country;
 import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:sliver_tools/sliver_tools.dart';
@@ -38,8 +39,9 @@ class _DiscoveryState extends State<Discovery> {
     bloc.discover(DiscoveryChartEvent(
       count: Discovery.fetchSize,
       genre: bloc.selectedGenre.genre,
-      countryCode:
-          PlatformDispatcher.instance.locale.countryCode?.toLowerCase() ?? '',
+      countryCode: Country.philippines.code,
+      // countryCode:
+      //     PlatformDispatcher.instance.locale.countryCode?.toLowerCase() ?? '',
       languageCode: PlatformDispatcher.instance.locale.languageCode,
     ));
   }

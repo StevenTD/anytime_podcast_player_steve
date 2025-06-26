@@ -1,24 +1,24 @@
 name: anytime
 description: Tinig Podcast
 
-version: 1.3.11+166
+version: 1.0.0+1
 
 environment:
   sdk: ">=3.2.0 <4.0.0"
-  flutter: 3.27.0
+  flutter: 3.32.4
 
 dependencies:
   accessibility_tools: ^2.3.0
   app_links: ^6.3.0
   auto_size_text: ^3.0.0
   audio_service: ^0.18.17
-  audio_session: ^0.1.23
+  audio_session: ^0.2.2
   collection: ^1.18.0
   connectivity_plus: ^6.0.11
   cupertino_icons: ^1.0.6
   device_info_plus: ^11.2.0
-  extended_image: ^9.1.0
-  file_picker: ^8.1.7
+  extended_image: ^10.0.1
+  file_picker: ^10.2.0
   flutter_dialogs: ^3.0.0
   flutter_downloader: ^1.11.8
   flutter_html: ^3.0.0-beta.2
@@ -27,23 +27,23 @@ dependencies:
   flutter_launcher_icons: ^0.14.2
   flutter_spinkit: ^5.0.0
   html: ^0.15.0
-  intl: ^0.19.0
+  intl: ^0.20.2
   intl_translation: ^0.20.0
-  just_audio: ^0.9.46
+  just_audio: ^0.10.4
   logging: ^1.0.2
   meta: ^1.12.0
   mp3_info: ^0.2.0
   path: ^1.8.3
   path_provider: ^2.1.4
   path_provider_platform_interface: ^2.0.4
-  percent_indicator: 4.2.4
-  permission_handler: ^11.1.0
-  podcast_search: ^0.7.4
+  percent_indicator: ^4.2.5
+  permission_handler: ^12.0.0+1
+  podcast_search: ^0.7.10
   provider: ^6.0.3
   rxdart: ^0.28.0
   scrollable_positioned_list: ^0.3.7
   sembast: ^3.8.3
-  share_plus: ^10.1.3
+  share_plus: ^11.0.0
   shared_preferences: ^2.3.4
   sliver_tools: ^0.2.12
   url_launcher: ^6.3.1
@@ -60,7 +60,7 @@ dependencies:
 
 dev_dependencies:
   mockito: ^5.2.0
-  flutter_lints: ^4.0.0
+  flutter_lints: ^6.0.0
   flutter_test:
     sdk: flutter
 
@@ -69,8 +69,8 @@ dependency_overrides:
   flutter_layout_grid: ^2.0.5
 
 flutter_icons:
-  image_path_android: "assets/images/AdoptCast.png"
-  image_path_ios: "assets/images/AdoptCast.png"
+  image_path_android: "assets/images/AdaptCast.png"
+  image_path_ios: "assets/images/AdaptCast.png"
   remove_alpha_ios: true
   android: true
   ios: true
@@ -79,8 +79,8 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/images/AdoptCast.png
-    - assets/images/AdoptCast.png
+    - assets/images/AdaptCast.png
+    - assets/images/AdaptCast.png
     - assets/images/anytime-placeholder-logo.png
 
     # Certificate authorities

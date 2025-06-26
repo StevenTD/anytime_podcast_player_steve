@@ -22,7 +22,7 @@ ThemeData _buildLightTheme() {
     bottomAppBarTheme: const BottomAppBarTheme().copyWith(
       color: const Color(0xffffffff),
     ),
-    cardTheme: const CardTheme().copyWith(
+    cardTheme: const CardThemeData().copyWith(
       color: const Color(0xffffa900),
       shadowColor: const Color(0xfff57c00),
     ),
@@ -93,7 +93,7 @@ ThemeData _buildDarkTheme() {
     bottomAppBarTheme: const BottomAppBarTheme().copyWith(
       color: const Color(0xff222222),
     ),
-    cardTheme: const CardTheme().copyWith(
+    cardTheme: const CardThemeData().copyWith(
       color: const Color(0xff444444),
       shadowColor: const Color(0x77ffffff),
     ),
@@ -236,7 +236,7 @@ class Themes {
           style: OutlinedButton.styleFrom(
               foregroundColor: dynamicColor.primary ?? Colors.grey[800]),
         ),
-        cardTheme: const CardTheme().copyWith(
+        cardTheme: const CardThemeData().copyWith(
           color: dynamicColor.primary ?? const Color(0xff444444),
           shadowColor: dynamicColor.primary ?? const Color(0x77ffffff),
         ),
@@ -282,7 +282,7 @@ class Themes {
             .withLightness(0.15)
             .toColor(),
       ),
-      cardTheme: const CardTheme().copyWith(
+      cardTheme: const CardThemeData().copyWith(
         color: dynamicColor.primary,
         shadowColor: dynamicColor.primary,
       ),
@@ -301,9 +301,8 @@ class Themes {
       cardColor: HSLColor.fromColor(dynamicColor.primary)
           .withLightness(0.098)
           .toColor(),
-      dividerColor: HSLColor.fromColor(dynamicColor.primary)
-          .withLightness(0.1)
-          .toColor(),
+      dividerColor:
+          HSLColor.fromColor(dynamicColor.primary).withLightness(0.1).toColor(),
       highlightColor: HSLColor.fromColor(dynamicColor.primary)
           .withLightness(0.09)
           .toColor(),

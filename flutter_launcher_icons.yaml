@@ -1,13 +1,13 @@
 # flutter pub run flutter_launcher_icons
 flutter_launcher_icons:
-  image_path: "assets/images/AdoptCast.png"
+  image_path: "assets/images/AdaptCast.png"
 
   android: "launcher_icon"
   # image_path_android: "assets/icon/icon.png"
   min_sdk_android: 21 # android min sdk min:16, default 21
-  adaptive_icon_background: "assets/images/AdoptCast.png"
-  adaptive_icon_foreground: "assets/images/AdoptCast.png"
-  adaptive_icon_monochrome: "assets/images/AdoptCast.png"
+  adaptive_icon_background: "assets/images/AdaptCast.png"
+  adaptive_icon_foreground: "assets/images/AdaptCast.png"
+  adaptive_icon_monochrome: "assets/images/AdaptCast.png"
 
   ios: false
   # image_path_ios: "assets/icon/icon.png"
@@ -18,15 +18,15 @@ flutter_launcher_icons:
 
   web:
     generate: true
-    image_path: "assets/images/AdoptCast.png"
+    image_path: "assets/images/AdaptCast.png"
     # background_color: "#hexcode"
     # theme_color: "#hexcode"
 
   windows:
     generate: true
-    image_path: "assets/images/AdoptCast.png"
+    image_path: "assets/images/AdaptCast.png"
     icon_size: 48 # min:48, max:256, default: 48
 
   macos:
     generate: true
-    image_path: "assets/images/AdoptCast.png"
+    image_path: "assets/images/AdaptCast.png"
