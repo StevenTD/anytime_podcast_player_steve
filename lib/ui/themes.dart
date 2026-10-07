@@ -19,7 +19,7 @@ ThemeData _buildLightTheme() {
       error: Color(0xffd32f2f),
       onSurface: Color(0xfffb8c00),
     ),
-    bottomAppBarTheme: const BottomAppBarTheme().copyWith(
+    bottomAppBarTheme: const BottomAppBarThemeData().copyWith(
       color: const Color(0xffffffff),
     ),
     cardTheme: const CardThemeData().copyWith(
@@ -90,7 +90,7 @@ ThemeData _buildDarkTheme() {
       error: Color(0xffd32f2f),
       onSurface: Color(0xffffffff),
     ),
-    bottomAppBarTheme: const BottomAppBarTheme().copyWith(
+    bottomAppBarTheme: const BottomAppBarThemeData().copyWith(
       color: const Color(0xff222222),
     ),
     cardTheme: const CardThemeData().copyWith(
@@ -191,7 +191,7 @@ class Themes {
               .withLightness(0.9)
               .toColor(),
         ),
-        bottomAppBarTheme: const BottomAppBarTheme().copyWith(
+        bottomAppBarTheme: const BottomAppBarThemeData().copyWith(
           color: HSLColor.fromColor(dynamicColor.primary)
                   .withLightness(0.92)
                   .toColor() ??
@@ -277,7 +277,7 @@ class Themes {
         error: Color(0xffd32f2f),
         onSurface: Color(0xffffffff),
       ),
-      bottomAppBarTheme: const BottomAppBarTheme().copyWith(
+      bottomAppBarTheme: const BottomAppBarThemeData().copyWith(
         color: HSLColor.fromColor(dynamicColor.primary)
             .withLightness(0.15)
             .toColor(),
