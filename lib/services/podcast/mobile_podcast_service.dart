@@ -300,8 +300,8 @@ class MobilePodcastService extends PodcastService {
               type = TranscriptFormat.unsupported;
               break;
             case podcast_search.TranscriptFormat.vtt:
-              // TODO: Handle this case.
-              throw UnimplementedError();
+              type = TranscriptFormat.unsupported;
+              break;
           }
 
           transcriptUrls.add(TranscriptUrl(url: t.url, type: type));
