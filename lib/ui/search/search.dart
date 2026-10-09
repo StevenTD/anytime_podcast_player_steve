@@ -13,6 +13,8 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+const searchActionHeroTag = 'home-search-action';
+
 /// This widget renders the search bar and allows the user to search for podcasts.
 class Search extends StatefulWidget {
   final String? searchTerm;
@@ -66,28 +68,56 @@ class _SearchState extends State<Search> {
             leading: IconButton(
               tooltip: L.of(context)!.search_back_button_label,
               icon: Platform.isAndroid
-                  ? Icon(Icons.arrow_back, color: Theme.of(context).appBarTheme.foregroundColor)
+                  ? Icon(Icons.arrow_back,
+                      color: Theme.of(context).appBarTheme.foregroundColor)
                   : const Icon(Icons.arrow_back_ios),
               onPressed: () => Navigator.pop(context),
             ),
-            title: TextField(
-                controller: _searchController,
-                focusNode: _searchFocusNode,
-                autofocus: widget.searchTerm != null ? false : true,
-                keyboardType: TextInputType.text,
-                textInputAction: TextInputAction.search,
-                decoration: InputDecoration(
-                  hintText: L.of(context)!.search_for_podcasts_hint,
-                  border: InputBorder.none,
+            title: Hero(
+              tag: searchActionHeroTag,
+              child: Material(
+                color: Theme.of(context).colorScheme.surfaceContainerHigh,
+                borderRadius: BorderRadius.circular(24),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.search,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: TextField(
+                          controller: _searchController,
+                          focusNode: _searchFocusNode,
+                          autofocus: widget.searchTerm != null ? false : true,
+                          keyboardType: TextInputType.text,
+                          textInputAction: TextInputAction.search,
+                          decoration: InputDecoration(
+                            hintText: L.of(context)!.search_for_podcasts_hint,
+                            border: InputBorder.none,
+                          ),
+                          style: TextStyle(
+                            color: Theme.of(context).primaryIconTheme.color,
+                            fontSize: 18.0,
+                            decorationColor:
+                                Theme.of(context).scaffoldBackgroundColor,
+                          ),
+                          onSubmitted: (value) {
+                            SemanticsService.announce(
+                              L.of(context)!.semantic_announce_searching,
+                              TextDirection.ltr,
+                            );
+                            bloc.search(SearchTermEvent(value));
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                style: TextStyle(
-                    color: Theme.of(context).primaryIconTheme.color,
-                    fontSize: 18.0,
-                    decorationColor: Theme.of(context).scaffoldBackgroundColor),
-                onSubmitted: ((value) {
-                  SemanticsService.announce(L.of(context)!.semantic_announce_searching, TextDirection.ltr);
-                  bloc.search(SearchTermEvent(value));
-                })),
+              ),
+            ),
             floating: false,
             pinned: true,
             snap: false,
@@ -98,7 +128,8 @@ class _SearchState extends State<Search> {
                 onPressed: () {
                   _searchController.clear();
                   FocusScope.of(context).requestFocus(_searchFocusNode);
-                  SystemChannels.textInput.invokeMethod<String>('TextInput.show');
+                  SystemChannels.textInput
+                      .invokeMethod<String>('TextInput.show');
                 },
               ),
             ],

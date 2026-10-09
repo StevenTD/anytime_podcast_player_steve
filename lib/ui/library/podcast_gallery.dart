@@ -6,6 +6,8 @@ import 'package:anytime/bloc/podcast/podcast_bloc.dart';
 import 'package:anytime/entities/podcast.dart';
 import 'package:anytime/l10n/L.dart';
 import 'package:anytime/state/bloc_state.dart';
+import 'package:anytime/ui/search/search.dart';
+import 'package:anytime/ui/widgets/search_slide_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -433,6 +435,37 @@ class _PodcastGalleryState extends State<PodcastGallery> {
     super.dispose();
   }
 
+  Widget _galleryToolbarAction(
+    BuildContext context, {
+    required Widget child,
+  }) {
+    final colors = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: colors.surfaceContainerHigh,
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: colors.shadow.withValues(alpha: 0.10),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          shape: const CircleBorder(),
+          clipBehavior: Clip.antiAlias,
+          child: child,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final strings = L.of(context)!;
@@ -542,16 +575,60 @@ class _PodcastGalleryState extends State<PodcastGallery> {
                   Align(
                     alignment: Alignment.topLeft,
                     child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Material(
-                        color:
-                            Theme.of(context).colorScheme.surfaceContainerHigh,
-                        shape: const CircleBorder(),
-                        elevation: 4,
+                      padding: const EdgeInsets.all(8),
+                      child: _galleryToolbarAction(
+                        context,
                         child: IconButton(
                           tooltip: strings.go_back_button_label,
+                          color: Theme.of(context).colorScheme.onSurface,
+                          constraints: const BoxConstraints.tightFor(
+                            width: 44,
+                            height: 44,
+                          ),
+                          padding: EdgeInsets.zero,
                           onPressed: () => Navigator.of(context).maybePop(),
                           icon: const Icon(Icons.arrow_back_rounded),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Hero(
+                        tag: searchActionHeroTag,
+                        child: _galleryToolbarAction(
+                          context,
+                          child: IconButton(
+                            tooltip: strings.search_for_podcasts_hint,
+                            color: Theme.of(context).colorScheme.onSurface,
+                            constraints: const BoxConstraints.tightFor(
+                              width: 44,
+                              height: 44,
+                            ),
+                            padding: EdgeInsets.zero,
+                            onPressed: () async {
+                              await Navigator.push(
+                                context,
+                                defaultTargetPlatform == TargetPlatform.iOS
+                                    ? MaterialPageRoute<void>(
+                                        fullscreenDialog: false,
+                                        settings: const RouteSettings(
+                                          name: 'search',
+                                        ),
+                                        builder: (context) => const Search(),
+                                      )
+                                    : SlideRightRoute(
+                                        widget: const Search(),
+                                        settings: const RouteSettings(
+                                          name: 'search',
+                                        ),
+                                      ),
+                              );
+                            },
+                            icon: const Icon(Icons.search),
+                          ),
                         ),
                       ),
                     ),

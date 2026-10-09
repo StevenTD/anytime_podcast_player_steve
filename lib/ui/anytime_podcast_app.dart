@@ -61,6 +61,8 @@ import 'package:material_color_utilities/material_color_utilities.dart';
 // import 'package:is_lock_screen2/is_lock_screen2.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 
+const _moreMenuHeroTag = 'home-more-menu';
+
 /// Anytime is a Podcast player. You can search and subscribe to podcasts,
 /// download and stream episodes and view the latest podcast charts.
 // ignore: must_be_immutable
@@ -307,6 +309,7 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
   final log = Logger('_AnytimeHomePageState');
   bool handledInitialLink = false;
   Widget? library;
+  bool _isMainScreenScrolled = false;
 
   @override
   void initState() {
@@ -426,138 +429,111 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
         body: Column(
           children: <Widget>[
             Expanded(
-              child: CustomScrollView(
-                slivers: <Widget>[
-                  SliverVisibility(
-                    visible: widget.topBarVisible,
-                    sliver: SliverAppBar(
-                      title: ExcludeSemantics(
-                        child: TitleWidget(),
-                      ),
-                      backgroundColor: backgroundColour,
-                      floating: false,
-                      pinned: true,
-                      snap: false,
-                      actions: <Widget>[
-                        IconButton(
-                          tooltip: L.of(context)!.search_for_podcasts_hint,
-                          icon: const Icon(Icons.search),
-                          onPressed: () async {
-                            await Navigator.push(
-                              context,
-                              defaultTargetPlatform == TargetPlatform.iOS
-                                  ? MaterialPageRoute<void>(
-                                      fullscreenDialog: false,
-                                      settings:
-                                          const RouteSettings(name: 'search'),
-                                      builder: (context) => const Search())
-                                  : SlideRightRoute(
-                                      widget: const Search(),
-                                      settings:
-                                          const RouteSettings(name: 'search'),
-                                    ),
-                            );
-                          },
-                        ),
-                        PopupMenuButton<String>(
-                          onSelected: _menuSelect,
-                          icon: const Icon(
-                            Icons.more_vert,
+              child: NotificationListener<ScrollNotification>(
+                onNotification: (notification) {
+                  if (notification.depth == 0 &&
+                      notification.metrics.axis == Axis.vertical) {
+                    final isScrolled = notification.metrics.pixels > 40;
+                    if (isScrolled != _isMainScreenScrolled) {
+                      setState(() => _isMainScreenScrolled = isScrolled);
+                    }
+                  }
+                  return false;
+                },
+                child: CustomScrollView(
+                  slivers: <Widget>[
+                    SliverVisibility(
+                      visible: widget.topBarVisible,
+                      sliver: SliverAppBar(
+                        title: ExcludeSemantics(
+                          child: AnimatedAlign(
+                            alignment: Alignment.centerLeft,
+                            widthFactor: _isMainScreenScrolled ? 0 : 1,
+                            heightFactor: 1,
+                            duration: const Duration(milliseconds: 240),
+                            curve: Curves.easeInOutCubic,
+                            child: AnimatedOpacity(
+                              opacity: _isMainScreenScrolled ? 0 : 1,
+                              duration: const Duration(milliseconds: 180),
+                              curve: Curves.easeOut,
+                              child: TitleWidget(),
+                            ),
                           ),
-                          itemBuilder: (BuildContext context) {
-                            return <PopupMenuEntry<String>>[
-                              if (feedbackUrl.isNotEmpty)
-                                PopupMenuItem<String>(
-                                  textStyle:
-                                      Theme.of(context).textTheme.titleMedium,
-                                  value: 'feedback',
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      const Padding(
-                                        padding: EdgeInsets.only(right: 8.0),
-                                        child: Icon(Icons.feedback_outlined,
-                                            size: 18.0),
-                                      ),
-                                      Text(L
-                                          .of(context)!
-                                          .feedback_menu_item_label),
-                                    ],
-                                  ),
-                                ),
-                              PopupMenuItem<String>(
-                                textStyle:
-                                    Theme.of(context).textTheme.titleMedium,
-                                value: 'layout',
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const Padding(
-                                      padding: EdgeInsets.only(right: 8.0),
-                                      child: Icon(Icons.dashboard, size: 18.0),
-                                    ),
-                                    Text(L.of(context)!.layout_label),
-                                  ],
-                                ),
-                              ),
-                              PopupMenuItem<String>(
-                                textStyle:
-                                    Theme.of(context).textTheme.titleMedium,
-                                value: 'rss',
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const Padding(
-                                      padding: EdgeInsets.only(right: 8.0),
-                                      child: Icon(Icons.rss_feed, size: 18.0),
-                                    ),
-                                    Text(L.of(context)!.add_rss_feed_option),
-                                  ],
-                                ),
-                              ),
-                              PopupMenuItem<String>(
-                                textStyle:
-                                    Theme.of(context).textTheme.titleMedium,
-                                value: 'settings',
-                                child: Row(
-                                  children: [
-                                    const Padding(
-                                      padding: EdgeInsets.only(right: 8.0),
-                                      child: Icon(Icons.settings, size: 18.0),
-                                    ),
-                                    Text(L.of(context)!.settings_label),
-                                  ],
-                                ),
-                              ),
-                              PopupMenuItem<String>(
-                                textStyle:
-                                    Theme.of(context).textTheme.titleMedium,
-                                value: 'about',
-                                child: Row(
-                                  children: [
-                                    const Padding(
-                                      padding: EdgeInsets.only(right: 8.0),
-                                      child:
-                                          Icon(Icons.info_outline, size: 18.0),
-                                    ),
-                                    Text(L.of(context)!.about_label),
-                                  ],
-                                ),
-                              ),
-                            ];
-                          },
                         ),
-                      ],
+                        backgroundColor: Colors.transparent,
+                        surfaceTintColor: Colors.transparent,
+                        elevation: 0,
+                        scrolledUnderElevation: 0,
+                        forceMaterialTransparency: true,
+                        toolbarHeight: 64,
+                        actionsPadding: const EdgeInsets.only(right: 8),
+                        actionsIconTheme: IconThemeData(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                        floating: false,
+                        pinned: true,
+                        snap: false,
+                        actions: <Widget>[
+                          Hero(
+                            tag: searchActionHeroTag,
+                            child: _toolbarActionSurface(
+                              child: IconButton(
+                                tooltip:
+                                    L.of(context)!.search_for_podcasts_hint,
+                                icon: const Icon(Icons.search),
+                                color: Theme.of(context).colorScheme.onSurface,
+                                constraints: const BoxConstraints.tightFor(
+                                  width: 48,
+                                  height: 48,
+                                ),
+                                padding: EdgeInsets.zero,
+                                onPressed: () async {
+                                  await Navigator.push(
+                                    context,
+                                    defaultTargetPlatform == TargetPlatform.iOS
+                                        ? MaterialPageRoute<void>(
+                                            fullscreenDialog: false,
+                                            settings: const RouteSettings(
+                                                name: 'search'),
+                                            builder: (context) =>
+                                                const Search())
+                                        : SlideRightRoute(
+                                            widget: const Search(),
+                                            settings: const RouteSettings(
+                                                name: 'search'),
+                                          ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                          Hero(
+                            tag: _moreMenuHeroTag,
+                            child: _toolbarActionSurface(
+                              child: IconButton(
+                                tooltip: L.of(context)!.about_label,
+                                icon: const Icon(Icons.more_vert),
+                                color: Theme.of(context).colorScheme.onSurface,
+                                constraints: const BoxConstraints.tightFor(
+                                  width: 48,
+                                  height: 48,
+                                ),
+                                padding: EdgeInsets.zero,
+                                onPressed: _showMoreMenu,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  StreamBuilder<int>(
-                      stream: pager.currentPage,
-                      builder:
-                          (BuildContext context, AsyncSnapshot<int> snapshot) {
-                        return _fragment(snapshot.data, searchBloc);
-                      }),
-                ],
+                    StreamBuilder<int>(
+                        stream: pager.currentPage,
+                        builder: (BuildContext context,
+                            AsyncSnapshot<int> snapshot) {
+                          return _fragment(snapshot.data, searchBloc);
+                        }),
+                  ],
+                ),
               ),
             ),
             const MiniPlayer(),
@@ -635,6 +611,126 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
       );
     } else {
       return const Downloads();
+    }
+  }
+
+  Widget _toolbarActionSurface({required Widget child}) {
+    final colors = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Container(
+        width: 48,
+        height: 48,
+        decoration: BoxDecoration(
+          color: colors.surfaceContainerHigh,
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: colors.shadow.withValues(alpha: 0.10),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          shape: const CircleBorder(),
+          clipBehavior: Clip.antiAlias,
+          child: child,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showMoreMenu() async {
+    final choice = await Navigator.of(context).push<String>(
+      PageRouteBuilder<String>(
+        opaque: false,
+        settings: const RouteSettings(name: 'home_more_menu'),
+        transitionDuration: const Duration(milliseconds: 240),
+        reverseTransitionDuration: const Duration(milliseconds: 200),
+        pageBuilder: (menuContext, animation, secondaryAnimation) {
+          final strings = L.of(menuContext)!;
+          final menuWidth = (MediaQuery.sizeOf(menuContext).width - 32)
+              .clamp(180.0, 260.0)
+              .toDouble();
+          final menuItems = <(String, IconData, String)>[
+            if (feedbackUrl.isNotEmpty)
+              (
+                'feedback',
+                Icons.feedback_outlined,
+                strings.feedback_menu_item_label,
+              ),
+            ('layout', Icons.dashboard, strings.layout_label),
+            ('rss', Icons.rss_feed, strings.add_rss_feed_option),
+            ('settings', Icons.settings, strings.settings_label),
+            ('about', Icons.info_outline, strings.about_label),
+          ];
+
+          return Material(
+            type: MaterialType.transparency,
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => Navigator.of(menuContext).pop(),
+                    child: const ColoredBox(color: Colors.black26),
+                  ),
+                ),
+                Positioned(
+                  top: MediaQuery.paddingOf(menuContext).top +
+                      kToolbarHeight +
+                      8,
+                  right: 16,
+                  child: Hero(
+                    tag: _moreMenuHeroTag,
+                    child: Material(
+                      color: Theme.of(menuContext)
+                          .colorScheme
+                          .surfaceContainerHigh,
+                      elevation: 12,
+                      clipBehavior: Clip.antiAlias,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: SizedBox(
+                        width: menuWidth,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            for (final (value, icon, label) in menuItems)
+                              ListTile(
+                                dense: true,
+                                visualDensity: VisualDensity.compact,
+                                leading: Icon(icon, size: 20),
+                                title: Text(
+                                  label,
+                                  style: Theme.of(menuContext)
+                                      .textTheme
+                                      .titleMedium,
+                                ),
+                                onTap: () =>
+                                    Navigator.of(menuContext).pop(value),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+      ),
+    );
+
+    if (choice != null && mounted) {
+      _menuSelect(choice);
     }
   }
 
