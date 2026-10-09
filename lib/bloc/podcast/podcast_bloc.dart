@@ -111,6 +111,26 @@ class PodcastBloc extends Bloc {
     _subscriptions.add(await podcastService.subscriptions());
   }
 
+  Future<Podcast> followFromDiscovery(Podcast podcast) async {
+    final loadedPodcast = await podcastService.loadPodcast(podcast: podcast);
+    if (loadedPodcast == null) {
+      throw StateError('Podcast feed could not be loaded.');
+    }
+
+    final followedPodcast = await podcastService.subscribe(loadedPodcast);
+    if (followedPodcast == null) {
+      throw StateError('Podcast could not be followed.');
+    }
+
+    _subscriptions.add(await podcastService.subscriptions());
+    return followedPodcast;
+  }
+
+  Future<void> unfollowFromDiscovery(Podcast podcast) async {
+    await podcastService.unsubscribe(podcast);
+    _subscriptions.add(await podcastService.subscriptions());
+  }
+
   /// Sets up a listener to handle Podcast load requests. We first push a [BlocLoadingState] to
   /// indicate that the Podcast is being loaded, before calling the [PodcastService] to handle
   /// the loading. Once loaded, we extract the episodes from the Podcast and push them out via

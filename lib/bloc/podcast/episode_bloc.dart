@@ -78,6 +78,7 @@ class EpisodeBloc extends Bloc {
     _handleDeleteDownloads();
     _handleMarkAsPlayed();
     _listenEpisodeEvents();
+    _listenPodcastEvents();
 
     /// Listen to an Episode download request
     _listenDownloadRequest();
@@ -117,6 +118,10 @@ class EpisodeBloc extends Bloc {
     podcastService.episodeListener!
         .where((event) => event.episode.downloaded || event.episode.played)
         .listen((event) => fetchDownloads(true));
+  }
+
+  void _listenPodcastEvents() {
+    podcastService.podcastListener?.listen((_) => fetchEpisodes(true));
   }
 
   void applySearchFilter() {
