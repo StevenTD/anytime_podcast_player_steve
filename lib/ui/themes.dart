@@ -176,9 +176,10 @@ class Themes {
   // }
 
   factory Themes.dynamicLightTheme(ColorScheme? dynamicColor) {
+    dynamicColor ??= ColorScheme.fromSeed(seedColor: Colors.deepPurple);
     final base = ThemeData.light(useMaterial3: true);
     final dynamicTheme = ThemeData(
-        secondaryHeaderColor: HSLColor.fromColor(dynamicColor!.primary)
+        secondaryHeaderColor: HSLColor.fromColor(dynamicColor.primary)
             .withLightness(0.92)
             .toColor(),
         hintColor: dynamicColor.primary,
@@ -266,10 +267,11 @@ class Themes {
   }
 
   factory Themes.dynamicDarkTheme(ColorScheme? dynamicColor) {
+    dynamicColor ??= ColorScheme.fromSeed(seedColor: Colors.deepPurple);
     final base = ThemeData.dark(useMaterial3: true);
     final dynamicTheme = ThemeData(
       colorScheme: ColorScheme.dark(
-        primary: dynamicColor!.primary,
+        primary: dynamicColor.primary,
         secondary: dynamicColor.secondary,
         surface: HSLColor.fromColor(dynamicColor.primary)
             .withLightness(0.18)

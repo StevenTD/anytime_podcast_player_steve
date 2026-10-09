@@ -26,7 +26,7 @@ class MessageLookup extends MessageLookupByLibrary {
   @override
   final Map<String, dynamic> messages = _notInlinedMessages(_notInlinedMessages);
 
-  static Map<String, dynamic> _notInlinedMessages(_) => {
+  static Map<String, dynamic> _notInlinedMessages(Object? _) => {
       'about_label': MessageLookupByLibrary.simpleMessage('Über'),
     'add_rss_feed_option': MessageLookupByLibrary.simpleMessage('RSS-Feed hinzufügen'),
     'app_title': MessageLookupByLibrary.simpleMessage('Anytime Podcast Player'),
@@ -177,7 +177,10 @@ class MessageLookup extends MessageLookupByLibrary {
     'settings_mark_deleted_played_label': MessageLookupByLibrary.simpleMessage('Markieren Sie gelöschte Episoden als abgespielt'),
     'settings_personalisation_divider_label': MessageLookupByLibrary.simpleMessage('PERSONALISIERUNG'),
     'settings_playback_divider_label': MessageLookupByLibrary.simpleMessage('WIEDERGABE'),
-    'settings_theme_switch_label': MessageLookupByLibrary.simpleMessage('Dark theme'),
+    'settings_theme_dark_option': MessageLookupByLibrary.simpleMessage('Dunkel'),
+    'settings_theme_light_option': MessageLookupByLibrary.simpleMessage('Hell'),
+    'settings_theme_switch_label': MessageLookupByLibrary.simpleMessage('Design'),
+    'settings_theme_system_option': MessageLookupByLibrary.simpleMessage('Systemstandard'),
     'show_notes_label': MessageLookupByLibrary.simpleMessage('Notizen anzeigen'),
     'sleep_episode_label': MessageLookupByLibrary.simpleMessage('Ende der Folge'),
     'sleep_minute_label': m0,

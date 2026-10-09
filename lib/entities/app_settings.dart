@@ -5,6 +5,10 @@
 import 'package:anytime/entities/search_providers.dart';
 
 class AppSettings {
+  static const String themeSystem = 'system';
+  static const String themeLight = 'light';
+  static const String themeDark = 'dark';
+
   /// The current theme name.
   final String theme;
 
@@ -65,7 +69,7 @@ class AppSettings {
   });
 
   AppSettings.sensibleDefaults()
-      : theme = 'dark',
+      : theme = themeDark,
         markDeletedEpisodesAsPlayed = false,
         deleteDownloadedPlayedEpisodes = false,
         storeDownloadsSDCard = false,

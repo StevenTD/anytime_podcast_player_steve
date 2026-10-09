@@ -11,7 +11,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// each is updated.
 void main() {
   const int timeout = 500;
-  final Map<String, Object> settings = <String, Object>{'dummy': 1};
+  final Map<String, Object> settings = <String, Object>{
+    'dummy': 1,
+    'theme': 'light',
+  };
   SettingsService? mobileSettingsService;
   late Stream<String>? settingsListener;
 
@@ -38,11 +41,11 @@ void main() {
     expect(mobileSettingsService?.storeDownloadsSDCard, true);
   }, timeout: const Timeout(Duration(milliseconds: timeout)));
 
-  test('Test dark mode', () async {
-    expect(mobileSettingsService?.themeDarkMode, true);
+  test('Test theme mode', () async {
+    expect(mobileSettingsService?.themeMode, 'light');
     expectLater(settingsListener, emits('theme'));
-    mobileSettingsService?.themeDarkMode = false;
-    expect(mobileSettingsService?.themeDarkMode, false);
+    mobileSettingsService?.themeMode = 'system';
+    expect(mobileSettingsService?.themeMode, 'system');
   }, timeout: const Timeout(Duration(milliseconds: timeout)));
 
   test('Test playback speed', () async {

@@ -58,16 +58,38 @@ class _SettingsState extends State<Settings> {
           return ListView(
             children: [
               SettingsDividerLabel(label: L.of(context)!.settings_personalisation_divider_label),
-              MergeSemantics(
-                child: ListTile(
-                  shape: const RoundedRectangleBorder(side: BorderSide.none),
-                  title: Text(L.of(context)!.settings_theme_switch_label),
-                  trailing: Switch.adaptive(
-                      value: snapshot.data!.theme == 'dark',
-                      onChanged: (value) {
-                        settingsBloc.darkMode(value);
-                      }),
-                ),
+              ListTile(
+                title: Text(L.of(context)!.settings_theme_switch_label),
+              ),
+              RadioListTile<String>(
+                title: Text(L.of(context)!.settings_theme_system_option),
+                value: AppSettings.themeSystem,
+                groupValue: snapshot.data!.theme,
+                onChanged: (value) {
+                  if (value != null) {
+                    settingsBloc.setThemeMode(value);
+                  }
+                },
+              ),
+              RadioListTile<String>(
+                title: Text(L.of(context)!.settings_theme_light_option),
+                value: AppSettings.themeLight,
+                groupValue: snapshot.data!.theme,
+                onChanged: (value) {
+                  if (value != null) {
+                    settingsBloc.setThemeMode(value);
+                  }
+                },
+              ),
+              RadioListTile<String>(
+                title: Text(L.of(context)!.settings_theme_dark_option),
+                value: AppSettings.themeDark,
+                groupValue: snapshot.data!.theme,
+                onChanged: (value) {
+                  if (value != null) {
+                    settingsBloc.setThemeMode(value);
+                  }
+                },
               ),
               SettingsDividerLabel(label: L.of(context)!.settings_episodes_divider_label),
               MergeSemantics(

@@ -16,6 +16,7 @@ import 'package:anytime/bloc/search/search_bloc.dart';
 import 'package:anytime/bloc/settings/settings_bloc.dart';
 import 'package:anytime/bloc/ui/pager_bloc.dart';
 import 'package:anytime/core/environment.dart';
+import 'package:anytime/entities/app_settings.dart';
 import 'package:anytime/entities/feed.dart';
 import 'package:anytime/entities/podcast.dart';
 import 'package:anytime/l10n/L.dart';
@@ -59,12 +60,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:material_color_utilities/material_color_utilities.dart';
 // import 'package:is_lock_screen2/is_lock_screen2.dart';
 import 'package:dynamic_color/dynamic_color.dart';
-
-ColorScheme? currentDynamicColorsLight;
-ColorScheme? currentDynamicColorsDark;
-ThemeData theme = Themes.dynamicLightTheme(currentDynamicColorsLight ??
-        ColorScheme.fromSeed(seedColor: Colors.deepPurple))
-    .themeData;
 
 /// Anytime is a Podcast player. You can search and subscribe to podcasts,
 /// download and stream episodes and view the latest podcast charts.
@@ -123,49 +118,68 @@ class AnytimePodcastApp extends StatefulWidget {
 
 class AnytimePodcastAppState extends State<AnytimePodcastApp>
     with WidgetsBindingObserver {
-  AppLifecycleState? _state;
   ColorScheme? currentColorScheme;
-  ThemeData? theme;
-  DynamicColorBuilder? dynamicColorBuilder;
+  late ThemeData lightTheme;
+  late ThemeData darkTheme;
+  ThemeMode themeMode = ThemeMode.dark;
+  late StreamSubscription<AppSettings> _settingsSubscription;
 
   Future<void> setCurrentColor() async {
     CorePalette? corePalette = await DynamicColorPlugin.getCorePalette();
 
+    if (!mounted) return;
     setState(() {
-      currentColorScheme = corePalette?.toColorScheme();
+      currentColorScheme =
+          corePalette?.toColorScheme() ??
+          ColorScheme.fromSeed(seedColor: Colors.deepPurple);
+      _updateThemes();
     });
-    if (widget.mobileSettingsService.themeDarkMode) {
-      theme = Themes.dynamicDarkTheme(currentColorScheme ??
-              ColorScheme.fromSeed(seedColor: Colors.deepPurple))
-          .themeData;
-    } else {
-      theme = Themes.dynamicLightTheme(currentColorScheme ??
-              ColorScheme.fromSeed(seedColor: Colors.deepPurple))
-          .themeData;
+  }
+
+  void _updateThemes() {
+    final colorScheme =
+        currentColorScheme ?? ColorScheme.fromSeed(seedColor: Colors.deepPurple);
+    lightTheme = Themes.dynamicLightTheme(colorScheme).themeData;
+    darkTheme = Themes.dynamicDarkTheme(colorScheme).themeData;
+  }
+
+  ThemeMode _themeModeFor(String preference) {
+    switch (preference) {
+      case AppSettings.themeSystem:
+        return ThemeMode.system;
+      case AppSettings.themeLight:
+        return ThemeMode.light;
+      case AppSettings.themeDark:
+      default:
+        return ThemeMode.dark;
     }
   }
 
   @override
   void initState() {
-    setCurrentColor();
     super.initState();
+    final settingsBloc = widget.settingsBloc!;
+    themeMode = _themeModeFor(settingsBloc.currentSettings.theme);
+    currentColorScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple);
+    _updateThemes();
     WidgetsBinding.instance.addObserver(this);
+    unawaited(setCurrentColor());
 
     /// Listen to theme change events from settings.
-    widget.settingsBloc!.settings.listen((event) {
+    _settingsSubscription = settingsBloc.settings.listen((event) {
+      final newThemeMode = _themeModeFor(event.theme);
+      if (newThemeMode == themeMode) return;
       setState(() {
-        var newTheme = event.theme == 'dark'
-            ? Themes.dynamicDarkTheme(currentColorScheme ??
-                    ColorScheme.fromSeed(seedColor: Colors.deepPurple))
-                .themeData
-            : Themes.dynamicLightTheme(currentColorScheme).themeData;
-
-        /// Only update the theme if it has changed.
-        if (newTheme != theme) {
-          theme = newTheme;
-        }
+        themeMode = newThemeMode;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    _settingsSubscription.cancel();
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   // Future<bool?> checkLockScreen() async {
@@ -177,7 +191,7 @@ class AnytimePodcastAppState extends State<AnytimePodcastApp>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
 //    _state = state;
-    setCurrentColor();
+    unawaited(setCurrentColor());
     // if (state == AppLifecycleState.inactive) {
     //   checkLockScreen().then((isLocked) {
     //     if (!isLocked!) {
@@ -246,9 +260,7 @@ class AnytimePodcastAppState extends State<AnytimePodcastApp>
             dispose: (_, value) => value.dispose(),
           )
         ],
-        child: DynamicColorBuilder(
-          builder: (lightColorScheme, darkColorScheme) {
-            return MaterialApp(
+        child: MaterialApp(
               debugShowCheckedModeBanner: false,
               showSemanticsDebugger: false,
               title: 'Tinig Postcast Player',
@@ -264,14 +276,14 @@ class AnytimePodcastAppState extends State<AnytimePodcastApp>
                 Locale('de', ''),
                 Locale('it', ''),
               ],
-              theme: theme,
+              theme: lightTheme,
+              darkTheme: darkTheme,
+              themeMode: themeMode,
 
               // Uncomment builder below to enable accessibility checker tool.
               // builder: (context, child) => AccessibilityTools(child: child),
               home: const AnytimeHomePage(title: 'Podcast Player'),
-            );
-          },
-        ));
+            ));
   }
 }
 
@@ -398,7 +410,18 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
     final backgroundColour = Theme.of(context).scaffoldBackgroundColor;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: Theme.of(context).appBarTheme.systemOverlayStyle!,
+      value: Theme.of(context).appBarTheme.systemOverlayStyle ??
+          SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness:
+                Theme.of(context).brightness == Brightness.dark
+                    ? Brightness.light
+                    : Brightness.dark,
+            systemNavigationBarIconBrightness:
+                Theme.of(context).brightness == Brightness.dark
+                    ? Brightness.light
+                    : Brightness.dark,
+          ),
       child: Scaffold(
         backgroundColor: backgroundColour,
         body: Column(
@@ -759,46 +782,37 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
 }
 
 class TitleWidget extends StatelessWidget {
-  final TextStyle _titleTheme1 = theme.textTheme.bodyMedium!.copyWith(
-    color: theme.primaryColor,
-    fontWeight: FontWeight.bold,
-    fontFamily: 'MontserratRegular',
-    fontSize: 18,
-  );
-
-  final TextStyle _titleTheme2Light = theme.textTheme.bodyMedium!.copyWith(
-    color: Colors.black,
-    fontWeight: FontWeight.bold,
-    fontFamily: 'MontserratRegular',
-    fontSize: 18,
-  );
-
-  final TextStyle _titleTheme2Dark = theme.textTheme.bodyMedium!.copyWith(
-    color: Colors.white,
-    fontWeight: FontWeight.bold,
-    fontFamily: 'MontserratRegular',
-    fontSize: 18,
-  );
-
   TitleWidget({
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final titleStyle = theme.textTheme.bodyMedium!.copyWith(
+      color: theme.primaryColor,
+      fontWeight: FontWeight.bold,
+      fontFamily: 'MontserratRegular',
+      fontSize: 18,
+    );
+    final nameStyle = theme.textTheme.bodyMedium!.copyWith(
+      color: theme.brightness == Brightness.light ? Colors.black : Colors.white,
+      fontWeight: FontWeight.bold,
+      fontFamily: 'MontserratRegular',
+      fontSize: 18,
+    );
+
     return Padding(
       padding: const EdgeInsets.only(left: 2.0),
       child: Row(
         children: <Widget>[
           Text(
             'Tinig',
-            style: Theme.of(context).brightness == Brightness.light
-                ? _titleTheme2Light
-                : _titleTheme2Dark,
+            style: nameStyle,
           ),
           Text(
             ' Podcast',
-            style: _titleTheme1,
+            style: titleStyle,
           ),
         ],
       ),

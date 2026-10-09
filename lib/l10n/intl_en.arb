@@ -282,9 +282,27 @@
     "type": "text",
     "placeholders": {}
   },
-  "settings_theme_switch_label": "Dark theme",
+  "settings_theme_switch_label": "Theme",
   "@settings_theme_switch_label": {
-    "description": "Dark theme",
+    "description": "Settings label for the selected app theme mode",
+    "type": "text",
+    "placeholders": {}
+  },
+  "settings_theme_system_option": "System default",
+  "@settings_theme_system_option": {
+    "description": "Use the device appearance setting",
+    "type": "text",
+    "placeholders": {}
+  },
+  "settings_theme_light_option": "Light",
+  "@settings_theme_light_option": {
+    "description": "Always use the light app theme",
+    "type": "text",
+    "placeholders": {}
+  },
+  "settings_theme_dark_option": "Dark",
+  "@settings_theme_dark_option": {
+    "description": "Always use the dark app theme",
     "type": "text",
     "placeholders": {}
   },

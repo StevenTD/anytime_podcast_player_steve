@@ -282,9 +282,27 @@
     "type": "text",
     "placeholders": {}
   },
-  "settings_theme_switch_label": "Tema scuro",
+  "settings_theme_switch_label": "Tema",
   "@settings_theme_switch_label": {
-    "description": "Dark theme",
+    "description": "Settings label for the selected app theme mode",
+    "type": "text",
+    "placeholders": {}
+  },
+  "settings_theme_system_option": "Predefinito di sistema",
+  "@settings_theme_system_option": {
+    "description": "Use the device appearance setting",
+    "type": "text",
+    "placeholders": {}
+  },
+  "settings_theme_light_option": "Chiaro",
+  "@settings_theme_light_option": {
+    "description": "Always use the light app theme",
+    "type": "text",
+    "placeholders": {}
+  },
+  "settings_theme_dark_option": "Scuro",
+  "@settings_theme_dark_option": {
+    "description": "Always use the dark app theme",
     "type": "text",
     "placeholders": {}
   },

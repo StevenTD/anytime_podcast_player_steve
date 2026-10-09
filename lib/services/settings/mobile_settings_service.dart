@@ -58,15 +58,29 @@ class MobileSettingsService extends SettingsService {
   }
 
   @override
-  bool get themeDarkMode {
-    var theme = _sharedPreferences.getString('theme') ?? 'dark';
+  String get themeMode {
+    final storedThemeMode = _sharedPreferences.getString('themeMode');
+    if (storedThemeMode == AppSettings.themeSystem ||
+        storedThemeMode == AppSettings.themeLight ||
+        storedThemeMode == AppSettings.themeDark) {
+      return storedThemeMode!;
+    }
 
-    return theme == 'dark';
+    // Preserve the existing dark/light preference for users upgrading.
+    final legacyTheme = _sharedPreferences.getString('theme');
+    return legacyTheme == AppSettings.themeLight
+        ? AppSettings.themeLight
+        : AppSettings.themeDark;
   }
 
   @override
-  set themeDarkMode(bool value) {
-    _sharedPreferences.setString('theme', value ? 'dark' : 'light');
+  set themeMode(String value) {
+    if (value != AppSettings.themeSystem &&
+        value != AppSettings.themeLight &&
+        value != AppSettings.themeDark) {
+      throw ArgumentError.value(value, 'value', 'Unknown theme mode');
+    }
+    _sharedPreferences.setString('themeMode', value);
     settingsNotifier.sink.add('theme');
   }
 

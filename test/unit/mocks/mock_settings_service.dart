@@ -40,7 +40,7 @@ class MockSettingsService extends SettingsService {
   bool storeDownloadsSDCard = false;
 
   @override
-  bool themeDarkMode = true;
+  String themeMode = 'dark';
 
   @override
   bool trimSilence = false;
