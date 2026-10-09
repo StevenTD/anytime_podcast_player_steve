@@ -409,6 +409,7 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
   Widget build(BuildContext context) {
     final pager = Provider.of<PagerBloc>(context);
     final searchBloc = Provider.of<EpisodeBloc>(context);
+    final audioBloc = Provider.of<AudioBloc>(context, listen: false);
     final backgroundColour = Theme.of(context).scaffoldBackgroundColor;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -426,117 +427,142 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
           ),
       child: Scaffold(
         backgroundColor: backgroundColour,
-        body: Column(
+        body: Stack(
           children: <Widget>[
-            Expanded(
-              child: NotificationListener<ScrollNotification>(
-                onNotification: (notification) {
-                  if (notification.depth == 0 &&
-                      notification.metrics.axis == Axis.vertical) {
-                    final isScrolled = notification.metrics.pixels > 40;
-                    if (isScrolled != _isMainScreenScrolled) {
-                      setState(() => _isMainScreenScrolled = isScrolled);
-                    }
-                  }
-                  return false;
-                },
-                child: CustomScrollView(
-                  slivers: <Widget>[
-                    SliverVisibility(
-                      visible: widget.topBarVisible,
-                      sliver: SliverAppBar(
-                        title: ExcludeSemantics(
-                          child: AnimatedAlign(
-                            alignment: Alignment.centerLeft,
-                            widthFactor: _isMainScreenScrolled ? 0 : 1,
-                            heightFactor: 1,
-                            duration: const Duration(milliseconds: 240),
-                            curve: Curves.easeInOutCubic,
-                            child: AnimatedOpacity(
-                              opacity: _isMainScreenScrolled ? 0 : 1,
-                              duration: const Duration(milliseconds: 180),
-                              curve: Curves.easeOut,
-                              child: TitleWidget(),
-                            ),
-                          ),
-                        ),
-                        backgroundColor: Colors.transparent,
-                        surfaceTintColor: Colors.transparent,
-                        elevation: 0,
-                        scrolledUnderElevation: 0,
-                        forceMaterialTransparency: true,
-                        toolbarHeight: 64,
-                        actionsPadding: const EdgeInsets.only(right: 8),
-                        actionsIconTheme: IconThemeData(
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                        floating: false,
-                        pinned: true,
-                        snap: false,
-                        actions: <Widget>[
-                          Hero(
-                            tag: searchActionHeroTag,
-                            child: _toolbarActionSurface(
-                              child: IconButton(
-                                tooltip:
-                                    L.of(context)!.search_for_podcasts_hint,
-                                icon: const Icon(Icons.search),
-                                color: Theme.of(context).colorScheme.onSurface,
-                                constraints: const BoxConstraints.tightFor(
-                                  width: 48,
-                                  height: 48,
+            Column(
+              children: <Widget>[
+                Expanded(
+                  child: NotificationListener<ScrollNotification>(
+                    onNotification: (notification) {
+                      if (notification.depth == 0 &&
+                          notification.metrics.axis == Axis.vertical) {
+                        final isScrolled = notification.metrics.pixels > 40;
+                        if (isScrolled != _isMainScreenScrolled) {
+                          setState(() => _isMainScreenScrolled = isScrolled);
+                        }
+                      }
+                      return false;
+                    },
+                    child: CustomScrollView(
+                      slivers: <Widget>[
+                        SliverVisibility(
+                          visible: widget.topBarVisible,
+                          sliver: SliverAppBar(
+                            title: ExcludeSemantics(
+                              child: AnimatedAlign(
+                                alignment: Alignment.centerLeft,
+                                widthFactor: _isMainScreenScrolled ? 0 : 1,
+                                heightFactor: 1,
+                                duration: const Duration(milliseconds: 240),
+                                curve: Curves.easeInOutCubic,
+                                child: AnimatedOpacity(
+                                  opacity: _isMainScreenScrolled ? 0 : 1,
+                                  duration: const Duration(milliseconds: 180),
+                                  curve: Curves.easeOut,
+                                  child: TitleWidget(),
                                 ),
-                                padding: EdgeInsets.zero,
-                                onPressed: () async {
-                                  await Navigator.push(
-                                    context,
-                                    defaultTargetPlatform == TargetPlatform.iOS
-                                        ? MaterialPageRoute<void>(
-                                            fullscreenDialog: false,
-                                            settings: const RouteSettings(
-                                                name: 'search'),
-                                            builder: (context) =>
-                                                const Search())
-                                        : SlideRightRoute(
-                                            widget: const Search(),
-                                            settings: const RouteSettings(
-                                                name: 'search'),
-                                          ),
-                                  );
-                                },
                               ),
                             ),
-                          ),
-                          Hero(
-                            tag: _moreMenuHeroTag,
-                            child: _toolbarActionSurface(
-                              child: IconButton(
-                                tooltip: L.of(context)!.about_label,
-                                icon: const Icon(Icons.more_vert),
-                                color: Theme.of(context).colorScheme.onSurface,
-                                constraints: const BoxConstraints.tightFor(
-                                  width: 48,
-                                  height: 48,
-                                ),
-                                padding: EdgeInsets.zero,
-                                onPressed: _showMoreMenu,
-                              ),
+                            backgroundColor: Colors.transparent,
+                            surfaceTintColor: Colors.transparent,
+                            elevation: 0,
+                            scrolledUnderElevation: 0,
+                            forceMaterialTransparency: true,
+                            toolbarHeight: 64,
+                            actionsPadding: const EdgeInsets.only(right: 8),
+                            actionsIconTheme: IconThemeData(
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
+                            floating: false,
+                            pinned: true,
+                            snap: false,
+                            actions: <Widget>[
+                              Hero(
+                                tag: searchActionHeroTag,
+                                child: _toolbarActionSurface(
+                                  child: IconButton(
+                                    tooltip:
+                                        L.of(context)!.search_for_podcasts_hint,
+                                    icon: const Icon(Icons.search),
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
+                                    constraints: const BoxConstraints.tightFor(
+                                      width: 48,
+                                      height: 48,
+                                    ),
+                                    padding: EdgeInsets.zero,
+                                    onPressed: () async {
+                                      await Navigator.push(
+                                        context,
+                                        defaultTargetPlatform ==
+                                                TargetPlatform.iOS
+                                            ? MaterialPageRoute<void>(
+                                                fullscreenDialog: false,
+                                                settings: const RouteSettings(
+                                                    name: 'search'),
+                                                builder: (context) =>
+                                                    const Search())
+                                            : SlideRightRoute(
+                                                widget: const Search(),
+                                                settings: const RouteSettings(
+                                                    name: 'search'),
+                                              ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                              Hero(
+                                tag: _moreMenuHeroTag,
+                                child: _toolbarActionSurface(
+                                  child: IconButton(
+                                    tooltip: L.of(context)!.about_label,
+                                    icon: const Icon(Icons.more_vert),
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
+                                    constraints: const BoxConstraints.tightFor(
+                                      width: 48,
+                                      height: 48,
+                                    ),
+                                    padding: EdgeInsets.zero,
+                                    onPressed: _showMoreMenu,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                        StreamBuilder<int>(
+                            stream: pager.currentPage,
+                            builder: (BuildContext context,
+                                AsyncSnapshot<int> snapshot) {
+                              return _fragment(snapshot.data, searchBloc);
+                            }),
+                        StreamBuilder<AudioState>(
+                          stream: audioBloc.playingState,
+                          initialData: AudioState.stopped,
+                          builder: (context, snapshot) {
+                            final isMiniPlayerVisible =
+                                snapshot.data != AudioState.stopped &&
+                                    snapshot.data != AudioState.none &&
+                                    snapshot.data != AudioState.error;
+                            return SliverToBoxAdapter(
+                              child: SizedBox(
+                                height: isMiniPlayerVisible ? 82 : 0,
+                              ),
+                            );
+                          },
+                        ),
+                      ],
                     ),
-                    StreamBuilder<int>(
-                        stream: pager.currentPage,
-                        builder: (BuildContext context,
-                            AsyncSnapshot<int> snapshot) {
-                          return _fragment(snapshot.data, searchBloc);
-                        }),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-            const MiniPlayer(),
+            const Align(
+              alignment: Alignment.bottomCenter,
+              child: MiniPlayer(),
+            ),
           ],
         ),
         bottomNavigationBar: StreamBuilder<int>(
