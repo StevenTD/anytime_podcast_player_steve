@@ -1,9 +1,20 @@
 import 'package:anytime/bloc/podcast/podcast_bloc.dart';
 import 'package:anytime/entities/podcast.dart';
+import 'package:anytime/l10n/L.dart';
+import 'package:anytime/ui/library/podcast_gallery.dart';
 import 'package:anytime/ui/podcast/podcast_details.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+
+void _openPodcastGallery(BuildContext context) {
+  Navigator.of(context).push(
+    MaterialPageRoute<void>(
+      settings: const RouteSettings(name: 'podcastgallery'),
+      builder: (context) => const PodcastGallery(),
+    ),
+  );
+}
 
 class CarouselViewSubscriptions extends StatelessWidget {
   const CarouselViewSubscriptions({super.key});
@@ -51,11 +62,18 @@ class _CarouselExampleState extends State<CarouselExample> {
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           const Spacer(),
-                          TextButton(
-                              onPressed: () {},
-                              child: const Text(
-                                'More',
-                              )),
+                          Hero(
+                            tag: podcastGalleryExploreHeroTag,
+                            child: Material(
+                              type: MaterialType.transparency,
+                              child: TextButton(
+                                onPressed: () => _openPodcastGallery(context),
+                                child: Text(
+                                  L.of(context)!.explore_podcasts_label,
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -85,18 +103,44 @@ class _CarouselExampleState extends State<CarouselExample> {
                     ),
                   ],
                 )
-              : Container(
+              : SizedBox(
                   height: height,
                   child: Center(
-                      child: Text(
-                    'No subscriptions found',
-                    overflow: TextOverflow.clip,
-                    softWrap: false,
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineLarge
-                        ?.copyWith(color: Colors.white),
-                  )),
+                    child: snapshot.connectionState == ConnectionState.waiting
+                        ? const CircularProgressIndicator()
+                        : Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                L.of(context)!.no_subscriptions_found_label,
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge
+                                    ?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
+                                    ),
+                              ),
+                              const SizedBox(height: 16),
+                              Hero(
+                                tag: podcastGalleryExploreHeroTag,
+                                child: Material(
+                                  type: MaterialType.transparency,
+                                  child: FilledButton.icon(
+                                    onPressed: () =>
+                                        _openPodcastGallery(context),
+                                    icon: const Icon(Icons.explore_outlined),
+                                    label: Text(
+                                      L.of(context)!.explore_podcasts_label,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                  ),
                 );
         });
 

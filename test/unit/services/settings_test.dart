@@ -1,6 +1,7 @@
 // Copyright 2020 Ben Hills and the project contributors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'package:anytime/entities/app_settings.dart';
 import 'package:anytime/services/settings/mobile_settings_service.dart';
 import 'package:anytime/services/settings/settings_service.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -47,6 +48,18 @@ void main() {
     mobileSettingsService?.themeMode = 'system';
     expect(mobileSettingsService?.themeMode, 'system');
   }, timeout: const Timeout(Duration(milliseconds: timeout)));
+
+  test('Theme mode defaults to system when no preference is saved', () async {
+    final preferences = await SharedPreferences.getInstance();
+    await preferences.remove('themeMode');
+    await preferences.remove('theme');
+
+    expect(mobileSettingsService?.themeMode, 'system');
+  });
+
+  test('App settings sensible defaults use system theme', () {
+    expect(AppSettings.sensibleDefaults().theme, AppSettings.themeSystem);
+  });
 
   test('Test playback speed', () async {
     expect(mobileSettingsService?.playbackSpeed, 1.0);

@@ -82,6 +82,26 @@ class L {
         );
   }
 
+  String get podcast_gallery_title {
+    return message('podcast_gallery_title') ??
+        Intl.message(
+          'Discover podcasts',
+          name: 'podcast_gallery_title',
+          desc: 'Title of the podcast gallery screen',
+          locale: localeName,
+        );
+  }
+
+  String get podcast_gallery_loading_message {
+    return message('podcast_gallery_loading_message') ??
+        Intl.message(
+          'Loading podcasts...',
+          name: 'podcast_gallery_loading_message',
+          desc: 'Loading message displayed in the podcast gallery',
+          locale: localeName,
+        );
+  }
+
   String get downloads {
     return message('downloads') ??
         Intl.message(
@@ -99,6 +119,56 @@ class L {
           'Follow',
           name: 'subscribe_button_label',
           desc: 'Subscribe button label',
+          locale: localeName,
+        );
+  }
+
+  String get following_button_label {
+    return message('following_button_label') ??
+        Intl.message(
+          'Following',
+          name: 'following_button_label',
+          desc: 'Label for a podcast the user already follows',
+          locale: localeName,
+        );
+  }
+
+  String get podcast_gallery_follow_success {
+    return message('podcast_gallery_follow_success') ??
+        Intl.message(
+          'Podcast added to your library.',
+          name: 'podcast_gallery_follow_success',
+          desc: 'Confirmation shown after following a podcast from the gallery',
+          locale: localeName,
+        );
+  }
+
+  String get podcast_gallery_follow_error {
+    return message('podcast_gallery_follow_error') ??
+        Intl.message(
+          'Could not follow this podcast. Please try again.',
+          name: 'podcast_gallery_follow_error',
+          desc: 'Error shown when following a podcast from the gallery fails',
+          locale: localeName,
+        );
+  }
+
+  String get podcast_gallery_unfollow_error {
+    return message('podcast_gallery_unfollow_error') ??
+        Intl.message(
+          'Could not unfollow this podcast. Please try again.',
+          name: 'podcast_gallery_unfollow_error',
+          desc: 'Error shown when unfollowing a podcast from the gallery fails',
+          locale: localeName,
+        );
+  }
+
+  String get retry_button_label {
+    return message('retry_button_label') ??
+        Intl.message(
+          'Retry',
+          name: 'retry_button_label',
+          desc: 'Retry action label',
           locale: localeName,
         );
   }
@@ -181,6 +251,26 @@ class L {
           name: 'no_subscriptions_message',
           desc:
               'Displayed on the library tab when the user has no subscriptions',
+          locale: localeName,
+        );
+  }
+
+  String get no_subscriptions_found_label {
+    return message('no_subscriptions_found_label') ??
+        Intl.message(
+          'No subscriptions found',
+          name: 'no_subscriptions_found_label',
+          desc: 'Displayed in the library subscription carousel when empty',
+          locale: localeName,
+        );
+  }
+
+  String get explore_podcasts_label {
+    return message('explore_podcasts_label') ??
+        Intl.message(
+          'Explore Podcasts',
+          name: 'explore_podcasts_label',
+          desc: 'Button label to open the podcast gallery',
           locale: localeName,
         );
   }

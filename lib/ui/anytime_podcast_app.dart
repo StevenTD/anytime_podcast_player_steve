@@ -121,7 +121,7 @@ class AnytimePodcastAppState extends State<AnytimePodcastApp>
   ColorScheme? currentColorScheme;
   late ThemeData lightTheme;
   late ThemeData darkTheme;
-  ThemeMode themeMode = ThemeMode.dark;
+  ThemeMode themeMode = ThemeMode.system;
   late StreamSubscription<AppSettings> _settingsSubscription;
 
   Future<void> setCurrentColor() async {
@@ -129,16 +129,15 @@ class AnytimePodcastAppState extends State<AnytimePodcastApp>
 
     if (!mounted) return;
     setState(() {
-      currentColorScheme =
-          corePalette?.toColorScheme() ??
+      currentColorScheme = corePalette?.toColorScheme() ??
           ColorScheme.fromSeed(seedColor: Colors.deepPurple);
       _updateThemes();
     });
   }
 
   void _updateThemes() {
-    final colorScheme =
-        currentColorScheme ?? ColorScheme.fromSeed(seedColor: Colors.deepPurple);
+    final colorScheme = currentColorScheme ??
+        ColorScheme.fromSeed(seedColor: Colors.deepPurple);
     lightTheme = Themes.dynamicLightTheme(colorScheme).themeData;
     darkTheme = Themes.dynamicDarkTheme(colorScheme).themeData;
   }
@@ -261,29 +260,29 @@ class AnytimePodcastAppState extends State<AnytimePodcastApp>
           )
         ],
         child: MaterialApp(
-              debugShowCheckedModeBanner: false,
-              showSemanticsDebugger: false,
-              title: 'Tinig Postcast Player',
-              navigatorObservers: [NavigationRouteObserver()],
-              localizationsDelegates: const <LocalizationsDelegate<Object>>[
-                AnytimeLocalisationsDelegate(),
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-              ],
-              supportedLocales: const [
-                Locale('en', ''),
-                Locale('de', ''),
-                Locale('it', ''),
-              ],
-              theme: lightTheme,
-              darkTheme: darkTheme,
-              themeMode: themeMode,
+          debugShowCheckedModeBanner: false,
+          showSemanticsDebugger: false,
+          title: 'Tinig Postcast Player',
+          navigatorObservers: [NavigationRouteObserver()],
+          localizationsDelegates: const <LocalizationsDelegate<Object>>[
+            AnytimeLocalisationsDelegate(),
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('en', ''),
+            Locale('de', ''),
+            Locale('it', ''),
+          ],
+          theme: lightTheme,
+          darkTheme: darkTheme,
+          themeMode: themeMode,
 
-              // Uncomment builder below to enable accessibility checker tool.
-              // builder: (context, child) => AccessibilityTools(child: child),
-              home: const AnytimeHomePage(title: 'Podcast Player'),
-            ));
+          // Uncomment builder below to enable accessibility checker tool.
+          // builder: (context, child) => AccessibilityTools(child: child),
+          home: const AnytimeHomePage(title: 'Podcast Player'),
+        ));
   }
 }
 
@@ -657,7 +656,7 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
             height: 52.0,
           ),
           children: <Widget>[
-            const Text('© 2025 Steven Dela Rosa\n'),
+            const Text('© 2026 SteveTD\n'),
             const Text(
               'This app is based on Anytime Podcast Player © 2020 Ben Hills and the project contributors.\n'
               'Licensed under the BSD 3-Clause License.',

@@ -24,6 +24,18 @@
     "type": "text",
     "placeholders": {}
   },
+  "podcast_gallery_title": "Podcasts entdecken",
+  "@podcast_gallery_title": {
+    "description": "Title of the podcast gallery screen",
+    "type": "text",
+    "placeholders": {}
+  },
+  "podcast_gallery_loading_message": "Podcasts werden geladen...",
+  "@podcast_gallery_loading_message": {
+    "description": "Loading message displayed in the podcast gallery",
+    "type": "text",
+    "placeholders": {}
+  },
   "downloads": "Herunterladen",
   "@downloads": {
     "description": "Downloads tab label",
@@ -33,6 +45,36 @@
   "subscribe_button_label": "Folgen",
   "@subscribe_button_label": {
     "description": "Subscribe button label",
+    "type": "text",
+    "placeholders": {}
+  },
+  "following_button_label": "Folge ich",
+  "@following_button_label": {
+    "description": "Label for a podcast the user already follows",
+    "type": "text",
+    "placeholders": {}
+  },
+  "podcast_gallery_follow_success": "Podcast zur Bibliothek hinzugefügt.",
+  "@podcast_gallery_follow_success": {
+    "description": "Confirmation shown after following a podcast from the gallery",
+    "type": "text",
+    "placeholders": {}
+  },
+  "podcast_gallery_follow_error": "Podcast konnte nicht abonniert werden. Bitte erneut versuchen.",
+  "@podcast_gallery_follow_error": {
+    "description": "Error shown when following a podcast from the gallery fails",
+    "type": "text",
+    "placeholders": {}
+  },
+  "podcast_gallery_unfollow_error": "Podcast konnte nicht abbestellt werden. Bitte erneut versuchen.",
+  "@podcast_gallery_unfollow_error": {
+    "description": "Error shown when unfollowing a podcast from the gallery fails",
+    "type": "text",
+    "placeholders": {}
+  },
+  "retry_button_label": "Erneut versuchen",
+  "@retry_button_label": {
+    "description": "Retry action label",
     "type": "text",
     "placeholders": {}
   },
@@ -81,6 +123,18 @@
   "no_subscriptions_message": "Tippen Sie unten auf die Schaltfläche „Entdecken“ oder verwenden Sie die Suchleiste oben, um Ihren ersten Podcast zu finden",
   "@no_subscriptions_message": {
     "description": "Displayed on the library tab when the user has no subscriptions",
+    "type": "text",
+    "placeholders": {}
+  },
+  "no_subscriptions_found_label": "Keine Abonnements gefunden",
+  "@no_subscriptions_found_label": {
+    "description": "Displayed in the library subscription carousel when empty",
+    "type": "text",
+    "placeholders": {}
+  },
+  "explore_podcasts_label": "Podcasts entdecken",
+  "@explore_podcasts_label": {
+    "description": "Button label to open the podcast gallery",
     "type": "text",
     "placeholders": {}
   },

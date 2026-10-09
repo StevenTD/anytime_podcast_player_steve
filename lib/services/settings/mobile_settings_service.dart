@@ -66,11 +66,15 @@ class MobileSettingsService extends SettingsService {
       return storedThemeMode!;
     }
 
-    // Preserve the existing dark/light preference for users upgrading.
+    // Preserve an explicit legacy preference for users upgrading.
     final legacyTheme = _sharedPreferences.getString('theme');
-    return legacyTheme == AppSettings.themeLight
-        ? AppSettings.themeLight
-        : AppSettings.themeDark;
+    if (legacyTheme == AppSettings.themeLight) {
+      return AppSettings.themeLight;
+    }
+    if (legacyTheme == AppSettings.themeDark) {
+      return AppSettings.themeDark;
+    }
+    return AppSettings.themeSystem;
   }
 
   @override

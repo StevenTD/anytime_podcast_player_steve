@@ -24,6 +24,18 @@
     "type": "text",
     "placeholders": {}
   },
+  "podcast_gallery_title": "Discover podcasts",
+  "@podcast_gallery_title": {
+    "description": "Title of the podcast gallery screen",
+    "type": "text",
+    "placeholders": {}
+  },
+  "podcast_gallery_loading_message": "Loading podcasts...",
+  "@podcast_gallery_loading_message": {
+    "description": "Loading message displayed in the podcast gallery",
+    "type": "text",
+    "placeholders": {}
+  },
   "downloads": "Downloads",
   "@downloads": {
     "description": "Downloads tab label",
@@ -33,6 +45,36 @@
   "subscribe_button_label": "Follow",
   "@subscribe_button_label": {
     "description": "Subscribe button label",
+    "type": "text",
+    "placeholders": {}
+  },
+  "following_button_label": "Following",
+  "@following_button_label": {
+    "description": "Label for a podcast the user already follows",
+    "type": "text",
+    "placeholders": {}
+  },
+  "podcast_gallery_follow_success": "Podcast added to your library.",
+  "@podcast_gallery_follow_success": {
+    "description": "Confirmation shown after following a podcast from the gallery",
+    "type": "text",
+    "placeholders": {}
+  },
+  "podcast_gallery_follow_error": "Could not follow this podcast. Please try again.",
+  "@podcast_gallery_follow_error": {
+    "description": "Error shown when following a podcast from the gallery fails",
+    "type": "text",
+    "placeholders": {}
+  },
+  "podcast_gallery_unfollow_error": "Could not unfollow this podcast. Please try again.",
+  "@podcast_gallery_unfollow_error": {
+    "description": "Error shown when unfollowing a podcast from the gallery fails",
+    "type": "text",
+    "placeholders": {}
+  },
+  "retry_button_label": "Retry",
+  "@retry_button_label": {
+    "description": "Retry action label",
     "type": "text",
     "placeholders": {}
   },
@@ -81,6 +123,18 @@
   "no_subscriptions_message": "Tap the Discovery button below or use the search bar above to find your first podcast",
   "@no_subscriptions_message": {
     "description": "Displayed on the library tab when the user has no subscriptions",
+    "type": "text",
+    "placeholders": {}
+  },
+  "no_subscriptions_found_label": "No subscriptions found",
+  "@no_subscriptions_found_label": {
+    "description": "Displayed in the library subscription carousel when empty",
+    "type": "text",
+    "placeholders": {}
+  },
+  "explore_podcasts_label": "Explore Podcasts",
+  "@explore_podcasts_label": {
+    "description": "Button label to open the podcast gallery",
     "type": "text",
     "placeholders": {}
   },

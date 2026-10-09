@@ -91,6 +91,8 @@ class MessageLookup extends MessageLookupByLibrary {
     'no_podcast_details_message': MessageLookupByLibrary.simpleMessage('Could not load podcast episodes. Please check your connection.'),
     'no_search_results_message': MessageLookupByLibrary.simpleMessage('No podcasts found'),
     'no_subscriptions_message': MessageLookupByLibrary.simpleMessage('Tap the Discovery button below or use the search bar above to find your first podcast'),
+    'no_subscriptions_found_label': MessageLookupByLibrary.simpleMessage('No subscriptions found'),
+    'explore_podcasts_label': MessageLookupByLibrary.simpleMessage('Explore Podcasts'),
     'no_transcript_available_label': MessageLookupByLibrary.simpleMessage('A transcript is not available for this podcast'),
     'notes_label': MessageLookupByLibrary.simpleMessage('Notes'),
     'now_playing_episode_position': MessageLookupByLibrary.simpleMessage('Episode position'),

@@ -122,6 +122,8 @@ class SembastRepository extends Repository {
         finder: episodeFinder,
       );
     });
+
+    _podcastSubject.add(podcast);
   }
 
   @override
