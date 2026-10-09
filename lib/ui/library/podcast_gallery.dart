@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:anytime/bloc/discovery/discovery_bloc.dart';
 import 'package:anytime/bloc/discovery/discovery_state_event.dart';
 import 'package:anytime/bloc/podcast/podcast_bloc.dart';
@@ -8,6 +10,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:logging/logging.dart';
 import 'package:podcast_search/podcast_search.dart' show Country;
 import 'package:podcast_search/podcast_search.dart' as search;
@@ -26,7 +29,8 @@ class _PodcastGalleryState extends State<PodcastGallery> {
   static const _columns = 3;
   static const _spacing = 16.0;
   static const _swipeThreshold = 30.0;
-  static const _swipeDuration = Duration(milliseconds: 160);
+  static const _swipeDuration = Duration(milliseconds: 260);
+  static const _previewDuration = Duration(seconds: 20);
   static const _focusedScale = 1.10;
   static const _unfocusedScale = 0.90;
 
@@ -38,6 +42,13 @@ class _PodcastGalleryState extends State<PodcastGallery> {
   Offset _lastSwipeDirection = Offset.zero;
   bool _swipeTriggered = false;
   int? _focusedIndex;
+  String? _previewPodcastUrl;
+  AudioPlayer? _previewPlayer;
+  StreamSubscription<PlayerState>? _previewStateSubscription;
+  Timer? _previewTimer;
+  int _previewGeneration = 0;
+  bool _previewIsLoading = false;
+  bool _previewIsPlaying = false;
 
   @override
   void initState() {
@@ -55,6 +66,236 @@ class _PodcastGalleryState extends State<PodcastGallery> {
         languageCode: PlatformDispatcher.instance.locale.languageCode,
       ),
     );
+  }
+
+  void _requestPreview(Podcast podcast) {
+    if (_previewPodcastUrl == podcast.url) return;
+    _previewPodcastUrl = podcast.url;
+    if (podcast.url.isEmpty) {
+      _previewGeneration++;
+      _previewTimer?.cancel();
+      _previewTimer = null;
+      final subscription = _previewStateSubscription;
+      _previewStateSubscription = null;
+      final player = _previewPlayer;
+      _previewPlayer = null;
+      setState(() {
+        _previewIsLoading = false;
+        _previewIsPlaying = false;
+      });
+      unawaited(_disposePreview(subscription, player));
+      return;
+    }
+    unawaited(_loadPreview(podcast));
+  }
+
+  Future<void> _disposePreview(
+    StreamSubscription<PlayerState>? subscription,
+    AudioPlayer? player,
+  ) async {
+    try {
+      await subscription?.cancel();
+      await player?.dispose();
+    } catch (error, stackTrace) {
+      _log.warning(
+          'Unable to dispose podcast preview player', error, stackTrace);
+    }
+  }
+
+  void _syncPreviewFocus(Podcast podcast) {
+    if (_previewPodcastUrl == podcast.url) return;
+
+    _previewPodcastUrl = podcast.url;
+    _previewGeneration++;
+    _previewTimer?.cancel();
+    _previewTimer = null;
+    final subscription = _previewStateSubscription;
+    _previewStateSubscription = null;
+    final player = _previewPlayer;
+    _previewPlayer = null;
+    if (_previewIsLoading || _previewIsPlaying) {
+      setState(() {
+        _previewIsLoading = false;
+        _previewIsPlaying = false;
+      });
+    }
+    unawaited(_disposePreview(subscription, player));
+  }
+
+  Future<void> _loadPreview(Podcast podcast) async {
+    final generation = ++_previewGeneration;
+    _previewTimer?.cancel();
+    _previewTimer = null;
+    final previousSubscription = _previewStateSubscription;
+    _previewStateSubscription = null;
+    final previousPlayer = _previewPlayer;
+    _previewPlayer = null;
+
+    setState(() {
+      _previewIsLoading = true;
+      _previewIsPlaying = false;
+    });
+
+    try {
+      await previousSubscription?.cancel();
+      await previousPlayer?.dispose();
+      if (!mounted || generation != _previewGeneration) return;
+
+      final podcastBloc = Provider.of<PodcastBloc>(context, listen: false);
+      final loadedPodcast =
+          await podcastBloc.podcastService.loadPodcast(podcast: podcast);
+      if (!mounted || generation != _previewGeneration) return;
+
+      final episodes = loadedPodcast?.episodes
+          .where((episode) => episode.contentUrl?.isNotEmpty == true)
+          .toList()
+        ?..sort(
+          (a, b) => (b.publicationDate ?? DateTime(1970))
+              .compareTo(a.publicationDate ?? DateTime(1970)),
+        );
+      if (episodes == null || episodes.isEmpty) {
+        throw StateError('No playable episode was found for ${podcast.url}.');
+      }
+
+      final episode = episodes.first;
+      final player = AudioPlayer();
+      _previewPlayer = player;
+      await player.setUrl(episode.contentUrl!);
+      if (!mounted || generation != _previewGeneration) return;
+
+      setState(() {
+        _previewIsLoading = false;
+        _previewIsPlaying = true;
+      });
+      _previewStateSubscription = player.playerStateStream.listen((state) {
+        if (state.processingState == ProcessingState.completed) {
+          _finishPreview(generation, player);
+        }
+      });
+      _startPreviewTimer(generation, player, podcast);
+      unawaited(
+        player.play().catchError(
+              (Object error, StackTrace stackTrace) =>
+                  _handlePreviewError(podcast, generation, error, stackTrace),
+            ),
+      );
+    } catch (error, stackTrace) {
+      _handlePreviewError(podcast, generation, error, stackTrace);
+    }
+  }
+
+  Future<void> _togglePreview(Podcast podcast) async {
+    final player = _previewPlayer;
+    final generation = _previewGeneration;
+    if (player == null || _previewPodcastUrl != podcast.url) {
+      _previewPodcastUrl = null;
+      _requestPreview(podcast);
+      return;
+    }
+
+    try {
+      if (_previewIsPlaying) {
+        _previewTimer?.cancel();
+        _previewTimer = null;
+        await player.pause();
+        if (mounted && identical(player, _previewPlayer)) {
+          setState(() => _previewIsPlaying = false);
+        }
+      } else {
+        if (player.processingState == ProcessingState.completed) {
+          await player.seek(Duration.zero);
+        }
+        if (!mounted ||
+            generation != _previewGeneration ||
+            !identical(player, _previewPlayer)) {
+          return;
+        }
+        setState(() => _previewIsPlaying = true);
+        _startPreviewTimer(generation, player, podcast);
+        unawaited(
+          player.play().catchError(
+                (Object error, StackTrace stackTrace) => _handlePreviewError(
+                  podcast,
+                  generation,
+                  error,
+                  stackTrace,
+                ),
+              ),
+        );
+      }
+    } catch (error, stackTrace) {
+      _handlePreviewError(
+        podcast,
+        generation,
+        error,
+        stackTrace,
+      );
+    }
+  }
+
+  void _startPreviewTimer(
+    int generation,
+    AudioPlayer player,
+    Podcast podcast,
+  ) {
+    _previewTimer?.cancel();
+    _previewTimer = Timer(_previewDuration, () async {
+      if (!mounted ||
+          generation != _previewGeneration ||
+          !identical(player, _previewPlayer)) {
+        return;
+      }
+      try {
+        await player.pause();
+        await player.seek(Duration.zero);
+        _finishPreview(generation, player);
+      } catch (error, stackTrace) {
+        _handlePreviewError(
+          podcast,
+          generation,
+          error,
+          stackTrace,
+        );
+      }
+    });
+  }
+
+  void _finishPreview(int generation, AudioPlayer player) {
+    if (!mounted ||
+        generation != _previewGeneration ||
+        !identical(player, _previewPlayer)) {
+      return;
+    }
+    _previewTimer?.cancel();
+    _previewTimer = null;
+    if (_previewIsPlaying) {
+      setState(() => _previewIsPlaying = false);
+    }
+  }
+
+  void _handlePreviewError(
+    Podcast podcast,
+    int generation,
+    Object error,
+    StackTrace stackTrace,
+  ) {
+    _log.warning(
+      'Unable to play preview for podcast ${podcast.url}',
+      error,
+      stackTrace,
+    );
+    if (!mounted || generation != _previewGeneration) return;
+    _previewTimer?.cancel();
+    _previewTimer = null;
+    unawaited(_previewStateSubscription?.cancel());
+    _previewStateSubscription = null;
+    final player = _previewPlayer;
+    _previewPlayer = null;
+    setState(() {
+      _previewIsLoading = false;
+      _previewIsPlaying = false;
+    });
+    if (player != null) unawaited(player.dispose());
   }
 
   Future<void> _follow(Podcast podcast) async {
@@ -184,6 +425,15 @@ class _PodcastGalleryState extends State<PodcastGallery> {
   }
 
   @override
+  void dispose() {
+    _previewGeneration++;
+    _previewTimer?.cancel();
+    unawaited(_previewStateSubscription?.cancel());
+    unawaited(_previewPlayer?.dispose() ?? Future<void>.value());
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final strings = L.of(context)!;
     final brightness = Theme.of(context).brightness;
@@ -280,8 +530,7 @@ class _PodcastGalleryState extends State<PodcastGallery> {
                                 const SizedBox(width: 8),
                                 Text(
                                   strings.explore_podcasts_label,
-                                  style:
-                                      Theme.of(context).textTheme.titleSmall,
+                                  style: Theme.of(context).textTheme.titleSmall,
                                 ),
                               ],
                             ),
@@ -334,6 +583,12 @@ class _PodcastGalleryState extends State<PodcastGallery> {
         final gridWidth = _columns * cardWidth + (_columns - 1) * _spacing;
         final gridHeight = rowCount * cardHeight + (rowCount - 1) * _spacing;
         final focusIndex = _focusedIndex!;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted || _focusedIndex != focusIndex) return;
+          _syncPreviewFocus(
+            Podcast.fromSearchResultItem(results.items[focusIndex]),
+          );
+        });
         final focusedRow = focusIndex ~/ _columns;
         final focusedColumn = focusIndex % _columns;
         final cellWidth = cardWidth + _spacing;
@@ -344,7 +599,7 @@ class _PodcastGalleryState extends State<PodcastGallery> {
         );
 
         return _AnimatedCutoutOverlay(
-          key: ValueKey(focusIndex),
+          animationKey: ValueKey(focusIndex),
           cutoutSize: Size(
             cardWidth * _focusedScale,
             cardHeight * _focusedScale,
@@ -374,7 +629,7 @@ class _PodcastGalleryState extends State<PodcastGallery> {
                 child: TweenAnimationBuilder<Offset>(
                   tween: Tween<Offset>(end: gridOffset),
                   duration: _swipeDuration,
-                  curve: Curves.easeOut,
+                  curve: Curves.easeInOutCubic,
                   builder: (context, offset, child) =>
                       Transform.translate(offset: offset, child: child),
                   child: SizedBox(
@@ -408,10 +663,11 @@ class _PodcastGalleryState extends State<PodcastGallery> {
                           height: cardHeight,
                           child: AnimatedScale(
                             duration: _swipeDuration,
-                            curve: Curves.easeOut,
+                            curve: Curves.easeInOutCubic,
                             scale: isFocused ? _focusedScale : _unfocusedScale,
                             child: AnimatedOpacity(
                               duration: _swipeDuration,
+                              curve: Curves.easeInOutCubic,
                               opacity: isFocused ? 1 : 0.56,
                               child: _PodcastGalleryCard(
                                 podcast: podcast,
@@ -419,6 +675,13 @@ class _PodcastGalleryState extends State<PodcastGallery> {
                                 isFollowing: isFollowing,
                                 isLoading: isLoading,
                                 isFocused: isFocused,
+                                previewIsLoading: isFocused &&
+                                    _previewPodcastUrl == podcast.url &&
+                                    _previewIsLoading,
+                                previewIsPlaying: isFocused &&
+                                    _previewPodcastUrl == podcast.url &&
+                                    _previewIsPlaying,
+                                onTogglePreview: () => _togglePreview(podcast),
                                 onFollow: podcast.url.isEmpty || isLoading
                                     ? null
                                     : isFollowing
@@ -452,13 +715,16 @@ class _PodcastGalleryState extends State<PodcastGallery> {
   }
 }
 
-class _PodcastGalleryCard extends StatelessWidget {
+class _PodcastGalleryCard extends StatefulWidget {
   const _PodcastGalleryCard({
     required this.podcast,
     required this.creator,
     required this.isFollowing,
     required this.isLoading,
     required this.isFocused,
+    required this.previewIsLoading,
+    required this.previewIsPlaying,
+    required this.onTogglePreview,
     required this.onFollow,
   });
 
@@ -467,121 +733,251 @@ class _PodcastGalleryCard extends StatelessWidget {
   final bool isFollowing;
   final bool isLoading;
   final bool isFocused;
+  final bool previewIsLoading;
+  final bool previewIsPlaying;
+  final VoidCallback onTogglePreview;
   final VoidCallback? onFollow;
+
+  @override
+  State<_PodcastGalleryCard> createState() => _PodcastGalleryCardState();
+}
+
+class _PodcastGalleryCardState extends State<_PodcastGalleryCard>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _pulseController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    );
+    if (widget.previewIsPlaying) {
+      _pulseController.repeat();
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant _PodcastGalleryCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.previewIsPlaying == oldWidget.previewIsPlaying) return;
+    if (widget.previewIsPlaying) {
+      _pulseController.repeat();
+    } else {
+      _pulseController
+        ..stop()
+        ..value = 0;
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final strings = L.of(context)!;
-    final artworkUrl = podcast.imageUrl ?? podcast.thumbImageUrl;
+    final artworkUrl = widget.podcast.imageUrl ?? widget.podcast.thumbImageUrl;
+    final accentColor = Theme.of(context).colorScheme.primary;
 
-    return Card(
-      color: Theme.of(context).colorScheme.surfaceContainerLowest,
-      clipBehavior: Clip.antiAlias,
-      elevation: isFocused ? 12 : 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: BorderSide(
-          color: isFocused
-              ? Theme.of(context).colorScheme.outlineVariant
-              : Colors.transparent,
-          width: isFocused ? 2 : 0,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            flex: 6,
-            child: artworkUrl == null || artworkUrl.isEmpty
-                ? ColoredBox(
-                    color:
-                        Theme.of(context).colorScheme.surfaceContainerHighest,
-                    child: const Icon(Icons.podcasts_rounded, size: 48),
-                  )
-                : CachedNetworkImage(
-                    imageUrl: artworkUrl,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => const Center(
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                    errorWidget: (context, url, error) => ColoredBox(
-                      color:
-                          Theme.of(context).colorScheme.surfaceContainerHighest,
-                      child: const Icon(Icons.podcasts_rounded, size: 48),
-                    ),
-                  ),
-          ),
-          Expanded(
-            flex: 4,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    podcast.title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                  ),
-                  const SizedBox(height: 2),
-                  Expanded(
-                    child: Text(
-                      creator?.trim().isNotEmpty == true
-                          ? creator!.trim()
-                          : strings.discover,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 38,
-                    width: double.infinity,
-                    child: FilledButton.icon(
-                      onPressed: onFollow,
-                      style: _followButtonStyle(context, isFollowing),
-                      icon: isLoading
-                          ? SizedBox.square(
-                              dimension: 15,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: isFollowing
-                                    ? Theme.of(context)
-                                        .colorScheme
-                                        .onSecondaryContainer
-                                    : Theme.of(context)
-                                        .colorScheme
-                                        .onPrimaryContainer,
-                              ),
-                            )
-                          : Icon(
-                              isFollowing
-                                  ? Icons.remove_rounded
-                                  : Icons.add_rounded,
-                              size: 17,
+    return AnimatedBuilder(
+      animation: _pulseController,
+      builder: (context, child) {
+        return Stack(
+          clipBehavior: Clip.none,
+          children: [
+            if (widget.previewIsPlaying)
+              for (var beat = 0; beat < 3; beat++)
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: Transform.scale(
+                      scale: 1.025 + _beatProgress(beat) * 0.22,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(22),
+                          border: Border.all(
+                            color: accentColor.withValues(
+                              alpha: 0.85 * (1 - _beatProgress(beat)),
                             ),
-                      label: Text(
-                        isFollowing
-                            ? strings.unsubscribe_button_label
-                            : strings.subscribe_button_label,
-                        maxLines: 1,
+                            width: 2.4,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: accentColor.withValues(
+                                alpha: 0.20 * (1 - _beatProgress(beat)),
+                              ),
+                              blurRadius: 12,
+                              spreadRadius: 1,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
+                ),
+            child!,
+          ],
+        );
+      },
+      child: Card(
+        color: Theme.of(context).colorScheme.surfaceContainerLowest,
+        clipBehavior: Clip.antiAlias,
+        elevation: widget.isFocused ? 12 : 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(
+            color: widget.isFocused
+                ? Theme.of(context).colorScheme.outlineVariant
+                : Colors.transparent,
+            width: widget.isFocused ? 2 : 0,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              flex: 6,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  if (artworkUrl == null || artworkUrl.isEmpty)
+                    ColoredBox(
+                      color:
+                          Theme.of(context).colorScheme.surfaceContainerHighest,
+                      child: const Icon(Icons.podcasts_rounded, size: 48),
+                    )
+                  else
+                    CachedNetworkImage(
+                      imageUrl: artworkUrl,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => const Center(
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                      errorWidget: (context, url, error) => ColoredBox(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
+                        child: const Icon(Icons.podcasts_rounded, size: 48),
+                      ),
+                    ),
+                  if (widget.isFocused)
+                    Positioned(
+                      top: 8,
+                      left: 8,
+                      child: Material(
+                        color: Colors.black54,
+                        shape: const CircleBorder(),
+                        child: IconButton(
+                          tooltip: widget.previewIsPlaying
+                              ? strings.pause_button_label
+                              : strings.play_button_label,
+                          onPressed: widget.previewIsLoading ||
+                                  widget.podcast.url.isEmpty
+                              ? null
+                              : widget.onTogglePreview,
+                          color: Colors.white,
+                          icon: widget.previewIsLoading
+                              ? const SizedBox.square(
+                                  dimension: 22,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : Icon(
+                                  widget.previewIsPlaying
+                                      ? Icons.pause_rounded
+                                      : Icons.play_arrow_rounded,
+                                ),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
-          ),
-        ],
+            Expanded(
+              flex: 4,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.podcast.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                    ),
+                    const SizedBox(height: 2),
+                    Expanded(
+                      child: Text(
+                        widget.creator?.trim().isNotEmpty == true
+                            ? widget.creator!.trim()
+                            : strings.discover,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant,
+                            ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 38,
+                      width: double.infinity,
+                      child: FilledButton.icon(
+                        onPressed: widget.onFollow,
+                        style: _followButtonStyle(
+                          context,
+                          widget.isFollowing,
+                        ),
+                        icon: widget.isLoading
+                            ? SizedBox.square(
+                                dimension: 15,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: widget.isFollowing
+                                      ? Theme.of(context)
+                                          .colorScheme
+                                          .onSecondaryContainer
+                                      : Theme.of(context)
+                                          .colorScheme
+                                          .onPrimaryContainer,
+                                ),
+                              )
+                            : Icon(
+                                widget.isFollowing
+                                    ? Icons.remove_rounded
+                                    : Icons.add_rounded,
+                                size: 17,
+                              ),
+                        label: Text(
+                          widget.isFollowing
+                              ? strings.unsubscribe_button_label
+                              : strings.subscribe_button_label,
+                          maxLines: 1,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  double _beatProgress(int beat) {
+    final phase = (_pulseController.value + beat / 3) % 1;
+    return Curves.easeOutCubic.transform(phase);
   }
 
   ButtonStyle _followButtonStyle(BuildContext context, bool isFollowing) {
@@ -652,15 +1048,16 @@ class _GalleryMessage extends StatelessWidget {
 
 class _AnimatedCutoutOverlay extends StatefulWidget {
   const _AnimatedCutoutOverlay({
-    super.key,
     required this.child,
     required this.cutoutSize,
+    required this.animationKey,
     required this.swipeDirection,
     required this.duration,
   });
 
   final Widget child;
   final Size cutoutSize;
+  final Key animationKey;
   final Offset swipeDirection;
   final Duration duration;
 
@@ -677,7 +1074,8 @@ class _AnimatedCutoutOverlayState extends State<_AnimatedCutoutOverlay>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: widget.duration,
+      duration: widget.duration ~/ 2,
+      reverseDuration: widget.duration ~/ 2,
     );
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
@@ -685,6 +1083,17 @@ class _AnimatedCutoutOverlayState extends State<_AnimatedCutoutOverlay>
       }
     });
     _controller.forward();
+  }
+
+  @override
+  void didUpdateWidget(covariant _AnimatedCutoutOverlay oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.animationKey != oldWidget.animationKey) {
+      _controller
+        ..duration = widget.duration ~/ 2
+        ..reverseDuration = widget.duration ~/ 2
+        ..forward(from: 0);
+    }
   }
 
   @override
@@ -703,7 +1112,7 @@ class _AnimatedCutoutOverlayState extends State<_AnimatedCutoutOverlay>
           animation: _controller,
           builder: (context, child) {
             const scaleAmount = 0.25;
-            final progress = Curves.easeOut.transform(_controller.value);
+            final progress = Curves.easeInOutCubic.transform(_controller.value);
             final cutoutSize = Size(
               widget.cutoutSize.width *
                   (1 - scaleAmount * progress * widget.swipeDirection.dx.abs()),
