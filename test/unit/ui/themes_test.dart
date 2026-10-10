@@ -23,6 +23,24 @@ void main() {
     );
   });
 
+  test('dynamic light theme keeps text button labels readable', () {
+    final theme = Themes.dynamicLightTheme(null).themeData;
+
+    expect(
+      theme.textButtonTheme.style?.foregroundColor?.resolve({}),
+      Colors.black87,
+    );
+  });
+
+  test('dynamic dark theme keeps text button labels readable', () {
+    final theme = Themes.dynamicDarkTheme(null).themeData;
+
+    expect(
+      theme.textButtonTheme.style?.foregroundColor?.resolve({}),
+      Colors.white,
+    );
+  });
+
   testWidgets('system theme follows device brightness changes', (tester) async {
     addTearDown(tester.platformDispatcher.clearAllTestValues);
     tester.platformDispatcher.platformBrightnessTestValue = Brightness.light;

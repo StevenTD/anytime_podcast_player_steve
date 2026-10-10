@@ -336,6 +336,15 @@ class _PodcastGalleryState extends State<PodcastGallery> {
             child: Text(strings.cancel_button_label),
           ),
           FilledButton(
+            style: FilledButton.styleFrom(
+              foregroundColor:
+                  ThemeData.estimateBrightnessForColor(
+                            Theme.of(context).colorScheme.primary,
+                          ) ==
+                          Brightness.dark
+                      ? Colors.white
+                      : Colors.black,
+            ),
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(strings.unsubscribe_button_label),
           ),

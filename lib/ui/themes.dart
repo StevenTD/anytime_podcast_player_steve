@@ -8,6 +8,15 @@ import 'package:flutter/services.dart';
 final ThemeData _lightTheme = _buildLightTheme();
 final ThemeData _darkTheme = _buildDarkTheme();
 
+TextButtonThemeData _actionTextButtonTheme(Brightness brightness) {
+  return TextButtonThemeData(
+    style: TextButton.styleFrom(
+      foregroundColor:
+          brightness == Brightness.dark ? Colors.white : Colors.black87,
+    ),
+  );
+}
+
 ThemeData _buildLightTheme() {
   final base = ThemeData.light(useMaterial3: false);
 
@@ -51,6 +60,7 @@ ThemeData _buildLightTheme() {
     buttonTheme: base.buttonTheme.copyWith(
       buttonColor: Colors.orange,
     ),
+    textButtonTheme: _actionTextButtonTheme(Brightness.light),
     iconTheme: base.iconTheme.copyWith(
       color: Colors.orange,
     ),
@@ -120,6 +130,7 @@ ThemeData _buildDarkTheme() {
     iconTheme: base.iconTheme.copyWith(
       color: Colors.white,
     ),
+    textButtonTheme: _actionTextButtonTheme(Brightness.dark),
     dividerTheme: base.dividerTheme.copyWith(
       color: const Color(0xff444444),
     ),
@@ -237,6 +248,7 @@ class Themes {
           style: OutlinedButton.styleFrom(
               foregroundColor: dynamicColor.primary ?? Colors.grey[800]),
         ),
+        textButtonTheme: _actionTextButtonTheme(Brightness.light),
         cardTheme: const CardThemeData().copyWith(
           color: dynamicColor.primary ?? const Color(0xff444444),
           shadowColor: dynamicColor.primary ?? const Color(0x77ffffff),
@@ -366,6 +378,7 @@ class Themes {
           ),
         ),
       ),
+      textButtonTheme: _actionTextButtonTheme(Brightness.dark),
     );
 
     return Themes(themeData: dynamicTheme);
