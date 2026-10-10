@@ -570,13 +570,23 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
             initialData: 0,
             builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
               int index = snapshot.data ?? 0;
+              final colors = Theme.of(context).colorScheme;
+              final isDarkMode = colors.brightness == Brightness.dark;
+              final selectedIconColor = isDarkMode
+                  ? colors.onSurface
+                  : Theme.of(context).scaffoldBackgroundColor;
+              final selectedIndicatorColor = isDarkMode
+                  ? HSLColor.fromColor(colors.surface)
+                      .withLightness(0.36)
+                      .toColor()
+                  : Theme.of(context).primaryColor;
 
               return NavigationBar(
                 selectedIndex: index,
                 onDestinationSelected: pager.changePage,
                 //  type: BottomNavigationBarType.fixed,
                 backgroundColor: Theme.of(context).bottomAppBarTheme.color,
-                indicatorColor: Theme.of(context).primaryColor,
+                indicatorColor: selectedIndicatorColor,
                 //   selectedIconTheme: Theme.of(context).iconTheme,
                 //    selectedItemColor: Theme.of(context).iconTheme.color,
                 //    selectedFontSize: 11.0,
@@ -592,7 +602,7 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
                     icon: index == 0
                         ? Icon(
                             Icons.library_music,
-                            color: Theme.of(context).scaffoldBackgroundColor,
+                            color: selectedIconColor,
                           )
                         : const Icon(Icons.library_music_outlined),
                     label: L.of(context)!.library,
@@ -606,7 +616,7 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
                     icon: index == 1
                         ? Icon(
                             Icons.explore,
-                            color: Theme.of(context).scaffoldBackgroundColor,
+                            color: selectedIconColor,
                           )
                         : const Icon(Icons.explore_outlined),
                     label: L.of(context)!.discover,
@@ -615,7 +625,7 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
                     icon: index == 2
                         ? Icon(
                             Icons.download,
-                            color: Theme.of(context).scaffoldBackgroundColor,
+                            color: selectedIconColor,
                           )
                         : const Icon(Icons.download_outlined),
                     label: L.of(context)!.downloads,

@@ -50,6 +50,13 @@ class _CarouselExampleState extends State<CarouselExample> {
         stream: podcastBloc.subscriptions,
         initialData: const [],
         builder: (context, snapshot) {
+          final colors = Theme.of(context).colorScheme;
+          final buttonBackgroundColor = colors.brightness == Brightness.dark
+              ? colors.surface
+              : colors.primary;
+          final buttonForegroundColor = colors.brightness == Brightness.dark
+              ? colors.onSurface
+              : colors.onPrimary;
           return snapshot.hasData && snapshot.data!.isNotEmpty
               ? Column(
                   children: [
@@ -66,9 +73,32 @@ class _CarouselExampleState extends State<CarouselExample> {
                             tag: podcastGalleryExploreHeroTag,
                             child: Material(
                               type: MaterialType.transparency,
-                              child: TextButton(
+                              child: FilledButton.icon(
                                 onPressed: () => _openPodcastGallery(context),
-                                child: Text(
+                                style: FilledButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  elevation: 2,
+                                  backgroundColor: buttonBackgroundColor,
+                                  foregroundColor: buttonForegroundColor,
+                                  textStyle: Theme.of(context)
+                                      .textTheme
+                                      .labelLarge
+                                      ?.copyWith(
+                                        color: buttonForegroundColor,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                ),
+                                icon: Icon(
+                                  Icons.explore_outlined,
+                                  color: buttonForegroundColor,
+                                ),
+                                label: Text(
                                   L.of(context)!.explore_podcasts_label,
                                 ),
                               ),
@@ -131,7 +161,20 @@ class _CarouselExampleState extends State<CarouselExample> {
                                   child: FilledButton.icon(
                                     onPressed: () =>
                                         _openPodcastGallery(context),
-                                    icon: const Icon(Icons.explore_outlined),
+                                    style: FilledButton.styleFrom(
+                                      backgroundColor: buttonBackgroundColor,
+                                      foregroundColor: buttonForegroundColor,
+                                      textStyle: Theme.of(context)
+                                          .textTheme
+                                          .labelLarge
+                                          ?.copyWith(
+                                            color: buttonForegroundColor,
+                                          ),
+                                    ),
+                                    icon: Icon(
+                                      Icons.explore_outlined,
+                                      color: buttonForegroundColor,
+                                    ),
                                     label: Text(
                                       L.of(context)!.explore_podcasts_label,
                                     ),
