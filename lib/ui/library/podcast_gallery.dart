@@ -51,6 +51,7 @@ class _PodcastGalleryState extends State<PodcastGallery> {
   int _previewGeneration = 0;
   bool _previewIsLoading = false;
   bool _previewIsPlaying = false;
+  bool _previewAutoplayEnabled = false;
 
   @override
   void initState() {
@@ -122,6 +123,9 @@ class _PodcastGalleryState extends State<PodcastGallery> {
       });
     }
     unawaited(_disposePreview(subscription, player));
+    if (_previewAutoplayEnabled && podcast.url.isNotEmpty) {
+      unawaited(_loadPreview(podcast));
+    }
   }
 
   Future<void> _loadPreview(Podcast podcast) async {
@@ -190,6 +194,7 @@ class _PodcastGalleryState extends State<PodcastGallery> {
     final player = _previewPlayer;
     final generation = _previewGeneration;
     if (player == null || _previewPodcastUrl != podcast.url) {
+      _previewAutoplayEnabled = true;
       _previewPodcastUrl = null;
       _requestPreview(podcast);
       return;
@@ -197,6 +202,7 @@ class _PodcastGalleryState extends State<PodcastGallery> {
 
     try {
       if (_previewIsPlaying) {
+        _previewAutoplayEnabled = false;
         _previewTimer?.cancel();
         _previewTimer = null;
         await player.pause();
@@ -212,6 +218,7 @@ class _PodcastGalleryState extends State<PodcastGallery> {
             !identical(player, _previewPlayer)) {
           return;
         }
+        _previewAutoplayEnabled = true;
         setState(() => _previewIsPlaying = true);
         _startPreviewTimer(generation, player, podcast);
         unawaited(
@@ -337,13 +344,12 @@ class _PodcastGalleryState extends State<PodcastGallery> {
           ),
           FilledButton(
             style: FilledButton.styleFrom(
-              foregroundColor:
-                  ThemeData.estimateBrightnessForColor(
-                            Theme.of(context).colorScheme.primary,
-                          ) ==
-                          Brightness.dark
-                      ? Colors.white
-                      : Colors.black,
+              foregroundColor: ThemeData.estimateBrightnessForColor(
+                        Theme.of(context).colorScheme.primary,
+                      ) ==
+                      Brightness.dark
+                  ? Colors.white
+                  : Colors.black,
             ),
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(strings.unsubscribe_button_label),
