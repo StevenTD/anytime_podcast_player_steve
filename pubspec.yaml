@@ -1,7 +1,7 @@
 name: anytime
 description: Tinig Podcast
 
-version: 1.0.0+3
+version: 1.0.1+6
 
 environment:
   sdk: ">=3.2.0 <4.0.0"
@@ -24,7 +24,7 @@ dependencies:
   flutter_html: ^3.0.0-beta.2
   flutter_html_svg: ^3.0.0-beta.2
   flutter_html_table: ^3.0.0-beta.2
-  flutter_launcher_icons: ^0.14.2
+  flutter_launcher_icons: ^0.14.4
   flutter_spinkit: ^5.0.0
   # flutter_html 3.0.0 uses html's internal matches API, removed in 0.15.7.
   html: ">=0.15.0 <0.15.7"
@@ -77,6 +77,9 @@ flutter_icons:
   remove_alpha_ios: true
   android: true
   ios: true
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/foreground.png"
+  adaptive_icon_monochrome: "assets/images/anytime-placeholder-logo.png"
 
 flutter:
   uses-material-design: true
@@ -85,6 +88,7 @@ flutter:
     - assets/images/AdaptCast.png
     - assets/images/AdaptCast.png
     - assets/images/anytime-placeholder-logo.png
+    - assets/images/foreground.png
 
     # Certificate authorities
     - assets/ca/lets-encrypt-r3.pem
