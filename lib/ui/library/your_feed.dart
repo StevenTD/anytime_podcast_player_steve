@@ -6,7 +6,6 @@ import 'package:anytime/ui/library/discovery.dart';
 import 'package:anytime/ui/library/episodes.dart';
 import 'package:anytime/ui/widgets/carousel_view.dart';
 import 'package:anytime/ui/widgets/tile_image.dart';
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -104,71 +103,74 @@ class _SubsciprionSelectorWidgetState
     //String selectedCategory = widget.discoveryBloc.selectedGenre.genre;
     final podcastBloc = Provider.of<PodcastBloc>(context);
 
-    return Container(
-      width: double.infinity,
-      color: Theme.of(context).canvasColor,
-      child: StreamBuilder<List<Podcast>>(
-          stream: podcastBloc.subscriptions,
-          initialData: const [],
-          builder: (context, snapshot) {
-            //  var i = podcastBloc.selectedGenre.index;
+    return SizedBox(
+      height: 84.0,
+      child: Container(
+        width: double.infinity,
+        color: Theme.of(context).canvasColor,
+        child: StreamBuilder<List<Podcast>>(
+            stream: podcastBloc.subscriptions,
+            initialData: const [],
+            builder: (context, snapshot) {
+              //  var i = podcastBloc.selectedGenre.index;
 
-            return snapshot.hasData && snapshot.data!.isNotEmpty
-                ? ScrollablePositionedList.builder(
-                    //  initialScrollIndex: (i > 0) ? i : 0,
-                    itemScrollController: widget.itemScrollController,
-                    itemCount: snapshot.data!.length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, i) {
-                      final item = snapshot.data![i];
-                      final padding = i == 0 ? 14.0 : 2.0;
+              return snapshot.hasData && snapshot.data!.isNotEmpty
+                  ? ScrollablePositionedList.builder(
+                      //  initialScrollIndex: (i > 0) ? i : 0,
+                      itemScrollController: widget.itemScrollController,
+                      itemCount: snapshot.data!.length,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, i) {
+                        final item = snapshot.data![i];
+                        final padding = i == 0 ? 14.0 : 2.0;
 
-                      return Container(
-                        margin: EdgeInsets.only(left: padding),
-                        child: Card(
-                          // color: item == selectedCategory ||
-                          //     (selectedCategory.isEmpty && i == 0)
-                          //     ? Theme.of(context).cardTheme.shadowColor
-                          //     : Theme.of(context).cardTheme.color,
-                          // child: TextButton(
-                          //   style: TextButton.styleFrom(
-                          //     foregroundColor: const Color(0xffffffff),
-                          //     visualDensity: VisualDensity.compact,
-                          //   ),
-                          //   onPressed: () {
-                          //     setState(() {
-                          //     //  selectedCategory = item;
-                          //     });
-                          //
-                          //     widget.discoveryBloc.discover(DiscoveryChartEvent(
-                          //       count: Discovery.fetchSize,
-                          //       genre: item,
-                          //       countryCode: PlatformDispatcher
-                          //           .instance.locale.countryCode
-                          //           ?.toLowerCase() ??
-                          //           '',
-                          //       languageCode: PlatformDispatcher
-                          //           .instance.locale.languageCode,
-                          //     ));
-                          //   },
-                          child: Column(
-                            children: [
-                              ClipRRect(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(15)),
-                                child: TileImage(
-                                  url: item.imageUrl!,
-                                  size: 60,
-                                ),
-                              )
-                            ],
+                        return Container(
+                          margin: EdgeInsets.only(left: padding),
+                          child: Card(
+                            // color: item == selectedCategory ||
+                            //     (selectedCategory.isEmpty && i == 0)
+                            //     ? Theme.of(context).cardTheme.shadowColor
+                            //     : Theme.of(context).cardTheme.color,
+                            // child: TextButton(
+                            //   style: TextButton.styleFrom(
+                            //     foregroundColor: const Color(0xffffffff),
+                            //     visualDensity: VisualDensity.compact,
+                            //   ),
+                            //   onPressed: () {
+                            //     setState(() {
+                            //     //  selectedCategory = item;
+                            //     });
+                            //
+                            //     widget.discoveryBloc.discover(DiscoveryChartEvent(
+                            //       count: Discovery.fetchSize,
+                            //       genre: item,
+                            //       countryCode: PlatformDispatcher
+                            //           .instance.locale.countryCode
+                            //           ?.toLowerCase() ??
+                            //           '',
+                            //       languageCode: PlatformDispatcher
+                            //           .instance.locale.languageCode,
+                            //     ));
+                            //   },
+                            child: Column(
+                              children: [
+                                ClipRRect(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(15)),
+                                  child: TileImage(
+                                    url: item.imageUrl!,
+                                    size: 60,
+                                  ),
+                                )
+                              ],
+                            ),
+                            //),
                           ),
-                          //),
-                        ),
-                      );
-                    })
-                : Container();
-          }),
+                        );
+                      })
+                  : Container();
+            }),
+      ),
     );
   }
 }

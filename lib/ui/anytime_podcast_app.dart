@@ -52,6 +52,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:liquid_glass_easy/liquid_glass_easy.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 import 'package:sliver_tools/sliver_tools.dart';
@@ -60,8 +61,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:material_color_utilities/material_color_utilities.dart';
 // import 'package:is_lock_screen2/is_lock_screen2.dart';
 import 'package:dynamic_color/dynamic_color.dart';
-
-const _moreMenuHeroTag = 'home-more-menu';
 
 /// Anytime is a Podcast player. You can search and subscribe to podcasts,
 /// download and stream episodes and view the latest podcast charts.
@@ -310,6 +309,7 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
   bool handledInitialLink = false;
   Widget? library;
   bool _isMainScreenScrolled = false;
+  bool _isMoreMenuOpen = false;
 
   @override
   void initState() {
@@ -512,23 +512,7 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
                                   ),
                                 ),
                               ),
-                              Hero(
-                                tag: _moreMenuHeroTag,
-                                child: _toolbarActionSurface(
-                                  child: IconButton(
-                                    tooltip: L.of(context)!.about_label,
-                                    icon: const Icon(Icons.more_vert),
-                                    color:
-                                        Theme.of(context).colorScheme.onSurface,
-                                    constraints: const BoxConstraints.tightFor(
-                                      width: 48,
-                                      height: 48,
-                                    ),
-                                    padding: EdgeInsets.zero,
-                                    onPressed: _showMoreMenu,
-                                  ),
-                                ),
-                              ),
+                              const SizedBox(width: 56),
                             ],
                           ),
                         ),
@@ -563,6 +547,18 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
               alignment: Alignment.bottomCenter,
               child: MiniPlayer(),
             ),
+            if (widget.topBarVisible)
+              Positioned.fill(
+                child: _HomeMoreMenu(
+                  isOpen: _isMoreMenuOpen,
+                  onOpen: () => setState(() => _isMoreMenuOpen = true),
+                  onClose: () => setState(() => _isMoreMenuOpen = false),
+                  onSelect: (choice) {
+                    setState(() => _isMoreMenuOpen = false);
+                    _menuSelect(choice);
+                  },
+                ),
+              ),
           ],
         ),
         bottomNavigationBar: StreamBuilder<int>(
@@ -654,120 +650,19 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
     final colors = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: Container(
+      child: SizedBox(
         width: 48,
         height: 48,
-        decoration: BoxDecoration(
-          color: colors.surfaceContainerHigh,
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: colors.shadow.withValues(alpha: 0.10),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Material(
-          color: Colors.transparent,
-          shape: const CircleBorder(),
-          clipBehavior: Clip.antiAlias,
+        child: LiquidGlassLens(
+          style: LiquidGlassStyle(
+            liteGlass: true,
+            shape: LiquidGlassShape.roundedRectangle(cornerRadius: 24),
+            color: colors.surfaceContainerHigh.withValues(alpha: 0.42),
+          ),
           child: child,
         ),
       ),
     );
-  }
-
-  Future<void> _showMoreMenu() async {
-    final choice = await Navigator.of(context).push<String>(
-      PageRouteBuilder<String>(
-        opaque: false,
-        settings: const RouteSettings(name: 'home_more_menu'),
-        transitionDuration: const Duration(milliseconds: 240),
-        reverseTransitionDuration: const Duration(milliseconds: 200),
-        pageBuilder: (menuContext, animation, secondaryAnimation) {
-          final strings = L.of(menuContext)!;
-          final menuWidth = (MediaQuery.sizeOf(menuContext).width - 32)
-              .clamp(180.0, 260.0)
-              .toDouble();
-          final menuItems = <(String, IconData, String)>[
-            if (feedbackUrl.isNotEmpty)
-              (
-                'feedback',
-                Icons.feedback_outlined,
-                strings.feedback_menu_item_label,
-              ),
-            ('layout', Icons.dashboard, strings.layout_label),
-            ('rss', Icons.rss_feed, strings.add_rss_feed_option),
-            ('settings', Icons.settings, strings.settings_label),
-            ('about', Icons.info_outline, strings.about_label),
-          ];
-
-          return Material(
-            type: MaterialType.transparency,
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () => Navigator.of(menuContext).pop(),
-                    child: const ColoredBox(color: Colors.black26),
-                  ),
-                ),
-                Positioned(
-                  top: MediaQuery.paddingOf(menuContext).top +
-                      kToolbarHeight +
-                      8,
-                  right: 16,
-                  child: Hero(
-                    tag: _moreMenuHeroTag,
-                    child: Material(
-                      color: Theme.of(menuContext)
-                          .colorScheme
-                          .surfaceContainerHigh,
-                      elevation: 12,
-                      clipBehavior: Clip.antiAlias,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: SizedBox(
-                        width: menuWidth,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            for (final (value, icon, label) in menuItems)
-                              ListTile(
-                                dense: true,
-                                visualDensity: VisualDensity.compact,
-                                leading: Icon(icon, size: 20),
-                                title: Text(
-                                  label,
-                                  style: Theme.of(menuContext)
-                                      .textTheme
-                                      .titleMedium,
-                                ),
-                                onTap: () =>
-                                    Navigator.of(menuContext).pop(value),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(opacity: animation, child: child);
-        },
-      ),
-    );
-
-    if (choice != null && mounted) {
-      _menuSelect(choice);
-    }
   }
 
   void _menuSelect(String choice) async {
@@ -909,6 +804,115 @@ class _AnytimeHomePageState extends State<AnytimeHomePage>
     } else {
       throw 'Could not launch $uri';
     }
+  }
+}
+
+class _HomeMoreMenu extends StatefulWidget {
+  final bool isOpen;
+  final VoidCallback onOpen;
+  final VoidCallback onClose;
+  final ValueChanged<String> onSelect;
+
+  const _HomeMoreMenu({
+    required this.isOpen,
+    required this.onOpen,
+    required this.onClose,
+    required this.onSelect,
+  });
+
+  @override
+  State<_HomeMoreMenu> createState() => _HomeMoreMenuState();
+}
+
+class _HomeMoreMenuState extends State<_HomeMoreMenu> {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final strings = L.of(context)!;
+    final menuWidth =
+        (MediaQuery.sizeOf(context).width - 32).clamp(180.0, 260.0).toDouble();
+    final menuItems = <(String, IconData, String)>[
+      if (feedbackUrl.isNotEmpty)
+        (
+          'feedback',
+          Icons.feedback_outlined,
+          strings.feedback_menu_item_label,
+        ),
+      ('layout', Icons.dashboard, strings.layout_label),
+      ('rss', Icons.rss_feed, strings.add_rss_feed_option),
+      ('settings', Icons.settings, strings.settings_label),
+      ('about', Icons.info_outline, strings.about_label),
+    ];
+    final menu = Padding(
+      key: const ValueKey('more-menu'),
+      padding: const EdgeInsets.only(top: 8),
+      child: SizedBox(
+        width: menuWidth,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (final (value, icon, label) in menuItems)
+              ListTile(
+                dense: true,
+                visualDensity: VisualDensity.compact,
+                leading: Icon(icon, size: 20),
+                title: Text(label, style: theme.textTheme.titleMedium),
+                onTap: () => widget.onSelect(value),
+              ),
+          ],
+        ),
+      ),
+    );
+    final moreButton = SizedBox(
+      key: const ValueKey('more-menu-button'),
+      width: 48,
+      height: 48,
+      child: IconButton(
+        tooltip: strings.more_label,
+        icon: const Icon(Icons.more_vert),
+        color: theme.colorScheme.onSurface,
+        onPressed: widget.onOpen,
+      ),
+    );
+
+    return Material(
+      type: MaterialType.transparency,
+      child: Stack(
+        children: [
+          if (widget.isOpen)
+            Positioned.fill(
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: widget.onClose,
+                child: const ColoredBox(color: Colors.black26),
+              ),
+            ),
+          Align(
+            alignment: Alignment.topRight,
+            child: Padding(
+              padding: EdgeInsets.only(
+                top: MediaQuery.paddingOf(context).top + 8,
+                right: 12,
+              ),
+              child: LiquidGlassMorph(
+                alignment: Alignment.topRight,
+                motion: LiquidGlassMorphMotion.fluid,
+                style: LiquidGlassStyle(
+                  refractionIndex: 1.02,
+                  refractionWidth: 16,
+                  blur: 1,
+                  saturation: 1.08,
+                  shape: LiquidGlassShape.roundedRectangle(cornerRadius: 20),
+                  color: theme.colorScheme.surfaceContainerHigh
+                      .withValues(alpha: 0.42),
+                ),
+                child: widget.isOpen ? menu : moreButton,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

@@ -112,60 +112,63 @@ class _CategorySelectorWidgetState extends State<CategorySelectorWidget> {
   Widget build(BuildContext context) {
     String selectedCategory = widget.discoveryBloc.selectedGenre.genre;
 
-    return Container(
-      width: double.infinity,
-      color: Theme.of(context).canvasColor,
-      child: StreamBuilder<List<String>>(
-          stream: widget.discoveryBloc.genres,
-          initialData: const [],
-          builder: (context, snapshot) {
-            var i = widget.discoveryBloc.selectedGenre.index;
+    return SizedBox(
+      height: 56.0,
+      child: Container(
+        width: double.infinity,
+        color: Theme.of(context).canvasColor,
+        child: StreamBuilder<List<String>>(
+            stream: widget.discoveryBloc.genres,
+            initialData: const [],
+            builder: (context, snapshot) {
+              var i = widget.discoveryBloc.selectedGenre.index;
 
-            return snapshot.hasData && snapshot.data!.isNotEmpty
-                ? ScrollablePositionedList.builder(
-                    initialScrollIndex: (i > 0) ? i : 0,
-                    itemScrollController: widget.itemScrollController,
-                    itemCount: snapshot.data!.length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, i) {
-                      final item = snapshot.data![i];
-                      final padding = i == 0 ? 14.0 : 2.0;
+              return snapshot.hasData && snapshot.data!.isNotEmpty
+                  ? ScrollablePositionedList.builder(
+                      initialScrollIndex: (i > 0) ? i : 0,
+                      itemScrollController: widget.itemScrollController,
+                      itemCount: snapshot.data!.length,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, i) {
+                        final item = snapshot.data![i];
+                        final padding = i == 0 ? 14.0 : 2.0;
 
-                      return Container(
-                        margin: EdgeInsets.only(left: padding),
-                        child: Card(
-                          color: item == selectedCategory ||
-                                  (selectedCategory.isEmpty && i == 0)
-                              ? Theme.of(context).cardTheme.shadowColor
-                              : Theme.of(context).cardTheme.color,
-                          child: TextButton(
-                            style: TextButton.styleFrom(
-                              foregroundColor: const Color(0xffffffff),
-                              visualDensity: VisualDensity.compact,
+                        return Container(
+                          margin: EdgeInsets.only(left: padding),
+                          child: Card(
+                            color: item == selectedCategory ||
+                                    (selectedCategory.isEmpty && i == 0)
+                                ? Theme.of(context).cardTheme.shadowColor
+                                : Theme.of(context).cardTheme.color,
+                            child: TextButton(
+                              style: TextButton.styleFrom(
+                                foregroundColor: const Color(0xffffffff),
+                                visualDensity: VisualDensity.compact,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  selectedCategory = item;
+                                });
+
+                                widget.discoveryBloc.discover(DiscoveryChartEvent(
+                                  count: Discovery.fetchSize,
+                                  genre: item,
+                                  countryCode: PlatformDispatcher
+                                          .instance.locale.countryCode
+                                          ?.toLowerCase() ??
+                                      '',
+                                  languageCode: PlatformDispatcher
+                                      .instance.locale.languageCode,
+                                ));
+                              },
+                              child: Text(item),
                             ),
-                            onPressed: () {
-                              setState(() {
-                                selectedCategory = item;
-                              });
-
-                              widget.discoveryBloc.discover(DiscoveryChartEvent(
-                                count: Discovery.fetchSize,
-                                genre: item,
-                                countryCode: PlatformDispatcher
-                                        .instance.locale.countryCode
-                                        ?.toLowerCase() ??
-                                    '',
-                                languageCode: PlatformDispatcher
-                                    .instance.locale.languageCode,
-                              ));
-                            },
-                            child: Text(item),
                           ),
-                        ),
-                      );
-                    })
-                : Container();
-          }),
+                        );
+                      })
+                  : Container();
+            }),
+      ),
     );
   }
 }

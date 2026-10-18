@@ -12,6 +12,7 @@ import 'package:anytime/ui/podcast/now_playing.dart';
 import 'package:anytime/ui/widgets/placeholder_builder.dart';
 import 'package:anytime/ui/widgets/podcast_image.dart';
 import 'package:flutter/material.dart';
+import 'package:liquid_glass_easy/liquid_glass_easy.dart';
 import 'package:provider/provider.dart';
 
 /// Displays a mini podcast player widget if a podcast is playing or paused.
@@ -80,6 +81,14 @@ class _MiniPlayerBuilderState extends State<_MiniPlayerBuilder>
     final miniPlayerColor = Theme.of(context).brightness == Brightness.light
         ? colors.surfaceContainerLow
         : colors.surfaceContainerHigh;
+    final glassStyle = LiquidGlassStyle(
+      shape: LiquidGlassShape.continuousRoundedRectangle(cornerRadius: 36),
+      refractionIndex: 1.02,
+      refractionWidth: 16,
+      blur: 8,
+      saturation: 1.08,
+      color: miniPlayerColor.withValues(alpha: 0.72),
+    );
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 8, 12, 16),
@@ -124,9 +133,7 @@ class _MiniPlayerBuilderState extends State<_MiniPlayerBuilder>
             label: L.of(context)!.semantics_mini_player_header,
             child: Container(
               height: 66,
-              clipBehavior: Clip.antiAlias,
               decoration: BoxDecoration(
-                color: miniPlayerColor,
                 borderRadius: BorderRadius.circular(36),
                 boxShadow: [
                   BoxShadow(
@@ -136,230 +143,242 @@ class _MiniPlayerBuilderState extends State<_MiniPlayerBuilder>
                   ),
                 ],
               ),
-              child: Stack(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 4.0, right: 4.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        StreamBuilder<Episode?>(
-                            stream: audioBloc.nowPlaying,
-                            initialData: audioBloc.nowPlaying?.valueOrNull,
-                            builder: (context, snapshot) {
-                              return StreamBuilder<AudioState>(
-                                  stream: audioBloc.playingState,
-                                  builder: (context, stateSnapshot) {
-                                    var playing = stateSnapshot.data ==
-                                        AudioState.playing;
+              child: LiquidGlassLens(
+                style: glassStyle,
+                child: Stack(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4.0, right: 4.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          StreamBuilder<Episode?>(
+                              stream: audioBloc.nowPlaying,
+                              initialData: audioBloc.nowPlaying?.valueOrNull,
+                              builder: (context, snapshot) {
+                                return StreamBuilder<AudioState>(
+                                    stream: audioBloc.playingState,
+                                    builder: (context, stateSnapshot) {
+                                      var playing = stateSnapshot.data ==
+                                          AudioState.playing;
 
-                                    return Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: <Widget>[
-                                        SizedBox(
-                                          height: 58.0,
-                                          width: 58.0,
-                                          child: ExcludeSemantics(
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: snapshot.hasData
-                                                  ? PodcastImage(
-                                                      key: Key(
-                                                          'mini${snapshot.data!.imageUrl}'),
-                                                      url: snapshot
-                                                          .data!.imageUrl!,
-                                                      width: 58.0,
-                                                      height: 58.0,
-                                                      borderRadius: 30.0,
-                                                      placeholder: placeholderBuilder !=
-                                                              null
-                                                          ? placeholderBuilder
-                                                                  .builder()(
-                                                              context)
-                                                          : const Image(
-                                                              image: AssetImage(
-                                                                  'assets/images/anytime-placeholder-logo.png')),
-                                                      errorPlaceholder: placeholderBuilder !=
-                                                              null
-                                                          ? placeholderBuilder
-                                                                  .errorBuilder()(
-                                                              context)
-                                                          : const Image(
-                                                              image: AssetImage(
-                                                                  'assets/images/anytime-placeholder-logo.png')),
-                                                    )
-                                                  : Container(),
+                                      return Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: <Widget>[
+                                          SizedBox(
+                                            height: 58.0,
+                                            width: 58.0,
+                                            child: ExcludeSemantics(
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: snapshot.hasData
+                                                    ? PodcastImage(
+                                                        key: Key(
+                                                            'mini${snapshot.data!.imageUrl}'),
+                                                        url: snapshot
+                                                            .data!.imageUrl!,
+                                                        width: 58.0,
+                                                        height: 58.0,
+                                                        borderRadius: 30.0,
+                                                        placeholder: placeholderBuilder !=
+                                                                null
+                                                            ? placeholderBuilder
+                                                                    .builder()(
+                                                                context)
+                                                            : const Image(
+                                                                image: AssetImage(
+                                                                    'assets/images/anytime-placeholder-logo.png')),
+                                                        errorPlaceholder: placeholderBuilder !=
+                                                                null
+                                                            ? placeholderBuilder
+                                                                    .errorBuilder()(
+                                                                context)
+                                                            : const Image(
+                                                                image: AssetImage(
+                                                                    'assets/images/anytime-placeholder-logo.png')),
+                                                      )
+                                                    : Container(),
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        Expanded(
-                                            flex: 1,
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: <Widget>[
-                                                Text(
-                                                  snapshot.data?.title ?? '',
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: textTheme.bodyMedium,
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 4.0),
-                                                  child: Text(
-                                                    snapshot.data?.author ?? '',
+                                          Expanded(
+                                              flex: 1,
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Text(
+                                                    snapshot.data?.title ?? '',
                                                     overflow:
                                                         TextOverflow.ellipsis,
-                                                    style: textTheme.bodySmall,
+                                                    style: textTheme.bodyMedium
+                                                        ?.copyWith(
+                                                      color: colors.onSurface,
+                                                    ),
                                                   ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 4.0),
+                                                    child: Text(
+                                                      snapshot.data?.author ??
+                                                          '',
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: textTheme.bodySmall
+                                                          ?.copyWith(
+                                                        color: colors
+                                                            .onSurfaceVariant,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              )),
+                                          const SizedBox(width: 12),
+                                          SizedBox(
+                                            height: 56.0,
+                                            width: 56.0,
+                                            child: TextButton(
+                                              style: TextButton.styleFrom(
+                                                padding: EdgeInsets.zero,
+                                                shape: CircleBorder(
+                                                    side: BorderSide(
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .surface,
+                                                        width: 0.0)),
+                                              ),
+                                              onPressed: () {
+                                                if (playing) {
+                                                  audioBloc.transitionState(
+                                                      TransitionState
+                                                          .fastforward);
+                                                }
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(4),
+                                                child: Icon(
+                                                  Icons.forward_30,
+                                                  semanticLabel: L
+                                                      .of(context)!
+                                                      .fast_forward_button_label,
+                                                  size: 32.0,
+                                                  color: colors.onSurface,
                                                 ),
-                                              ],
-                                            )),
-                                        const SizedBox(width: 12),
-                                        SizedBox(
-                                          height: 56.0,
-                                          width: 56.0,
-                                          child: TextButton(
-                                            style: TextButton.styleFrom(
-                                              padding: EdgeInsets.zero,
-                                              shape: CircleBorder(
-                                                  side: BorderSide(
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .surface,
-                                                      width: 0.0)),
-                                            ),
-                                            onPressed: () {
-                                              if (playing) {
-                                                audioBloc.transitionState(
-                                                    TransitionState
-                                                        .fastforward);
-                                              }
-                                            },
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(4),
-                                              child: Icon(
-                                                Icons.forward_30,
-                                                semanticLabel: L
-                                                    .of(context)!
-                                                    .fast_forward_button_label,
-                                                size: 32.0,
-                                                color: Theme.of(context)
-                                                    .iconTheme
-                                                    .color,
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        const SizedBox(width: 12),
-                                        SizedBox(
-                                          height: 56.0,
-                                          width: 56.0,
-                                          child: TextButton(
-                                            style: TextButton.styleFrom(
-                                              padding: EdgeInsets.zero,
-                                              shape: CircleBorder(
-                                                  side: BorderSide(
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .surface,
-                                                      width: 0.0)),
-                                            ),
-                                            onPressed: () {
-                                              if (playing) {
-                                                _pause(audioBloc);
-                                              } else {
-                                                _play(audioBloc);
-                                              }
-                                            },
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(4),
-                                              child: AnimatedIcon(
-                                                semanticLabel: playing
-                                                    ? L
-                                                        .of(context)!
-                                                        .pause_button_label
-                                                    : L
-                                                        .of(context)!
-                                                        .play_button_label,
-                                                size: 40.0,
-                                                icon: AnimatedIcons.play_pause,
-                                                color: Theme.of(context)
-                                                    .iconTheme
-                                                    .color,
-                                                progress: _playPauseController,
+                                          const SizedBox(width: 12),
+                                          SizedBox(
+                                            height: 56.0,
+                                            width: 56.0,
+                                            child: TextButton(
+                                              style: TextButton.styleFrom(
+                                                padding: EdgeInsets.zero,
+                                                shape: CircleBorder(
+                                                    side: BorderSide(
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .surface,
+                                                        width: 0.0)),
+                                              ),
+                                              onPressed: () {
+                                                if (playing) {
+                                                  _pause(audioBloc);
+                                                } else {
+                                                  _play(audioBloc);
+                                                }
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(4),
+                                                child: AnimatedIcon(
+                                                  semanticLabel: playing
+                                                      ? L
+                                                          .of(context)!
+                                                          .pause_button_label
+                                                      : L
+                                                          .of(context)!
+                                                          .play_button_label,
+                                                  size: 40.0,
+                                                  icon:
+                                                      AnimatedIcons.play_pause,
+                                                  color: colors.onSurface,
+                                                  progress:
+                                                      _playPauseController,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                    );
-                                  });
-                            }),
-                      ],
+                                        ],
+                                      );
+                                    });
+                              }),
+                        ],
+                      ),
                     ),
-                  ),
-                  Positioned(
-                    left: 25,
-                    right: 25,
-                    bottom: 0,
-                    child: StreamBuilder<PositionState>(
-                      stream: audioBloc.playPosition,
-                      initialData: audioBloc.playPosition?.valueOrNull,
-                      builder: (context, snapshot) {
-                        final position = snapshot.data?.position ??
-                            const Duration(seconds: 0);
-                        final length =
-                            snapshot.data?.length ?? const Duration(seconds: 0);
-                        final progress = length.inMilliseconds > 0
-                            ? (position.inMilliseconds / length.inMilliseconds)
-                                .clamp(0.0, 1.0)
-                            : 0.0;
+                    Positioned(
+                      left: 25,
+                      right: 25,
+                      bottom: 0,
+                      child: StreamBuilder<PositionState>(
+                        stream: audioBloc.playPosition,
+                        initialData: audioBloc.playPosition?.valueOrNull,
+                        builder: (context, snapshot) {
+                          final position = snapshot.data?.position ??
+                              const Duration(seconds: 0);
+                          final length = snapshot.data?.length ??
+                              const Duration(seconds: 0);
+                          final progress = length.inMilliseconds > 0
+                              ? (position.inMilliseconds /
+                                      length.inMilliseconds)
+                                  .clamp(0.0, 1.0)
+                              : 0.0;
 
-                        return LayoutBuilder(
-                          builder: (context, constraints) {
-                            return SizedBox(
-                              height: 3,
-                              child: Stack(
-                                children: [
-                                  DecoratedBox(
-                                    decoration: BoxDecoration(
-                                      color: colors.onSurface
-                                          .withValues(alpha: 0.16),
-                                      borderRadius: BorderRadius.circular(2),
+                          return LayoutBuilder(
+                            builder: (context, constraints) {
+                              return SizedBox(
+                                height: 3,
+                                child: Stack(
+                                  children: [
+                                    DecoratedBox(
+                                      decoration: BoxDecoration(
+                                        color: colors.onSurface
+                                            .withValues(alpha: 0.16),
+                                        borderRadius: BorderRadius.circular(2),
+                                      ),
+                                      child: const SizedBox.expand(),
                                     ),
-                                    child: const SizedBox.expand(),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: SizedBox(
-                                      width: constraints.maxWidth * progress,
-                                      height: 2,
-                                      child: DecoratedBox(
-                                        decoration: BoxDecoration(
-                                          color: Theme.of(context).primaryColor,
-                                          borderRadius:
-                                              BorderRadius.circular(2),
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: SizedBox(
+                                        width: constraints.maxWidth * progress,
+                                        height: 2,
+                                        child: DecoratedBox(
+                                          decoration: BoxDecoration(
+                                            color: colors.primary,
+                                            borderRadius:
+                                                BorderRadius.circular(2),
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        );
-                      },
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

@@ -13,6 +13,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:liquid_glass_easy/liquid_glass_easy.dart';
 import 'package:logging/logging.dart';
 import 'package:podcast_search/podcast_search.dart' show Country;
 import 'package:podcast_search/podcast_search.dart' as search;
@@ -457,24 +458,15 @@ class _PodcastGalleryState extends State<PodcastGallery> {
     final colors = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: Container(
+      child: SizedBox(
         width: 44,
         height: 44,
-        decoration: BoxDecoration(
-          color: colors.surfaceContainerHigh,
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: colors.shadow.withValues(alpha: 0.10),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Material(
-          color: Colors.transparent,
-          shape: const CircleBorder(),
-          clipBehavior: Clip.antiAlias,
+        child: LiquidGlassLens(
+          style: LiquidGlassStyle(
+            //  liteGlass: true,
+            shape: LiquidGlassShape.roundedRectangle(cornerRadius: 22),
+            color: colors.surfaceContainerHigh.withValues(alpha: 0.56),
+          ),
           child: child,
         ),
       ),
@@ -560,12 +552,17 @@ class _PodcastGalleryState extends State<PodcastGallery> {
                       padding: const EdgeInsets.all(12),
                       child: Hero(
                         tag: podcastGalleryExploreHeroTag,
-                        child: Material(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .surfaceContainerHigh,
-                          borderRadius: BorderRadius.circular(24),
-                          elevation: 2,
+                        child: LiquidGlassLens(
+                          style: LiquidGlassStyle(
+                            //  liteGlass: true,
+                            shape: LiquidGlassShape.roundedRectangle(
+                              cornerRadius: 24,
+                            ),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerHigh
+                                .withValues(alpha: 0.58),
+                          ),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,
@@ -1023,37 +1020,84 @@ class _PodcastGalleryCardState extends State<_PodcastGalleryCard>
                     SizedBox(
                       height: 38,
                       width: double.infinity,
-                      child: FilledButton.icon(
-                        onPressed: widget.onFollow,
-                        style: _followButtonStyle(
-                          context,
-                          widget.isFollowing,
+                      child: LiquidGlassLens(
+                        style: LiquidGlassStyle(
+                          liteGlass: true,
+                          shape: LiquidGlassShape.roundedRectangle(
+                            cornerRadius: 12,
+                          ),
+                          color: (widget.isFollowing
+                                  ? Theme.of(context)
+                                      .colorScheme
+                                      .secondaryContainer
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .primaryContainer)
+                              .withValues(alpha: 0.72),
                         ),
-                        icon: widget.isLoading
-                            ? SizedBox.square(
-                                dimension: 15,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: widget.isFollowing
-                                      ? Theme.of(context)
-                                          .colorScheme
-                                          .onSecondaryContainer
-                                      : Theme.of(context)
-                                          .colorScheme
-                                          .onPrimaryContainer,
-                                ),
-                              )
-                            : Icon(
-                                widget.isFollowing
-                                    ? Icons.remove_rounded
-                                    : Icons.add_rounded,
-                                size: 17,
+                        child: Semantics(
+                          button: true,
+                          enabled: widget.onFollow != null,
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: widget.onFollow,
+                              borderRadius: BorderRadius.circular(12),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  if (widget.isLoading)
+                                    SizedBox.square(
+                                      dimension: 15,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: widget.isFollowing
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .onSecondaryContainer
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .onPrimaryContainer,
+                                      ),
+                                    )
+                                  else
+                                    Icon(
+                                      widget.isFollowing
+                                          ? Icons.remove_rounded
+                                          : Icons.add_rounded,
+                                      size: 17,
+                                      color: widget.isFollowing
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .onSecondaryContainer
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .onPrimaryContainer,
+                                    ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    widget.isFollowing
+                                        ? strings.unsubscribe_button_label
+                                        : strings.subscribe_button_label,
+                                    maxLines: 1,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelLarge
+                                        ?.copyWith(
+                                          color: widget.isFollowing
+                                              ? Theme.of(context)
+                                                  .colorScheme
+                                                  .onSecondaryContainer
+                                              : Theme.of(context)
+                                                  .colorScheme
+                                                  .onPrimaryContainer,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                  ),
+                                ],
                               ),
-                        label: Text(
-                          widget.isFollowing
-                              ? strings.unsubscribe_button_label
-                              : strings.subscribe_button_label,
-                          maxLines: 1,
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -1070,30 +1114,6 @@ class _PodcastGalleryCardState extends State<_PodcastGalleryCard>
   double _beatProgress(int beat) {
     final phase = (_pulseController.value + beat / 3) % 1;
     return Curves.easeOutCubic.transform(phase);
-  }
-
-  ButtonStyle _followButtonStyle(BuildContext context, bool isFollowing) {
-    final colors = Theme.of(context).colorScheme;
-    final backgroundColor =
-        isFollowing ? colors.secondaryContainer : colors.primaryContainer;
-    final foregroundColor =
-        isFollowing ? colors.onSecondaryContainer : colors.onPrimaryContainer;
-
-    return FilledButton.styleFrom(
-      backgroundColor: backgroundColor,
-      foregroundColor: foregroundColor,
-      disabledBackgroundColor: backgroundColor,
-      disabledForegroundColor: foregroundColor,
-      side: BorderSide(color: colors.outlineVariant),
-      minimumSize: const Size(0, 38),
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      visualDensity: VisualDensity.compact,
-      textStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
-            color: foregroundColor,
-            fontWeight: FontWeight.w600,
-          ),
-    );
   }
 }
 
